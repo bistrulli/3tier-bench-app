@@ -1,4 +1,5 @@
 FROM ubuntu:21.04 AS build
+ENV TZ=Europe/Rome
 
 #install all dependecy
 RUN apt-get update -y

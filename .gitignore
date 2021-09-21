@@ -28,3 +28,5 @@ target/
 #macfile
 .DS_Store
 
+
+*.rdb
