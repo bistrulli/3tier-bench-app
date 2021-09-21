@@ -38,7 +38,7 @@ public class Client implements Runnable {
 			HttpClient client=null;
 			HttpRequest request=null;
 			client=HttpClient.newBuilder().version(Version.HTTP_1_1).build();
-			request=HttpRequest.newBuilder().uri(URI.create("http://localhost:3000/?id="+this.clietId.toString()+"&entry=e1"+"&snd=think")).
+			request=HttpRequest.newBuilder().uri(URI.create("http://tier1:3000/?id="+this.clietId.toString()+"&entry=e1"+"&snd=think")).
 					timeout(Duration.ofMinutes(10)).build();
 			
 			Jedis jedis = this.task.getJedisPool().getResource();

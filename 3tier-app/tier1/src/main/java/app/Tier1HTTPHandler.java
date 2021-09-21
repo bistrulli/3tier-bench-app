@@ -39,7 +39,7 @@ public class Tier1HTTPHandler extends TierHttpHandler {
 		HttpRequest request = null;
 		client = HttpClient.newBuilder().version(Version.HTTP_1_1).build();
 		request = HttpRequest.newBuilder()
-				.uri(URI.create("http://localhost:3001/?&entry=e2" + "&snd=" + this.getName()))
+				.uri(URI.create("http://tier2:3001/?&entry=e2" + "&snd=" + this.getName()))
 				.timeout(Duration.ofMinutes(10)).build();
 		try {
 			client.send(request, BodyHandlers.ofString());
