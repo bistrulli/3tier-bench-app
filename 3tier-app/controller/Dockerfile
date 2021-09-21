@@ -17,6 +17,9 @@ RUN git clone https://github.com/bistrulli/3tier-bench-app.git
 
 WORKDIR /3tier-bench-app/3tier-app/controller
 
+#"Start redis server"
+RUN redis-server --port 6379 &
+
 #start redis
-CMD ["redis-server","--port","6379","&","/bin/bash"]
+CMD ["/bin/bash"]
 
