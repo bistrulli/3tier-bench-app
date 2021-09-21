@@ -5,7 +5,6 @@ RUN apt-get update -y
 RUN apt-get install openjdk-15-jdk -y
 RUN apt-get install maven -y
 RUN apt-get install git -y
-RUN apt-get install redis-server -y
 
 
 #download code
@@ -24,7 +23,7 @@ RUN mvn package
 WORKDIR /3tier-bench-app/3tier-app/tier2/target
 
 CMD ["java","-Xmx4G","-jar","tier2-0.0.1-SNAPSHOT-jar-with-dependencies.jar",\
-	"--cpuEmu","1","--jedisHost","localhost"]
+	"--cpuEmu","1","--jedisHost","monitor"]
 
 
 
