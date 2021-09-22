@@ -5,7 +5,6 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 #install all dependecy
 RUN apt-get update -y
 RUN apt-get install git -y
-RUN apt-get install redis-server -y
 RUN apt-get install python -y
 RUN apt-get install pip -y
 
@@ -18,5 +17,5 @@ RUN git clone https://github.com/bistrulli/3tier-bench-app.git
 WORKDIR /3tier-bench-app/3tier-app/controller
  
 #start redis
-CMD ["redis-server","--port","6379","&",";","/bin/bash"]
+CMD ["redis-server --port 6379"]
 
