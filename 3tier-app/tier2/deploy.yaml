@@ -1,0 +1,21 @@
+apiVersion: "apps/v1"
+kind: "Deployment"
+metadata:
+  name: "tier2"
+  namespace: "default"
+  labels:
+    app: "tier2"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: "tier2"
+  template:
+    metadata:
+      labels:
+        app: "tier2"
+    spec:
+      containers:
+      - name: "tier2"
+        image: "bistrulli/tier2:0.1"
+        imagePullPolicy: "Always"
