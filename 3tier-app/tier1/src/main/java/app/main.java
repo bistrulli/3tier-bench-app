@@ -24,7 +24,7 @@ public class main {
 	}
 
 	public static void resetState(SimpleTask task) {
-		Jedis jedis = new Jedis("localhost");
+		Jedis jedis = new Jedis(main.jedisHost);
 		Transaction t = jedis.multi();
 		String[] entries = task.getEntries().keySet().toArray(new String[0]);
 		for (String e : entries) {
