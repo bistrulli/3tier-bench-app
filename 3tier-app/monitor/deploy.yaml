@@ -1,21 +1,21 @@
 apiVersion: "apps/v1"
 kind: "Deployment"
 metadata:
-  name: "tier2-pod"
+  name: "redis-server"
   namespace: "default"
   labels:
-    app: "tier2-pod"
+    app: "redis-server"
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: "tier2-pod"
+      app: "redis-server"
   template:
     metadata:
       labels:
-        app: "tier2-pod"
+        app: "redis-server"
     spec:
       containers:
-      - name: "tier2-pod"
-        image: "bistrulli/tier2:0.1"
+      - name: "redis-server"
+        image: "bistrulli/my_exp:my_redis_srv"
         imagePullPolicy: "Always"

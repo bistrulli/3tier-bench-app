@@ -1,21 +1,21 @@
 apiVersion: "apps/v1"
 kind: "Deployment"
 metadata:
-  name: "tier2-pod"
+  name: "tier1-pod"
   namespace: "default"
   labels:
-    app: "tier2-pod"
+    app: "tier1-pod"
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: "tier2-pod"
+      app: "tier1-pod"
   template:
     metadata:
       labels:
-        app: "tier2-pod"
+        app: "tier1-pod"
     spec:
       containers:
-      - name: "tier2-pod"
-        image: "bistrulli/tier2:0.1"
+      - name: "tier1-pod"
+        image: "bistrulli/tier1:0.1"
         imagePullPolicy: "Always"
