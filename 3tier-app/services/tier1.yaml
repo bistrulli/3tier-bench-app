@@ -1,0 +1,16 @@
+---
+apiVersion: "v1"
+kind: "Service"
+metadata:
+  name: "tier1"
+  namespace: "default"
+  labels:
+    app: "tier1-pod"
+spec:
+  ports:
+  - protocol: "TCP"
+    port: 3000
+    targetPort: 3000
+  selector:
+    app: "tier1-pod"
+  type: "ClusterIP"
