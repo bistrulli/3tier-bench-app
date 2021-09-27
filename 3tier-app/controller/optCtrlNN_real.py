@@ -112,7 +112,11 @@ def resetU():
 
 
 def getstate(r, keys, N):
-    state = [float(r.get(keys[i])) for i in range(len(keys))]
+    try:
+        state = [float(r.get(keys[i])) for i in range(len(keys))]
+    except:
+        for i in range(len(keys)):
+            print(r.get(keys[i]),keys[i])
     astate = [state[0]]
     gidx = 1;
     for i in range(1, N):
