@@ -25,8 +25,8 @@ period = 100000
 
 def killSys():
     subprocess.call(["sudo", "pkill", "-9", "-f", "client-0.0.1-SNAPSHOT"])
-    subprocess.call(["sudo", "pkill", "-9", "-f", "tier1-0.0.1-SNAPSHOT"])
-    subprocess.call(["sudo", "pkill", "-9", "-f", "tier2-0.0.1-SNAPSHOT"])
+    # subprocess.call(["sudo", "pkill", "-9", "-f", "tier1-0.0.1-SNAPSHOT"])
+    # subprocess.call(["sudo", "pkill", "-9", "-f", "tier2-0.0.1-SNAPSHOT"])
 
 
 def handler(signum, frame):
@@ -329,13 +329,13 @@ if __name__ == "__main__":
                     Ie = 0
                     
                     killSys()
+                    time.sleep(2)
                     sys = None
                 
                 if step == 0 or step % sTime == 0:
                     if(isCpu):
                         resetU()
-                    r.set("t1_hw", np.sum(XSSIM[:, step]))
-                    r.set("t2_hw", np.sum(XSSIM[:, step]))
+                    r.mset({"t1_hw":np.sum(XSSIM[:, step]),"t2_hw":np.sum(XSSIM[:, step])})
                     sys = startSys(np.sum(XSSIM[:, step]), isCpu)
                     time.sleep(1)
                     # cpulProc=setUCpuLimit(proc,None,False)

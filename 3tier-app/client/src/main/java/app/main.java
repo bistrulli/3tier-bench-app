@@ -21,6 +21,11 @@ public class main {
 		main.getCliOptions(args);
 		SimpleTask[] Sys = main.genSystem();
 		main.resetState(Sys[0]);
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		Sys[0].start();
 	}
 
