@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import com.google.common.net.InetAddresses;
 import com.google.common.net.InternetDomainName;
+import com.google.gson.Gson;
 
 import Server.SimpleTask;
 import gnu.getopt.Getopt;
@@ -13,7 +14,8 @@ import redis.clients.jedis.Transaction;
 
 public class main {
 	private static Integer initPop = -1;
-	private static String jedisHost = null;
+	private static String jedisHost = null; 
+	private static String[] systemQueues=null; 
 
 	public static void main(String[] args) {
 		main.getCliOptions(args);
@@ -23,18 +25,17 @@ public class main {
 	}
 
 	public static void resetState(SimpleTask task) {
-		Jedis jedis = new Jedis("localhost");
+		Jedis jedis = new Jedis(main.jedisHost);
 		Transaction t = jedis.multi();
-		String[] entries = task.getEntries().keySet().toArray(new String[0]);
-		for (String e : entries) {
+		for (String e :main.systemQueues) {
 			t.set(e, "0");
 		}
 		t.exec();
 		t.close();
-		jedis.close();
+		jedis.close(); 
 	}
 
-	public static SimpleTask[] genSystem() {
+	public static SimpleTask[] genSystem() { 
 		HashMap<String, Class> clientEntries = new HashMap<String, Class>();
 		HashMap<String, Long> clientEntries_stimes = new HashMap<String, Long>();
 		clientEntries.put("think", Client.class);
@@ -50,9 +51,11 @@ public class main {
 
 	public static void getCliOptions(String[] args) {
 		int c;
-		LongOpt[] longopts = new LongOpt[2];
+		LongOpt[] longopts = new LongOpt[3];
 		longopts[0] = new LongOpt("initPop", LongOpt.REQUIRED_ARGUMENT, null, 0);
 		longopts[1] = new LongOpt("jedisHost", LongOpt.REQUIRED_ARGUMENT, null, 1);
+		longopts[2] = new LongOpt("queues", LongOpt.REQUIRED_ARGUMENT, null, 2);
+		
 
 		Getopt g = new Getopt("ddctrl", args, "", longopts);
 		g.setOpterr(true);
@@ -71,6 +74,15 @@ public class main {
 						throw new Exception(String.format("%s is not a valid jedis URL", g.getOptarg()));
 					}
 					main.jedisHost = String.valueOf(g.getOptarg());
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				break;
+			case 2:
+				try {
+				// Deserialization
+				Gson gson = new Gson();
+				main.systemQueues = gson.fromJson(String.valueOf(g.getOptarg()), String[].class); 
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

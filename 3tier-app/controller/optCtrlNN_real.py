@@ -76,16 +76,17 @@ def startSys(initPop, isCpu):
                             '--initPop', "%d" % (initPop),
                             '--jedisHost', 'localhost']))
     else:
-        sys.append(subprocess.Popen(['java', "-Xmx4G", '-jar', '../tier2/target/tier2-0.0.1-SNAPSHOT-jar-with-dependencies.jar',
-                               '--cpuEmu', '1',
-                               '--jedisHost', 'localhost']))
-        sys.append(subprocess.Popen(['java', "-Xmx4G", '-jar', '../tier1/target/tier1-0.0.1-SNAPSHOT-jar-with-dependencies.jar',
-                               '--cpuEmu', '1',
-                               '--jedisHost', 'localhost']))
-        time.sleep(2)
+        # sys.append(subprocess.Popen(['java', "-Xmx4G", '-jar', '../tier2/target/tier2-0.0.1-SNAPSHOT-jar-with-dependencies.jar',
+        #                        '--cpuEmu', '1',
+        #                        '--jedisHost', 'localhost']))
+        # sys.append(subprocess.Popen(['java', "-Xmx4G", '-jar', '../tier1/target/tier1-0.0.1-SNAPSHOT-jar-with-dependencies.jar',
+        #                        '--cpuEmu', '1',
+        #                        '--jedisHost', 'localhost']))
+        # time.sleep(2)
         sys.append(subprocess.Popen(['java', "-Xmx4G", '-jar', '../client/target/client-0.0.1-SNAPSHOT-jar-with-dependencies.jar',
                             '--initPop', "%d" % (initPop),
-                            '--jedisHost', 'localhost']))
+                            '--jedisHost', 'monitor',
+                            '--queues','["think", "e1_bl", "e1_ex", "t1_hw", "e2_bl", "e2_ex", "t2_hw"]']))
     
     return sys
 
@@ -268,7 +269,7 @@ if __name__ == "__main__":
     dt = 10 ** (-1)
     H = 5
     N = 3
-    rep = 3
+    rep = 1
     sTime = 500
     TF = sTime * rep * dt;
     Time = np.linspace(0, TF, int(np.ceil(TF / dt)) + 1)
@@ -298,7 +299,7 @@ if __name__ == "__main__":
     # init_cstr=["X%d_0" % (i) for i in range(P.shape[0])];
     cp = -1
     sys = None
-    r = redis.Redis()
+    r = redis.Redis(host="monitor")
     
     Ie = None
     
@@ -350,8 +351,7 @@ if __name__ == "__main__":
                 Sold = optU_N
                 
                 # print(XSSIM[:,[step]].T,optU[1])
-                r.set("t1_hw", optU[1])
-                r.set("t2_hw", optU[2])
+                r.mset({"t1_hw":optU[1],"t2_hw":optU[2]})
                 # print(XSSIM[:,step],tgt)
                 # setUCpuLimit(cpulProc,optU,True)
                 if(isCpu):

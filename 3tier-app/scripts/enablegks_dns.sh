@@ -1,9 +1,9 @@
 #!/bin/bash
 
-cluster_name=$1
-cluster_zone=northamerica-northeast1-a
+cluster_name="cluster-1"
+cluster_zone="northamerica-northeast1-a"
 
-gcloud beta container clusters update $cluster_name \   
-  --zone $cluster_zone  --cluster-dns clouddns --cluster-dns-scope cluster
+gcloud beta container clusters update $cluster_name \
+--cluster-dns clouddns --cluster-dns-scope cluster  --zone $cluster_zone
 
   
