@@ -1,4 +1,6 @@
 FROM ubuntu:21.04 AS build
+ENV TZ=Europe/Rome
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 #install all dependecy
 RUN apt-get update -y
@@ -7,9 +9,11 @@ RUN apt-get install maven -y
 RUN apt-get install git -y
 RUN apt-get install python -y
 RUN apt-get install pip -y
+RUN apt-get install sudo -y
+RUN apt-get install openssh-server -y
 
 
-RUN pip install numpy scipy matplotlib casadi redis
+RUN pip install numpy scipy matplotlib casadi redis tqdm cgroupspy
 RUN pip install --index-url https://google-coral.github.io/py-repo/ tflite_runtime
 
 #download code
@@ -25,7 +29,7 @@ WORKDIR /3tier-bench-app/3tier-app/
 
 RUN mvn package
 
-WORKDIR /3tier-bench-app/3tier-app/client/target
+WORKDIR /3tier-bench-app/3tier-app/controller
 
 CMD ["sleep","365d"]
 

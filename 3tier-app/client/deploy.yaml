@@ -1,0 +1,21 @@
+apiVersion: "apps/v1"
+kind: "Deployment"
+metadata:
+  name: "client-ctrl"
+  namespace: "default"
+  labels:
+    app: "client-ctrl"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: "client-ctrl-pod"
+  template:
+    metadata:
+      labels:
+        app: "client-ctrl-pod"
+    spec:
+      containers:
+      - name: "client-ctrl-pod"
+        image: "bistrulli/client:0.1"
+        imagePullPolicy: "Always"

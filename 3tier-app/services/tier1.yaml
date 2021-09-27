@@ -13,5 +13,7 @@ spec:
     targetPort: 3000
   selector:
     app: "tier1-pod"
-  type: "LoadBalancer"
-  loadBalancerIP: ""
+  #type: "LoadBalancer"
+  #loadBalancerIP: ""
+  type: "ClusterIP"
+  
