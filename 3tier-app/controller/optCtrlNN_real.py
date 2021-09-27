@@ -112,16 +112,17 @@ def resetU():
 
 
 def getstate(r, keys, N):
+    str_state=r.mget(keys)
     try:
-        state = [float(r.get(keys[i])) for i in range(len(keys))]
+        astate = [float(str_state[0])]
+        gidx = 1;
+        for i in range(1, N):
+            astate.append(float(state[gidx]) + float(tate[gidx + 1]))
+            gidx += 3
     except:
         for i in range(len(keys)):
-            print(r.get(keys[i]),keys[i])
-    astate = [state[0]]
-    gidx = 1;
-    for i in range(1, N):
-        astate.append(state[gidx] + state[gidx + 1])
-        gidx += 3
+            print(str_state[i],keys[i])
+    
     return astate
 
 
