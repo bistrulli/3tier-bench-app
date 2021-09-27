@@ -117,7 +117,7 @@ def getstate(r, keys, N):
         astate = [float(str_state[0])]
         gidx = 1;
         for i in range(1, N):
-            astate.append(float(state[gidx]) + float(tate[gidx + 1]))
+            astate.append(float(str_state[gidx]) + float(str_state[gidx + 1]))
             gidx += 3
     except:
         for i in range(len(keys)):
