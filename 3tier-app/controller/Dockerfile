@@ -7,15 +7,15 @@ RUN apt-get update -y
 RUN apt-get install git -y
 RUN apt-get install python -y
 RUN apt-get install pip -y
+RUN apt-get install sudo -y
+RUN apt-get install openssh-server -y
 
-RUN pip install numpy scipy matplotlib casadi redis
+RUN pip install numpy scipy matplotlib casadi redis tqdm cgroupspy
 RUN pip install --index-url https://google-coral.github.io/py-repo/ tflite_runtime
 
 #download code
 RUN git clone https://github.com/bistrulli/3tier-bench-app.git
 
 WORKDIR /3tier-bench-app/3tier-app/controller
- 
-#start redis
-CMD ["redis-server --port 6379"]
+
 

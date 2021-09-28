@@ -274,7 +274,7 @@ if __name__ == "__main__":
     dt = 10 ** (-1)
     H = 5
     N = 3
-    rep = 5
+    rep = 1
     sTime = 500
     TF = sTime * rep * dt;
     Time = np.linspace(0, TF, int(np.ceil(TF / dt)) + 1)
@@ -315,7 +315,8 @@ if __name__ == "__main__":
                     Sold = None       
                     alfa.append(genAfa())
                     # alfa.append(1.0)
-                    XSSIM[:, step] = [np.random.randint(low=30, high=150), 0, 0]
+                    #XSSIM[:, step] = [np.random.randint(low=30, high=150), 0, 0]
+                    XSSIM[:, step] = getstate(r, keys, N)
                     # XSSIM[:, step] = [90, 0, 0]
                     print(alfa[-1], XSSIM[:, step])
                     # print(XSSIM[:, step])
@@ -329,16 +330,16 @@ if __name__ == "__main__":
                     ek = 0
                     Ie = 0
                     
-                    killSys()
-                    time.sleep(2)
-                    sys = None
+                    #killSys()
+                    #time.sleep(2)
+                    #sys = None
                 
                 if step == 0 or step % sTime == 0:
                     if(isCpu):
                         resetU()
-                    r.mset({"t1_hw":np.sum(XSSIM[:, step]),"t2_hw":np.sum(XSSIM[:, step])})
-                    sys = startSys(np.sum(XSSIM[:, step]), isCpu)
-                    time.sleep(1)
+                    #r.mset({"t1_hw":np.sum(XSSIM[:, step]),"t2_hw":np.sum(XSSIM[:, step])})
+                    #sys = startSys(np.sum(XSSIM[:, step]), isCpu)
+                    #time.sleep(1)
                     # cpulProc=setUCpuLimit(proc,None,False)
                 
                 XSSIM[:, step] = getstate(r, keys, N)
@@ -373,7 +374,7 @@ if __name__ == "__main__":
                 # optSPid=mitigateBottleneck(optSPid, Xsim3, tgt)
              
             # print("NN Reference error %f%% \nODE Reference error %f%% \n"%(np.abs(XSNN[0,-1]-tgt)*100/tgt,np.abs(XSODE[0,-1]-tgt)*100/tgt))
-            killSys()
+            #killSys()
             plt.close('all')    
             
             xsim_cavg = []
@@ -468,4 +469,5 @@ if __name__ == "__main__":
             plt.show()
     
     finally:
-        killSys()
+        #killSys()
+        pass

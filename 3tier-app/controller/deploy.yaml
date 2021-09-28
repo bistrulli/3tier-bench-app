@@ -1,0 +1,22 @@
+apiVersion: "apps/v1"
+kind: "Deployment"
+metadata:
+  name: "ctrl"
+  namespace: "default"
+  labels:
+    app: "ctrl"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: "ctrl-pod"
+  template:
+    metadata:
+      labels:
+        app: "ctrl-pod"
+    spec:
+      containers:
+      - name: "ctrl-pod"
+        image: "bistrulli/controller:0.1"
+        imagePullPolicy: "Always"
+        command: ["sleep","365d"]
