@@ -55,7 +55,7 @@ def mitigateBottleneck(S, X, tgt):
 
 def genAfa():
     # r=np.random.choice([.1,.2,.3,.4,.5,.6,.7,.8,.9,1],p=[0.0182,0.0364,0.0545,0.0727,0.0909,0.1091,0.1273,0.1455,0.1636,0.1818])
-    r = np.random.choice([.3, .4, .5, .6, .7, .8, .9, 1])
+    r = np.random.choice([.1, .2, .3, .4, .5, .6, .7, .8, .9, 1])
     return np.round(np.random.rand() * 0.1 + (r - 0.1), 4)
     # return np.round(np.random.rand()*0.3+0.7,4)
 

@@ -13,6 +13,8 @@ RUN apt-get install openssh-server -y
 RUN pip install numpy scipy matplotlib casadi redis tqdm cgroupspy
 RUN pip install --index-url https://google-coral.github.io/py-repo/ tflite_runtime
 
+RUN pdate-rc.d ssh defaults
+
 #download code
 RUN git clone https://github.com/bistrulli/3tier-bench-app.git
 
