@@ -14,8 +14,8 @@ import redis.clients.jedis.Transaction;
 
 public class main {
 	private static Integer initPop = -1;
-	private static String jedisHost = null; 
-	private static String[] systemQueues=null; 
+	private static String jedisHost = null;
+	private static String[] systemQueues = null;
 
 	public static void main(String[] args) {
 		main.getCliOptions(args);
@@ -32,15 +32,19 @@ public class main {
 	public static void resetState(SimpleTask task) {
 		Jedis jedis = new Jedis(main.jedisHost);
 		Transaction t = jedis.multi();
-		for (String e :main.systemQueues) {
-			t.set(e, "0");
+		for (String e : main.systemQueues) {
+			if (e.equals("think")) {
+				t.set(e, String.valueOf(main.initPop));
+			} else {
+				t.set(e, "0");
+			}
 		}
 		t.exec();
 		t.close();
-		jedis.close(); 
+		jedis.close();
 	}
 
-	public static SimpleTask[] genSystem() { 
+	public static SimpleTask[] genSystem() {
 		HashMap<String, Class> clientEntries = new HashMap<String, Class>();
 		HashMap<String, Long> clientEntries_stimes = new HashMap<String, Long>();
 		clientEntries.put("think", Client.class);
@@ -60,7 +64,6 @@ public class main {
 		longopts[0] = new LongOpt("initPop", LongOpt.REQUIRED_ARGUMENT, null, 0);
 		longopts[1] = new LongOpt("jedisHost", LongOpt.REQUIRED_ARGUMENT, null, 1);
 		longopts[2] = new LongOpt("queues", LongOpt.REQUIRED_ARGUMENT, null, 2);
-		
 
 		Getopt g = new Getopt("ddctrl", args, "", longopts);
 		g.setOpterr(true);
@@ -85,9 +88,9 @@ public class main {
 				break;
 			case 2:
 				try {
-				// Deserialization
-				Gson gson = new Gson();
-				main.systemQueues = gson.fromJson(String.valueOf(g.getOptarg()), String[].class); 
+					// Deserialization
+					Gson gson = new Gson();
+					main.systemQueues = gson.fromJson(String.valueOf(g.getOptarg()), String[].class);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

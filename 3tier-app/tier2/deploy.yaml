@@ -19,4 +19,5 @@ spec:
       - name: "tier2-pod"
         image: "bistrulli/tier2:0.1"
         imagePullPolicy: "Always"
-        command: ["java","-Xmx4G","-jar","tier2-0.0.1-SNAPSHOT-jar-with-dependencies.jar","--cpuEmu","0","--jedisHost","monitor"]
+        #command: ["java","-Xmx4G","-jar","tier2-0.0.1-SNAPSHOT-jar-with-dependencies.jar","--cpuEmu","0","--jedisHost","monitor"]
+        command: ["sleep","365d"]

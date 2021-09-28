@@ -83,7 +83,7 @@ def startSys(initPop, isCpu):
         #                        '--cpuEmu', '1',
         #                        '--jedisHost', 'localhost']))
         # time.sleep(2)
-        sys.append(subprocess.Popen(['java', "-Xmx4G", '-jar', '../client/target/client-0.0.1-SNAPSHOT-jar-with-dependencies.jar',
+        sys.append(subprocess.Popen(['java', "-Xmx10G", '-jar', '../client/target/client-0.0.1-SNAPSHOT-jar-with-dependencies.jar',
                             '--initPop', "%d" % (initPop),
                             '--jedisHost', 'monitor',
                             '--queues','["think", "e1_bl", "e1_ex", "t1_hw", "e2_bl", "e2_ex", "t2_hw"]']))
