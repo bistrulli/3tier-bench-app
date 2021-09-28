@@ -38,6 +38,7 @@ public class Client implements Runnable {
 			HttpClient client=null;
 			HttpRequest request=null;
 			client=HttpClient.newBuilder().version(Version.HTTP_1_1).build();
+			request=HttpRequest.newBuilder().uri(URI.create("http://tier1:3000/?id="+this.clietId.toString()+"&entry=e1"+"&snd=think")).build();
 			
 			Jedis jedis = this.task.getJedisPool().getResource();
 			jedis.incr("think");
@@ -46,7 +47,6 @@ public class Client implements Runnable {
 				TimeUnit.MILLISECONDS.sleep(Double.valueOf(this.dist.sample()).longValue());
 				
 				SimpleTask.getLogger().debug(String.format("%s sent",this.task.getName()));
-				request=HttpRequest.newBuilder().uri(URI.create("http://tier1:3000/?id="+this.clietId.toString()+"&entry=e1"+"&snd=think")).build();
 				client.send(request, BodyHandlers.ofString());
 				
 				jedis.incr("think");
