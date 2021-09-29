@@ -118,6 +118,8 @@ def getstate(r, keys, N):
         gidx = 1;
         for i in range(1, N):
             astate.append(float(str_state[gidx]) + float(str_state[gidx + 1]))
+            if(float(str_state[gidx])<0 or float(str_state[gidx + 1])<0):
+                raise ValueError("Error! state < 0")
             gidx += 3
     except:
         for i in range(len(keys)):

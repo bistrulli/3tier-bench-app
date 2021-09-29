@@ -1,21 +1,21 @@
 apiVersion: "apps/v1"
 kind: "Deployment"
 metadata:
-  name: "test-pod"
-  namespace: "default"
+  name: "test-pod1"
+  #namespace: "my-space"
   labels:
-    app: "test-pod"
+    app: "test-pod1"
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: "test-pod"
+      app: "test-pod1"
   template:
     metadata:
       labels:
-        app: "test-pod"
+        app: "test-pod1"
     spec:
       containers:
-      - name: "my-exp-1"
+      - name: "my-exp"
         image: "bistrulli/my_exp:test_pod"
         imagePullPolicy: "Always"
