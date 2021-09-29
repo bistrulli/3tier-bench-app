@@ -347,11 +347,11 @@ if __name__ == "__main__":
                 #tgt = np.round(alfa[-1] * 0.8257 * np.sum(XSSIM[:, step]), 5)
                 XSSIM[:, step] = getstate(r, keys, N)
                 
-                # if(step > 0):
-                #     Ie += (tgt - XSSIM[0, step])
+                if(step > 0):
+                    Ie += (tgt - XSSIM[0, step])
                 
                 stime = time.time()
-                optU_N, XNN = ctrl.buildOpt(XSSIM[:, [step]].T, tgt + 0.05 * Ie, MU, S, P, Sold, H, isAR)
+                optU_N, XNN = ctrl.buildOpt(XSSIM[:, [step]].T, tgt + 0.1 * Ie, MU, S, P, Sold, H, isAR)
                 ftime = time.time() - stime
                 
                 optU = optU_N * ctrl.stdu + ctrl.meanu
