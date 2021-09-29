@@ -174,7 +174,7 @@ class optCtrlNN2:
         ub = [np.sum(X0) + 1]
         for i in range(1, P.shape[0]):
             lb.append(0.1*10 ** (-1))
-            ub.append(20)
+            ub.append(2000)
         
         for i in range(P.shape[0] * P.shape[1]):
             lb.append(0)
