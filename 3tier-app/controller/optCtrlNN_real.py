@@ -344,7 +344,7 @@ if __name__ == "__main__":
                     #time.sleep(1)
                     # cpulProc=setUCpuLimit(proc,None,False)
                 
-                tgt = np.round(alfa[-1] * 0.8257 * np.sum(XSSIM[:, step]), 5)
+                #tgt = np.round(alfa[-1] * 0.8257 * np.sum(XSSIM[:, step]), 5)
                 XSSIM[:, step] = getstate(r, keys, N)
                 
                 if(step > 0):
