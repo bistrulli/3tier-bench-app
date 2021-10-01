@@ -96,8 +96,8 @@ def startSys(initPop, isCpu):
 
 
 def setU(optS):
-    tier1=apps_api.read_namespaced_deployment(name="tier1-pod",namespace="default")
-    tier2=apps_api.read_namespaced_deployment(name="tier2-pod",namespace="default")
+    tier1=apps_api.read_namespaced_deployment(name="tier1-pod",namespace="default",exact=False)
+    tier2=apps_api.read_namespaced_deployment(name="tier2-pod",namespace="default",exact=False)
     
     # global croot, period
     # quota = np.round(optS[1] * period)
@@ -107,28 +107,6 @@ def setU(optS):
     # # croot.controller.cfs_period_us=period
     # croot.controller.cfs_quota_us = int(quota)
     
-    
-    t1_patch = {"spec": 
-            {"template": {
-                "spec": {
-                    "containers": [{'resources':{
-                                        'limits':{
-                                                    "cpu":"%dm"%(int(np.round(optS[1]*1000)))
-                                                 }
-                                    }}]
-            }
-         }}}
-    
-    t2_patch = {"spec": 
-                {"template": {
-                    "spec": {
-                        "containers": [{'resources':{
-                                            'limits':{
-                                                        "cpu":"%dm"%(int(np.round(optS[2]*1000)))
-                                                     }
-                                        }}]
-                }
-             }}}
     
     # t1_patch = [{"op": "replace", "value": "%dm"%(int(np.round(optS[1]*1000))),
     #         "path": "/spec/template/spec/containers/0/resources/limits/cpu"}]
