@@ -21,6 +21,7 @@ def getDeplyment(api,name,namespace=None):
         namespace="default"
         
     deps = api.list_namespaced_deployment(namespace=namespace)
+    api.read_namespaced_deployment(name=name,namespace)
     for i in deps.items:
         print(i)
 
@@ -63,4 +64,5 @@ def update_deployment(api, deployment):
 config.load_kube_config()
 
 v1 = client.AppsV1Api()
-getDeplyment(v1,"tier1-pod")
+tier1=api.read_namespaced_deployment(name="tier1-pod",namespace="default")
+print(tier1)
