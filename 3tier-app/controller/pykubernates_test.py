@@ -20,7 +20,7 @@ def update_deployment(api, deployment):
     # Update container image
     #deployment.spec.template.spec.containers[0].image = "nginx:1.16.0"
     
-    print(deployment.metadata.name)
+    print(deployment["metadata"].name)
     
     # Update container cpu limit
     deployment.spec.template.spec.containers[0].resources.resources.limits.cpu="1000m"
