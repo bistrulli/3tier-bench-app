@@ -16,7 +16,7 @@ def readDploymentFromYaml(depFile):
     dep = yaml.safe_load(depFile)
     return dep
 
-def getDeplyment(api,namespace=None,name):
+def getDeplyment(api,name,namespace=None):
     if(namespace==None):
         namespace="default"
         
