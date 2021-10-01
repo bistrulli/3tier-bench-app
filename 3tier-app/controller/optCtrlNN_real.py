@@ -15,12 +15,18 @@ import redis
 import subprocess
 import signal
 from cgroupspy import trees
+from kubernetes import client, config
 
 curpath = os.path.realpath(__file__)
 croot = None
 period = 100000
+config.load_kube_config()
+v1 = client.CoreV1Api()
+
 
 # tf.compat.v1.disable_eager_execution()
+
+
 
 
 def killSys():
@@ -272,7 +278,7 @@ if __name__ == "__main__":
                      "%s/../learnt_model/open_loop_3tier_H5.mat" % (os.path.dirname(curpath)))
     
     isAR = True
-    isCpu = False
+    isCpu = True
     dt = 10 ** (-1)
     H = 5
     N = 3
@@ -315,9 +321,8 @@ if __name__ == "__main__":
                 # compute ODE
                 if step == 0 or step % sTime == 0: 
                     Sold = None       
-                    alfa.append(genAfa())
-                    #alfa.append(1.0)
-                    # alfa.append(1.0)
+                    #alfa.append(genAfa())
+                    alfa.append(0.5)
                     #XSSIM[:, step] = [np.random.randint(low=30, high=150), 0, 0]
                     XSSIM[:, step] = getstate(r, keys, N)
                     # XSSIM[:, step] = [90, 0, 0]
