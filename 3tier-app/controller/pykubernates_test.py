@@ -25,13 +25,9 @@ def getDeplyment(api,name,namespace=None):
         print(i)
 
 def update_deployment(api, deployment):
-    # Update container image
-    #deployment.spec.template.spec.containers[0].image = "nginx:1.16.0"
-    
-    print(deployment["metadata"].name)
     
     # Update container cpu limit
-    deployment.spec.template.spec.containers[0].resources.resources.limits.cpu="1000m"
+    deployment.spec.template.spec.containers[0].resources.limits.cpu="1000m"
     if(deployment.spec.template.spec.containers[0].resources==None):
         resources=client.V1ResourceRequirements(
                 #requests={"cpu": "100m", "memory": "200Mi"},
@@ -64,4 +60,5 @@ config.load_kube_config()
 
 apps_api = client.AppsV1Api()
 tier1=apps_api.read_namespaced_deployment(name="tier1-pod",namespace="default")
-print(tier1)
+
+print(tier1.spec.template.spec.containers[0].resources)
