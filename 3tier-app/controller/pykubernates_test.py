@@ -12,9 +12,17 @@ import signal
 from kubernetes import client, config
 import yaml
 
-def readDploymen(depFile):
+def readDploymentFromYaml(depFile):
     dep = yaml.safe_load(depFile)
     return dep
+
+def getDeplyment(api,namespace=None,name):
+    if(namespace==None):
+        namespace="default"
+        
+    deps = apis_api.list_namespaced_deployment(namespace=namespace)
+    for i in resp.items:
+        print(i)
 
 def update_deployment(api, deployment):
     # Update container image
@@ -55,9 +63,4 @@ def update_deployment(api, deployment):
 config.load_kube_config()
 
 v1 = client.CoreV1Api()
-# print("Listing pods with their IPs:")
-# ret = v1.list_pod_for_all_namespaces(watch=False)
-# for i in ret.items:
-#     print("%s\t%s\t%s" % (i.status.pod_ip, i.metadata.namespace, i.metadata.name))
-tier1_dep=readDploymen(open("../tier1/deploy.yaml"))
-update_deployment(v1,tier1_dep)
+getDeplyment(v1,"tier1-pod")
