@@ -1,0 +1,16 @@
+apiVersion: "v1"
+kind: "Service"
+metadata:
+  name: "ctrl-service"
+  namespace: "default"
+  labels:
+    app: "ctrl"
+spec:
+  ports:
+  - protocol: "TCP"
+    port: 22
+    targetPort: 22
+  selector:
+    app: "ctrl-pod"
+  type: "LoadBalancer"
+  loadBalancerIP: ""

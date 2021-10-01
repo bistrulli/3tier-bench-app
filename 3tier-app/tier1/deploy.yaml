@@ -17,6 +17,9 @@ spec:
     spec:
       containers:
       - name: "tier1-pod"
-        image: "bistrulli/tier1:0.1"
+        image: "bistrulli/tier1:0.2"
         imagePullPolicy: "Always"
         command: ["java","-Xmx4G","-jar","tier1-0.0.1-SNAPSHOT-jar-with-dependencies.jar","--cpuEmu","1","--jedisHost","monitor"]
+        #resources:
+        #  limits:
+        #    cpu: "1000m"
