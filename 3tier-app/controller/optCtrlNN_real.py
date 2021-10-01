@@ -134,10 +134,14 @@ def setU(optS):
     #         "path": "/spec/template/spec/containers/0/resources/limits/cpu"}]
     # t2_patch = [{"op": "replace", "value": "%dm"%(int(np.round(optS[2]*1000))),
     #         "path": "/spec/template/spec/containers/0/resources/limits/cpu"}]
+    print("tier1","%dm"%(int(np.round(optS[1]*1000))))
+    print("tier2","%dm"%(int(np.round(optS[2]*1000))))
+    print(tier1.spec.template.spec.containers[0].resources)
+    print(tier2.spec.template.spec.containers[0].resources)
     tier1.spec.template.spec.containers[0].resources.limits.cpu="%dm"%(int(np.round(optS[1]*1000)))
     tier2.spec.template.spec.containers[0].resources.limits.cpu="%dm"%(int(np.round(optS[2]*1000)))
-    apps_api.patch_namespaced_deployment(name=tier1.metadata.name, namespace=tier1.metadata.namespace, body=tier1, async_req=False)
-    apps_api.patch_namespaced_deployment(name=tier2.metadata.name, namespace=tier2.metadata.namespace, body=tier2, async_req=False)
+    apps_api.patch_namespaced_deployment(name=tier1.metadata.name, namespace=tier1.metadata.namespace, body=tier1)
+    apps_api.patch_namespaced_deployment(name=tier2.metadata.name, namespace=tier2.metadata.namespace, body=tier2)
     
 
 
