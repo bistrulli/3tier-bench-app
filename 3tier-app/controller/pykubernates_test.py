@@ -21,7 +21,6 @@ def getDeplyment(api,name,namespace=None):
         namespace="default"
         
     deps = api.list_namespaced_deployment(namespace=namespace)
-    api.read_namespaced_deployment(name=name,namespace)
     for i in deps.items:
         print(i)
 
