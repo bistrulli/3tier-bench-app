@@ -21,7 +21,7 @@ def getDeplyment(api,name,namespace=None):
         namespace="default"
         
     deps = api.list_namespaced_deployment(namespace=namespace)
-    for i in resp.items:
+    for i in deps.items:
         print(i)
 
 def update_deployment(api, deployment):
