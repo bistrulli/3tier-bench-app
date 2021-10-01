@@ -23,9 +23,6 @@ period = 100000
 config.load_kube_config()
 apps_api = client.AppsV1Api()
 
-tier1=apps_api.read_namespaced_deployment(name="tier1-pod",namespace="default")
-tier2=apps_api.read_namespaced_deployment(name="tier2-pod",namespace="default")
-
 
 # tf.compat.v1.disable_eager_execution()
 
@@ -99,7 +96,8 @@ def startSys(initPop, isCpu):
 
 
 def setU(optS):
-    global tier1, tier2
+    tier1=apps_api.read_namespaced_deployment(name="tier1-pod",namespace="default")
+    tier2=apps_api.read_namespaced_deployment(name="tier2-pod",namespace="default")
     
     # global croot, period
     # quota = np.round(optS[1] * period)
@@ -136,6 +134,8 @@ def setU(optS):
     #         "path": "/spec/template/spec/containers/0/resources/limits/cpu"}]
     # t2_patch = [{"op": "replace", "value": "%dm"%(int(np.round(optS[2]*1000))),
     #         "path": "/spec/template/spec/containers/0/resources/limits/cpu"}]
+    tier1.spec.template.spec.containers[0].resources.limits.cpu="%dm"%(int(np.round(optS[1]*1000)))
+    tier2.spec.template.spec.containers[0].resources.limits.cpu="%dm"%(int(np.round(optS[2]*1000)))
     apps_api.patch_namespaced_deployment(name=tier1.metadata.name, namespace=tier1.metadata.namespace, body=t1_patch, async_req=False)
     apps_api.patch_namespaced_deployment(name=tier2.metadata.name, namespace=tier2.metadata.namespace, body=t2_patch, async_req=False)
     
