@@ -61,4 +61,7 @@ config.load_kube_config()
 apps_api = client.AppsV1Api()
 tier1=apps_api.read_namespaced_deployment(name="tier1-pod",namespace="default")
 
-print(tier1.spec.template.spec.containers[0].resources)
+tier1.spec.template.spec.containers[0].resources.limits={"cpu": "100m"}
+apps_api.patch_namespaced_deployment(name=tier1.metadata.name, namespace=tier1.metadata.namespace, body=tier1, async_req=True)
+
+    
