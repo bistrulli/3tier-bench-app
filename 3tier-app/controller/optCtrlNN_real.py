@@ -21,12 +21,13 @@ curpath = os.path.realpath(__file__)
 croot = None
 period = 100000
 config.load_kube_config()
-v1 = client.CoreV1Api()
+apps_api = client.AppsV1Api()
+
+tier1=apps_api.read_namespaced_deployment(name="tier1-pod",namespace="default")
+tier2=apps_api.read_namespaced_deployment(name="tier2-pod",namespace="default")
 
 
 # tf.compat.v1.disable_eager_execution()
-
-
 
 
 def killSys():
@@ -98,23 +99,30 @@ def startSys(initPop, isCpu):
 
 
 def setU(optS):
+    global tier1, tier2
     
-    global croot, period
-    quota = np.round(optS[1] * period)
-    if(croot == None):
-        croot = trees.Tree().get_node_by_path('/cpu/t1')
+    # global croot, period
+    # quota = np.round(optS[1] * period)
+    # if(croot == None):
+    #     croot = trees.Tree().get_node_by_path('/cpu/t1')
+    #
+    # # croot.controller.cfs_period_us=period
+    # croot.controller.cfs_quota_us = int(quota)
+    tier1.spec.template.spec.containers[0].resources.limits={"cpu": "%dm"%(int(np.round(optS[1]*1000)))}
+    tier2.spec.template.spec.containers[0].resources.limits={"cpu": "%dm"%(int(np.round(optS[2]*1000)))}
+    apps_api.patch_namespaced_deployment(name=tier1.metadata.name, namespace=tier1.metadata.namespace, body=tier1, async_req=True)
+    apps_api.patch_namespaced_deployment(name=tier2.metadata.name, namespace=tier2.metadata.namespace, body=tier2, async_req=False)
     
-    # croot.controller.cfs_period_us=period
-    croot.controller.cfs_quota_us = int(quota)
 
 
 def resetU():
-    global croot, period
-    if(croot == None):
-        croot = trees.Tree().get_node_by_path('/cpu/t1')
-        
-    croot.controller.cfs_period_us = period
-    croot.controller.cfs_quota_us = int(-1)
+    global tier1, tier2
+    # global croot, period
+    # if(croot == None):
+    #     croot = trees.Tree().get_node_by_path('/cpu/t1')
+    #
+    # croot.controller.cfs_period_us = period
+    # croot.controller.cfs_quota_us = int(-1)
 
 
 def getstate(r, keys, N):
@@ -347,10 +355,7 @@ if __name__ == "__main__":
                         resetU()
                     #r.mset({"t1_hw":np.sum(XSSIM[:, step]),"t2_hw":np.sum(XSSIM[:, step])})
                     #sys = startSys(np.sum(XSSIM[:, step]), isCpu)
-                    #time.sleep(1)
-                    # cpulProc=setUCpuLimit(proc,None,False)
                 
-                #tgt = np.round(alfa[-1] * 0.8257 * np.sum(XSSIM[:, step]), 5)
                 XSSIM[:, step] = getstate(r, keys, N)
                 
                 if(step > 0):
@@ -361,20 +366,14 @@ if __name__ == "__main__":
                 ftime = time.time() - stime
                 
                 optU = optU_N * ctrl.stdu + ctrl.meanu
-                # optU[1]=np.maximum(optU[1]+0.01*Ie,0.01)
-                # print(optU[0:N])
                 Sold = optU_N
                 
-                # print(XSSIM[:,[step]].T,optU[1])
                 r.mset({"t1_hw":optU[1],"t2_hw":optU[2]})
-                # print(XSSIM[:,step],tgt)
-                # setUCpuLimit(cpulProc,optU,True)
                 if(isCpu):
                     setU(optU)
                 # print(optU)
                             
                 optSNN[:, step] = optU[0:N]
-                # optSMD[:,step]=optS2
                 tgtStory += [tgt]
                 
                 time.sleep(0.3)
