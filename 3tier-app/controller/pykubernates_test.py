@@ -20,7 +20,7 @@ def getDeplyment(api,name,namespace=None):
     if(namespace==None):
         namespace="default"
         
-    deps = apis_api.list_namespaced_deployment(namespace=namespace)
+    deps = api.list_namespaced_deployment(namespace=namespace)
     for i in resp.items:
         print(i)
 
