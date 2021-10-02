@@ -124,6 +124,7 @@ def setU(optS):
         t2_patch = [{"op": "add", "value": {"resources":{"limits":{"cpu":"%dm"%(int(np.round(optS[2]*1000)))}}},
                 "path": "/spec/template/spec/containers/0/"}]
     else:
+        print("last")
         t1_patch = [{"op": "replace", "value": "%dm"%(int(np.round(optS[1]*1000))),
                 "path": "/spec/template/spec/containers/0/resources/limits/cpu"}]
         t2_patch = [{"op": "replace", "value": "%dm"%(int(np.round(optS[2]*1000))),
