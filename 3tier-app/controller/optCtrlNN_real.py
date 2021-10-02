@@ -120,8 +120,8 @@ def setU(optS):
     print(tier2.spec.template.spec.containers[0].resources)
     # tier1.spec.template.spec.containers[0].resources.limits["cpu"]="%dm"%(int(np.round(optS[1]*1000)))
     # tier2.spec.template.spec.containers[0].resources.limits["cpu"]="%dm"%(int(np.round(optS[2]*1000)))
-    core_api.patch_namespaced_deployment(name="tier1-pod", namespace="default", body=t1_patch)
-    core_api.patch_namespaced_deployment(name="tier2-pod", namespace="default", body=t2_patch)
+    apps_api.patch_namespaced_deployment(name="tier1-pod", namespace="default", body=t1_patch)
+    apps_api.patch_namespaced_deployment(name="tier2-pod", namespace="default", body=t2_patch)
     
 
 
