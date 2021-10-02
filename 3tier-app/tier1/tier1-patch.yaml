@@ -3,6 +3,7 @@ spec:
   template:
     spec:
       containers:
+        - name: "tier1-pod"
         resources:
           limits:
             cpu: "1233m"
