@@ -20,6 +20,6 @@ spec:
         image: "bistrulli/tier1:0.2"
         imagePullPolicy: "Always"
         command: ["java","-Xmx4G","-jar","tier1-0.0.1-SNAPSHOT-jar-with-dependencies.jar","--cpuEmu","0","--jedisHost","monitor"]
-#        resources:
-#          limits:
-#            cpu: "100m"
+        resources:
+          limits:
+            cpu: "100000m"
