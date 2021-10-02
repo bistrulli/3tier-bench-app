@@ -23,6 +23,7 @@ period = 100000
 config.load_kube_config()
 apps_api = client.AppsV1Api()
 core_api = client.CoreV1Api()
+first=True
 
 
 # tf.compat.v1.disable_eager_execution()
@@ -97,6 +98,7 @@ def startSys(initPop, isCpu):
 
 
 def setU(optS):
+    global first
     # tier1=apps_api.read_namespaced_deployment(name="tier1-pod",namespace="default",exact=False)
     # tier2=apps_api.read_namespaced_deployment(name="tier2-pod",namespace="default",exact=False)
     
@@ -108,10 +110,18 @@ def setU(optS):
     # # croot.controller.cfs_period_us=period
     # croot.controller.cfs_quota_us = int(quota)
     
-    t1_patch = [{"op": "replace", "value": "%dm"%(int(np.round(optS[1]*1000))),
-            "path": "/spec/template/spec/containers/0/resources/limits/cpu"}]
-    t2_patch = [{"op": "replace", "value": "%dm"%(int(np.round(optS[2]*1000))),
-            "path": "/spec/template/spec/containers/0/resources/limits/cpu"}]
+    t1_patch=None
+    t2_patch=None
+    if(first):
+        t1_patch = [{"op": "add", "value": "%dm"%(int(np.round(optS[1]*1000))),
+                "path": "/spec/template/spec/containers/0/resources/limits/cpu"}]
+        t2_patch = [{"op": "add", "value": "%dm"%(int(np.round(optS[2]*1000))),
+                "path": "/spec/template/spec/containers/0/resources/limits/cpu"}]
+    else:
+        t1_patch = [{"op": "replace", "value": "%dm"%(int(np.round(optS[1]*1000))),
+                "path": "/spec/template/spec/containers/0/resources/limits/cpu"}]
+        t2_patch = [{"op": "replace", "value": "%dm"%(int(np.round(optS[2]*1000))),
+                "path": "/spec/template/spec/containers/0/resources/limits/cpu"}]
     # print("tier1","%dm"%(int(np.round(optS[1]*1000))))
     # print("tier2","%dm"%(int(np.round(optS[2]*1000))))
     # print(tier1.spec.template.spec.containers[0].resources)
