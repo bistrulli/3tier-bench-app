@@ -111,23 +111,11 @@ def setU(optS):
     # croot.controller.cfs_quota_us = int(quota)
     
     
-#          limits:
-#            cpu: "100m"
     
-    t1_patch=None
-    t2_patch=None
-    if(first):
-        print("first")
-        first=False
-        t1_patch = [{"op": "add", "value": {"resources":{"limits":{"cpu":"%dm"%(int(np.round(optS[1]*1000)))}}},
-                "path": "/spec/template/spec/containers/0/"}]
-        t2_patch = [{"op": "add", "value": {"resources":{"limits":{"cpu":"%dm"%(int(np.round(optS[2]*1000)))}}},
-                "path": "/spec/template/spec/containers/0/"}]
-    else:
-        print("last")
-        t1_patch = [{"op": "replace", "value": "%dm"%(int(np.round(optS[1]*1000))),
+
+    t1_patch = [{"op": "replace", "value": "%dm"%(int(np.round(optS[1]*1000))),
                 "path": "/spec/template/spec/containers/0/resources/limits/cpu"}]
-        t2_patch = [{"op": "replace", "value": "%dm"%(int(np.round(optS[2]*1000))),
+    t2_patch = [{"op": "replace", "value": "%dm"%(int(np.round(optS[2]*1000))),
                 "path": "/spec/template/spec/containers/0/resources/limits/cpu"}]
     # print("tier1","%dm"%(int(np.round(optS[1]*1000))))
     # print("tier2","%dm"%(int(np.round(optS[2]*1000))))
@@ -135,8 +123,8 @@ def setU(optS):
     # print(tier2.spec.template.spec.containers[0].resources)
     # tier1.spec.template.spec.containers[0].resources.limits["cpu"]="%dm"%(int(np.round(optS[1]*1000)))
     # tier2.spec.template.spec.containers[0].resources.limits["cpu"]="%dm"%(int(np.round(optS[2]*1000)))
-    apps_api.patch_namespaced_deployment(name="tier1-pod", namespace="default", body=t1_patch)
-    apps_api.patch_namespaced_deployment(name="tier2-pod", namespace="default", body=t2_patch)
+    apps_api.patch_namespaced_deployment(force=True,sname="tier1-pod", namespace="default",body=t1_patch, async_req=False)
+    apps_api.patch_namespaced_deployment(force=True,name="tier2-pod", namespace="default", body=t2_patch, async_req=False)
     
 
 
