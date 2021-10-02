@@ -4,6 +4,6 @@ spec:
     spec:
       containers:
         - name: "tier1-pod"
-        resources:
-          limits:
-            cpu: "1233m"
+          resources:
+            limits:
+              cpu: "1233m"
