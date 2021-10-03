@@ -4,6 +4,5 @@ services:
     image: "bistrulli/my_exp:my_redis_srv"
   tier2:
     image: "bistrulli/tier1:0.1"
-    imagePullPolicy: "Always"
     command: ["java","-Xmx4G","-jar","tier1-0.0.1-SNAPSHOT-jar-with-dependencies.jar","--cpuEmu","0","--jedisHost","monitor"]
     
