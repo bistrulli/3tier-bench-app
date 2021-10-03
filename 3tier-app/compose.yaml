@@ -2,6 +2,8 @@ version: "3.9"
 services:
   monitor:
     image: "bistrulli/my_exp:my_redis_srv"
+  ports:
+      - "6379:6379"
   tier2:
     image: "bistrulli/tier2:0.1"
     depends_on:
@@ -21,10 +23,5 @@ services:
       - tier1
     command: ["java","-Xmx4G","-jar","client-0.0.1-SNAPSHOT-jar-with-dependencies.jar","--initPop","100",\
                   ,"--queues",'["think", "e1_bl", "e1_ex", "t1_hw", "e2_bl", "e2_ex", "t2_hw"]',"--jedisHost","monitor"]
-  controller:
-    image: "bistrulli/controller:0.1"
-    depends_on:
-      - monitor
-      - tier2
-      - tier1
+    
     
