@@ -3,6 +3,16 @@ services:
   monitor:
     image: "bistrulli/my_exp:my_redis_srv"
   tier2:
+    image: "bistrulli/tier2:0.1"
+    depends_on:
+      - monitor
+    command: ["java","-Xmx4G","-jar","tier2-0.0.1-SNAPSHOT-jar-with-dependencies.jar","--cpuEmu","1","--jedisHost","monitor"]
+  tier1:
     image: "bistrulli/tier1:0.1"
-    command: ["java","-Xmx4G","-jar","tier1-0.0.1-SNAPSHOT-jar-with-dependencies.jar","--cpuEmu","0","--jedisHost","monitor"]
+    depends_on:
+      - monitor
+      - tier2
+    command: ["java","-Xmx4G","-jar","tier1-0.0.1-SNAPSHOT-jar-with-dependencies.jar","--cpuEmu","1","--jedisHost","monitor"]
+    ports: 
+      - "3001:3001"
     
