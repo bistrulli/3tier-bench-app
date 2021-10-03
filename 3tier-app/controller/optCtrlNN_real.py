@@ -324,7 +324,7 @@ if __name__ == "__main__":
     # init_cstr=["X%d_0" % (i) for i in range(P.shape[0])];
     cp = -1
     sys = None
-    r = redis.Redis(host="monitor")
+    r = redis.Redis()
     
     Ie = None
     
