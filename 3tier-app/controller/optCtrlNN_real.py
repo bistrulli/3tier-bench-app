@@ -20,11 +20,6 @@ from kubernetes import client, config
 curpath = os.path.realpath(__file__)
 croot = None
 period = 100000
-config.load_kube_config()
-apps_api = client.AppsV1Api()
-core_api = client.CoreV1Api()
-first=True
-
 
 # tf.compat.v1.disable_eager_execution()
 
@@ -98,17 +93,13 @@ def startSys(initPop, isCpu):
 
 
 def setU(optS):
-    global first
-    # tier1=apps_api.read_namespaced_deployment(name="tier1-pod",namespace="default",exact=False)
-    # tier2=apps_api.read_namespaced_deployment(name="tier2-pod",namespace="default",exact=False)
+    global croot, period
+    quota = np.round(optS[1] * period)
+    if(croot == None):
+        croot = trees.Tree().get_node_by_path('/cpu/t1')
     
-    # global croot, period
-    # quota = np.round(optS[1] * period)
-    # if(croot == None):
-    #     croot = trees.Tree().get_node_by_path('/cpu/t1')
-    #
-    # # croot.controller.cfs_period_us=period
-    # croot.controller.cfs_quota_us = int(quota)
+    croot.controller.cfs_period_us=period
+    croot.controller.cfs_quota_us = int(quota)
     
     
     
@@ -299,7 +290,7 @@ if __name__ == "__main__":
                      "%s/../learnt_model/open_loop_3tier_H5.mat" % (os.path.dirname(curpath)))
     
     isAR = True
-    isCpu = True
+    isCpu = False
     dt = 10 ** (-1)
     H = 5
     N = 3
