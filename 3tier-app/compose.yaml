@@ -15,5 +15,7 @@ services:
       - monitor
       - tier2
     command: ["java","-Xmx4G","-jar","tier1-0.0.1-SNAPSHOT-jar-with-dependencies.jar","--cpuEmu","1","--jedisHost","monitor"]
+    ports:
+      - "3001:3001"
     
     
