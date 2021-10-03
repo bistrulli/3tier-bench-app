@@ -2,7 +2,7 @@ version: "3.9"
 services:
   monitor:
     image: "bistrulli/my_exp:my_redis_srv"
-  ports:
+    ports:
       - "6379:6379"
   tier2:
     image: "bistrulli/tier2:0.1"
