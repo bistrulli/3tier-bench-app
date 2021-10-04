@@ -5,12 +5,12 @@ services:
     ports:
       - "6379:6379"
   tier2:
-    image: "bistrulli/tier2:0.1"
+    image: "bistrulli/tier2:0.2"
     depends_on:
       - monitor
     command: ["java","-Xmx4G","-jar","tier2-0.0.1-SNAPSHOT-jar-with-dependencies.jar","--cpuEmu","1","--jedisHost","monitor"]
   tier1:
-    image: "bistrulli/tier1:0.1"
+    image: "bistrulli/tier1:0.2"
     depends_on:
       - monitor
       - tier2
