@@ -94,6 +94,16 @@ def startSys(initPop, isCpu):
     
     return sys
 
+def startClient(initPop):
+    return client.containers.run(image="bistrulli/client:0.1",
+                          command="java -Xmx4G -jar client-0.0.1-SNAPSHOT-jar-with-dependencies.jar --initPop %d --queues \
+                                  '[\"think\", \"e1_bl\", \"e1_ex\", \"t1_hw\", \"e2_bl\", \"e2_ex\", \"t2_hw\"]' \
+                                   --jedisHost monitor"%(initPop),
+                          auto_remove=True,
+                          detach=True,
+                          hostname="client",
+                          network="3tier-app_default")
+
 
 def setU(optS):
     global croot, period
@@ -298,7 +308,7 @@ if __name__ == "__main__":
     H = 5
     N = 3
     rep = 1
-    sTime = 100
+    sTime = 500
     TF = sTime * rep * dt;
     Time = np.linspace(0, TF, int(np.ceil(TF / dt)) + 1)
     XSNN = np.zeros([N, len(Time)])
@@ -336,10 +346,10 @@ if __name__ == "__main__":
                 # compute ODE
                 if step == 0 or step % sTime == 0: 
                     Sold = None       
-                    #alfa.append(genAfa())
-                    alfa.append(0.5)
-                    #XSSIM[:, step] = [np.random.randint(low=30, high=150), 0, 0]
-                    XSSIM[:, step] = getstate(r, keys, N)
+                    alfa.append(genAfa())
+                    #alfa.append(0.5)
+                    XSSIM[:, step] = [np.random.randint(low=30, high=150), 0, 0]
+                    #XSSIM[:, step] = getstate(r, keys, N)
                     # XSSIM[:, step] = [90, 0, 0]
                     print(alfa[-1], XSSIM[:, step])
                     # print(XSSIM[:, step])
@@ -361,7 +371,7 @@ if __name__ == "__main__":
                     if(isCpu):
                         resetU()
                     #r.mset({"t1_hw":np.sum(XSSIM[:, step]),"t2_hw":np.sum(XSSIM[:, step])})
-                    #sys = startSys(np.sum(XSSIM[:, step]), isCpu)
+                    sys=startClient(np.sum(XSSIM[:, step]))
                 
                 XSSIM[:, step] = getstate(r, keys, N)
                 

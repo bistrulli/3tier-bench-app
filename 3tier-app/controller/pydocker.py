@@ -1,6 +1,10 @@
 import docker
 import redis
 
+r = redis.Redis()
+r.mset({"t1_hw":"1",
+        "t2_hw":"1"})
+r.close()
 client = docker.from_env()
 
 client.containers.run(image="bistrulli/client:0.1",
@@ -10,7 +14,3 @@ client.containers.run(image="bistrulli/client:0.1",
                       hostname="client",
                       network="3tier-app_default")
 
-r = redis.Redis()
-r.mset({"t1_hw":"1",
-        "t2_hw":"1"})
-r.close()
