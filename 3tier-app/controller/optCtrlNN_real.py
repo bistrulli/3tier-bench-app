@@ -498,5 +498,5 @@ if __name__ == "__main__":
             plt.show()
     
     finally:
-        #killSys()
+        killSysCmp()
         pass
