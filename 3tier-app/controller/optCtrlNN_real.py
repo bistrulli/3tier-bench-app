@@ -16,7 +16,6 @@ import subprocess
 import signal
 from cgroupspy import trees
 import docker
-from anyio._backends._asyncio import sleep
 
 
 client = docker.from_env()
