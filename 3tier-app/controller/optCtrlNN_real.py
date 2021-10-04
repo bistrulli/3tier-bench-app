@@ -376,13 +376,9 @@ if __name__ == "__main__":
                     cp += 1
                     ek = 0
                     Ie = 0
-                        
-                
-                if step == 0 or step % sTime == 0:
                     
-                    if(sys!=None):
-                        killSysCmp()
-                        time.sleep(2)
+                    killSysCmp()
+                    time.sleep(10)
                     
                     killDockerCmp()
                     time.sleep(10)
@@ -393,7 +389,7 @@ if __name__ == "__main__":
                         resetU()
                     #r.mset({"t1_hw":np.sum(XSSIM[:, step]),"t2_hw":np.sum(XSSIM[:, step])})
                     sys=startClient(np.sum(XSSIM[:, step]))
-                    time.sleep(2)
+                    time.sleep(10)
                 
                 XSSIM[:, step] = getstate(r, keys, N)
                 
