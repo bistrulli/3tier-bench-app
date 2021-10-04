@@ -382,12 +382,11 @@ if __name__ == "__main__":
                         time.sleep(2)
                         sys=None
                     
-                    if(step == 0):
-                        startDockerCmp()
-                    else:
-                        restartDockerCmp()
-                    
-                    time.sleep(5)   
+                    killDockerCmp()
+                    time.sleep(15)
+                    startDockerCmp()
+                         
+                      
                 
                 if step == 0 or step % sTime == 0:
                     if(isCpu):
