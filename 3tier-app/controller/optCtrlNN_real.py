@@ -35,7 +35,6 @@ def killSys():
 def killSysCmp(sys):
     if(sys is not None):
         sys.kill()
-        sys.remove()
 
 def handler(signum, frame):
     print('Signal handler called with signal', signum)
@@ -320,7 +319,7 @@ if __name__ == "__main__":
     dt = 10 ** (-1)
     H = 5
     N = 3
-    rep = 10
+    rep = 2
     sTime = 500
     TF = sTime * rep * dt;
     Time = np.linspace(0, TF, int(np.ceil(TF / dt)) + 1)
