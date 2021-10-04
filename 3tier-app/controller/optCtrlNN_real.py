@@ -375,7 +375,9 @@ if __name__ == "__main__":
                     cp += 1
                     ek = 0
                     Ie = 0
-                    
+                        
+                
+                if step == 0 or step % sTime == 0:
                     
                     if(sys!=None):
                         killSysCmp(sys)
@@ -385,10 +387,8 @@ if __name__ == "__main__":
                     killDockerCmp()
                     time.sleep(10)
                     startDockerCmp()
-                    time.sleep(10)     
-                      
-                
-                if step == 0 or step % sTime == 0:
+                    time.sleep(10) 
+                    
                     if(isCpu):
                         resetU()
                     #r.mset({"t1_hw":np.sum(XSSIM[:, step]),"t2_hw":np.sum(XSSIM[:, step])})
