@@ -372,6 +372,7 @@ if __name__ == "__main__":
                         resetU()
                     #r.mset({"t1_hw":np.sum(XSSIM[:, step]),"t2_hw":np.sum(XSSIM[:, step])})
                     sys=startClient(np.sum(XSSIM[:, step]))
+                    time.sleep(2)
                 
                 XSSIM[:, step] = getstate(r, keys, N)
                 
