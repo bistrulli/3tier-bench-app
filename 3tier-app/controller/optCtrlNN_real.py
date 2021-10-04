@@ -387,7 +387,7 @@ if __name__ == "__main__":
                     else:
                         restartDockerCmp()
                     
-                    time.sleep(3)   
+                    time.sleep(5)   
                 
                 if step == 0 or step % sTime == 0:
                     if(isCpu):
