@@ -32,7 +32,7 @@ def killSys():
     # subprocess.call(["sudo", "pkill", "-9", "-f", "tier1-0.0.1-SNAPSHOT"])
     # subprocess.call(["sudo", "pkill", "-9", "-f", "tier2-0.0.1-SNAPSHOT"])
 
-def killSysCmp(sys):
+def killSysCmp():
     global sys
     if(sys is not None):
         sys.kill()
@@ -381,7 +381,7 @@ if __name__ == "__main__":
                 if step == 0 or step % sTime == 0:
                     
                     if(sys!=None):
-                        killSysCmp(sys)
+                        killSysCmp()
                         time.sleep(2)
                     
                     killDockerCmp()
@@ -421,7 +421,7 @@ if __name__ == "__main__":
                 # optSPid=mitigateBottleneck(optSPid, Xsim3, tgt)
              
             # print("NN Reference error %f%% \nODE Reference error %f%% \n"%(np.abs(XSNN[0,-1]-tgt)*100/tgt,np.abs(XSODE[0,-1]-tgt)*100/tgt))
-            killSysCmp(sys)
+            killSysCmp()
             killDockerCmp()
             plt.close('all')    
             
@@ -517,4 +517,4 @@ if __name__ == "__main__":
             plt.show()
     
     finally:
-        killSysCmp(sys)
+        killSysCmp()
