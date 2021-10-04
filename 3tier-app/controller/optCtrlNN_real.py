@@ -16,6 +16,7 @@ import subprocess
 import signal
 from cgroupspy import trees
 import docker
+from anyio._backends._asyncio import sleep
 
 
 client = docker.from_env()
@@ -380,6 +381,8 @@ if __name__ == "__main__":
                         startDockerCmp()
                     else:
                         restartDockerCmp()
+                    
+                    time.sleep(3)
                     
                     if(sys!=None):
                         killSysCmp(sys)
