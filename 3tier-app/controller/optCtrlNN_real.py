@@ -98,6 +98,15 @@ def startSys(initPop, isCpu):
     
     return sys
 
+def restartDockerCmp():
+    subprocess.Popen(["docker-compose","-f","../compose.yaml","restart"])
+
+def startDockerCmp():
+    subprocess.Popen(["docker-compose","-f","../compose.yaml","up"])
+
+def killDockerCmp():
+    subprocess.Popen(["docker-compose","-f","../compose.yaml","stop"])
+
 def startClient(initPop):
     return client.containers.run(image="bistrulli/client:0.1",
                           command="java -Xmx4G -jar client-0.0.1-SNAPSHOT-jar-with-dependencies.jar --initPop %d --queues \
@@ -367,9 +376,15 @@ if __name__ == "__main__":
                     ek = 0
                     Ie = 0
                     
+                    if(step == 0):
+                        startDockerCmp()
+                    else:
+                        restartDockerCmp()
+                    
                     if(sys!=None):
                         killSysCmp(sys)
                         sys=None
+                       
                 
                 if step == 0 or step % sTime == 0:
                     if(isCpu):
@@ -405,6 +420,7 @@ if __name__ == "__main__":
              
             # print("NN Reference error %f%% \nODE Reference error %f%% \n"%(np.abs(XSNN[0,-1]-tgt)*100/tgt,np.abs(XSODE[0,-1]-tgt)*100/tgt))
             killSysCmp(sys)
+            killDockerCmp()
             plt.close('all')    
             
             xsim_cavg = []
