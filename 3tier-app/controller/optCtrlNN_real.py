@@ -33,8 +33,9 @@ def killSys():
     # subprocess.call(["sudo", "pkill", "-9", "-f", "tier2-0.0.1-SNAPSHOT"])
 
 def killSysCmp(sys):
-    sys.stop()
-    sys.remove()
+    if(sys is not None and sys.status=="running"):
+        sys.stop()
+        sys.remove()
 
 def handler(signum, frame):
     print('Signal handler called with signal', signum)
@@ -499,4 +500,3 @@ if __name__ == "__main__":
     
     finally:
         killSysCmp(sys)
-        pass
