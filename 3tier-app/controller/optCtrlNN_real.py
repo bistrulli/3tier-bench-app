@@ -33,8 +33,8 @@ def killSys():
     # subprocess.call(["sudo", "pkill", "-9", "-f", "tier2-0.0.1-SNAPSHOT"])
 
 def killSysCmp(sys):
-    if(sys is not None and sys.status=="running"):
-        sys.stop()
+    if(sys is not None):
+        sys.kill()
         sys.remove()
 
 def handler(signum, frame):
@@ -105,7 +105,7 @@ def startDockerCmp():
     subprocess.Popen(["docker-compose","-f","../compose.yaml","up"])
 
 def killDockerCmp():
-    subprocess.Popen(["docker-compose","-f","../compose.yaml","stop"])
+    subprocess.Popen(["docker-compose","-f","../compose.yaml","kill"])
 
 def startClient(initPop):
     return client.containers.run(image="bistrulli/client:0.1",
@@ -383,9 +383,9 @@ if __name__ == "__main__":
                         sys=None
                     
                     killDockerCmp()
-                    time.sleep(15)
+                    time.sleep(10)
                     startDockerCmp()
-                         
+                    time.sleep(10)     
                       
                 
                 if step == 0 or step % sTime == 0:
