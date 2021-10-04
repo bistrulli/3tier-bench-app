@@ -15,7 +15,10 @@ import redis
 import subprocess
 import signal
 from cgroupspy import trees
-from kubernetes import client, config
+import docker
+
+
+client = docker.from_env()
 
 curpath = os.path.realpath(__file__)
 croot = None
