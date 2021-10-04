@@ -35,7 +35,7 @@ def killSys():
 def killSysCmp():
     global sys
     if(sys is not None):
-        sys.kill()
+        sys.kill(signal="SIGINT")
         sys=None
 
 def handler(signum, frame):

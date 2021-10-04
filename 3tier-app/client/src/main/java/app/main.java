@@ -1,6 +1,7 @@
 package app;
 
 import java.util.HashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.google.common.net.InetAddresses;
 import com.google.common.net.InternetDomainName;
@@ -19,13 +20,18 @@ public class main {
 
 	public static void main(String[] args) {
 		main.getCliOptions(args);
-		SimpleTask[] Sys = main.genSystem();
+		final SimpleTask[] Sys = main.genSystem();
 		main.resetState(Sys[0]);
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+		
+		Runtime.getRuntime().addShutdownHook(new Thread()
+        {
+            @Override
+            public void run()
+            {	
+            	SimpleTask.setToStopGracefully(new AtomicBoolean(true));
+            }
+        });
+		
 		Sys[0].start();
 	}
 

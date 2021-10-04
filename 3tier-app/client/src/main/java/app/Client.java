@@ -5,6 +5,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpClient.Version;
 import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.time.Duration;
 import java.util.UUID;
@@ -42,12 +43,13 @@ public class Client implements Runnable {
 					.build();
 
 			Jedis jedis = this.task.getJedisPool().getResource();
-			while (!Thread.currentThread().isInterrupted()) {
+			while (!SimpleTask.getToStopGracefully().get()) {
 
 				TimeUnit.MILLISECONDS.sleep(Double.valueOf(this.dist.sample()).longValue());
 
 				SimpleTask.getLogger().debug(String.format("%s sent", this.task.getName()));
-				client.send(request, BodyHandlers.ofString());
+				HttpResponse<String> resp = client.send(request, BodyHandlers.ofString());
+				SimpleTask.getLogger().debug(resp.body());
 
 				jedis.incr("think");
 			}
