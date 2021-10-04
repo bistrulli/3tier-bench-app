@@ -376,17 +376,18 @@ if __name__ == "__main__":
                     ek = 0
                     Ie = 0
                     
+                    
+                    if(sys!=None):
+                        killSysCmp(sys)
+                        time.sleep(2)
+                        sys=None
+                    
                     if(step == 0):
                         startDockerCmp()
                     else:
                         restartDockerCmp()
                     
-                    time.sleep(3)
-                    
-                    if(sys!=None):
-                        killSysCmp(sys)
-                        sys=None
-                       
+                    time.sleep(3)   
                 
                 if step == 0 or step % sTime == 0:
                     if(isCpu):
