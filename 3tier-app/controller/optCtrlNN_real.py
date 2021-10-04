@@ -33,8 +33,10 @@ def killSys():
     # subprocess.call(["sudo", "pkill", "-9", "-f", "tier2-0.0.1-SNAPSHOT"])
 
 def killSysCmp(sys):
+    global sys
     if(sys is not None):
         sys.kill()
+        sys=None
 
 def handler(signum, frame):
     print('Signal handler called with signal', signum)
@@ -381,7 +383,6 @@ if __name__ == "__main__":
                     if(sys!=None):
                         killSysCmp(sys)
                         time.sleep(2)
-                        sys=None
                     
                     killDockerCmp()
                     time.sleep(10)
