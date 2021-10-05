@@ -1,6 +1,7 @@
 package app;
 
 import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.google.common.net.InetAddresses;
@@ -22,16 +23,6 @@ public class main {
 		main.getCliOptions(args);
 		final SimpleTask[] Sys = main.genSystem();
 		main.resetState(Sys[0]);
-		
-		Runtime.getRuntime().addShutdownHook(new Thread()
-        {
-            @Override
-            public void run()
-            {	
-            	SimpleTask.setToStopGracefully(new AtomicBoolean(true));
-            }
-        });
-		
 		Sys[0].start();
 	}
 

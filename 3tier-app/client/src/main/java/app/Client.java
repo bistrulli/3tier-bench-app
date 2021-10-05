@@ -9,6 +9,7 @@ import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.time.Duration;
 import java.util.UUID;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -34,6 +35,7 @@ public class Client implements Runnable {
 	}
 
 	public void run() {
+		Jedis jedis = this.task.getJedisPool().getResource();
 		try {
 			HttpClient client = null;
 			HttpRequest request = null;
@@ -41,18 +43,20 @@ public class Client implements Runnable {
 			request = HttpRequest.newBuilder()
 					.uri(URI.create("http://tier1:3000/?id=" + this.clietId.toString() + "&entry=e1" + "&snd=think"))
 					.build();
-
-			Jedis jedis = this.task.getJedisPool().getResource();
-			while (!SimpleTask.getToStopGracefully().get()) {
-
+			
+			String s=null;
+			
+			while ( jedis.get("stop")==null || !jedis.get("stop").equals("1")) {
+				
+				SimpleTask.getLogger().debug(String.format("stop=%s", s));
 				TimeUnit.MILLISECONDS.sleep(Double.valueOf(this.dist.sample()).longValue());
 
-				SimpleTask.getLogger().debug(String.format("%s sent", this.task.getName()));
+				SimpleTask.getLogger().debug(String.format("%s sending", this.task.getName()));
 				HttpResponse<String> resp = client.send(request, BodyHandlers.ofString());
-				SimpleTask.getLogger().debug(resp.body());
-
+				
 				jedis.incr("think");
 			}
+			SimpleTask.getLogger().debug(String.format(" user %s stopped", this.clietId));
 			jedis.close();
 		} catch (IOException e1) {
 			e1.printStackTrace();
