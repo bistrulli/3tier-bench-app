@@ -321,7 +321,7 @@ if __name__ == "__main__":
     
     signal.signal(signal.SIGINT, handler)
     
-    startDockerCmp()
+    #startDockerCmp()
     
     curpath = os.path.realpath(__file__)
     ctrl = optCtrlNN2("%s/../learnt_model/model_3tier.tflite" % (os.path.dirname(curpath)),
