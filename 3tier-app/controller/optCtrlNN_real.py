@@ -130,28 +130,31 @@ def startClient(initPop):
 
 def setU(optS):
     global croot, period
-    quota = np.round(optS[1] * period)
-    if(croot == None):
-        croot = trees.Tree().get_node_by_path('/cpu/t1')
-    
-    croot.controller.cfs_period_us=period
-    croot.controller.cfs_quota_us = int(quota)
+    quota=[ np.round(optS[i] * period) for i in range(len(optS))]
     
     
     
-
-    t1_patch = [{"op": "replace", "value": "%dm"%(int(np.round(optS[1]*1000))),
-                "path": "/spec/template/spec/containers/0/resources/limits/cpu"}]
-    t2_patch = [{"op": "replace", "value": "%dm"%(int(np.round(optS[2]*1000))),
-                "path": "/spec/template/spec/containers/0/resources/limits/cpu"}]
+    # if(croot == None):
+    #     croot = trees.Tree().get_node_by_path('/cpu/t1')
+    #
+    # croot.controller.cfs_period_us=period
+    # croot.controller.cfs_quota_us = int(quota)
+    #
+    #
+    #
+    #
+    # t1_patch = [{"op": "replace", "value": "%dm"%(int(np.round(optS[1]*1000))),
+    #             "path": "/spec/template/spec/containers/0/resources/limits/cpu"}]
+    # t2_patch = [{"op": "replace", "value": "%dm"%(int(np.round(optS[2]*1000))),
+    #             "path": "/spec/template/spec/containers/0/resources/limits/cpu"}]
     # print("tier1","%dm"%(int(np.round(optS[1]*1000))))
     # print("tier2","%dm"%(int(np.round(optS[2]*1000))))
     # print(tier1.spec.template.spec.containers[0].resources)
     # print(tier2.spec.template.spec.containers[0].resources)
     # tier1.spec.template.spec.containers[0].resources.limits["cpu"]="%dm"%(int(np.round(optS[1]*1000)))
     # tier2.spec.template.spec.containers[0].resources.limits["cpu"]="%dm"%(int(np.round(optS[2]*1000)))
-    apps_api.patch_namespaced_deployment(name="tier1-pod", namespace="default",body=t1_patch, async_req=False)
-    apps_api.patch_namespaced_deployment(name="tier2-pod", namespace="default", body=t2_patch, async_req=False)
+    # apps_api.patch_namespaced_deployment(name="tier1-pod", namespace="default",body=t1_patch, async_req=False)
+    # apps_api.patch_namespaced_deployment(name="tier2-pod", namespace="default", body=t2_patch, async_req=False)
     
 
 
