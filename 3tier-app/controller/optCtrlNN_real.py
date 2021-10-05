@@ -23,6 +23,7 @@ client = docker.from_env()
 curpath = os.path.realpath(__file__)
 croot = None
 period = 100000
+sys = None
 
 # tf.compat.v1.disable_eager_execution()
 
@@ -350,7 +351,6 @@ if __name__ == "__main__":
     tgtStory = [0]
     # init_cstr=["X%d_0" % (i) for i in range(P.shape[0])];
     cp = -1
-    sys = None
     r = redis.Redis()
     
     Ie = None
@@ -380,10 +380,10 @@ if __name__ == "__main__":
                     killSysCmp()
                     time.sleep(10)
                     
-                    killDockerCmp()
-                    time.sleep(10)
-                    startDockerCmp()
-                    time.sleep(10) 
+                    # killDockerCmp()
+                    # time.sleep(10)
+                    # startDockerCmp()
+                    # time.sleep(10) 
                     
                     if(isCpu):
                         resetU()
