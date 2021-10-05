@@ -36,7 +36,8 @@ def killSys():
 def killSysCmp():
     global sys
     if(sys is not None):
-        sys.kill(signal="SIGINT")
+        #sys.kill(signal="SIGINT")
+        sys.stop()
         sys=None
 
 def handler(signum, frame):
@@ -117,7 +118,8 @@ def startClient(initPop):
                           auto_remove=True,
                           detach=True,
                           hostname="client",
-                          network="3tier-app_default")
+                          network="3tier-app_default",
+                          stop_signal="SIGINT")
 
 
 def setU(optS):
