@@ -132,8 +132,8 @@ def setU(optS):
     global croot, period,client
     quota=[np.round(optS[i] * period) for i in range(len(optS))]
 
-    tier1=client.get("tier1-cnt")
-    tier2=client.get("tier2-cnt")
+    tier1=client.containers.get("tier1-cnt")
+    tier2=client.containers.get("tier2-cnt")
     
     tier1.update(cpu_period=period,cpu_quota=quota[0])
     tier2.update(cpu_period=period,cpu_quota=quota[1])
