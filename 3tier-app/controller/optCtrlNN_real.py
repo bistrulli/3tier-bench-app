@@ -135,8 +135,8 @@ def setU(optS):
     tier1=client.containers.get("tier1-cnt")
     tier2=client.containers.get("tier2-cnt")
     
-    tier1.update(cpu_period=period,cpu_quota=quota[0])
-    tier2.update(cpu_period=period,cpu_quota=quota[1])
+    tier1.update(cpu_period=period,cpu_quota=int(quota[0]))
+    tier2.update(cpu_period=period,cpu_quota=int(quota[1]))
     
     # if(croot == None):
     #     croot = trees.Tree().get_node_by_path('/cpu/t1')
