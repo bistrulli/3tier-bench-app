@@ -2,6 +2,7 @@ version: "3.9"
 services:
   monitor:
     image: "bistrulli/my_exp:my_redis_srv"
+    command: ["redis-server","--protected-mode","no","--save",""]
     ports:
       - "6379:6379"
   tier2:
@@ -19,5 +20,3 @@ services:
     command: ["java","-Xmx4G","-jar","tier1-0.0.1-SNAPSHOT-jar-with-dependencies.jar","--cpuEmu","0","--jedisHost","monitor"]
     ports:
       - "3000:3000"
-    
-    
