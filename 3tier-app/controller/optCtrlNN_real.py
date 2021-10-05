@@ -110,7 +110,7 @@ def killDockerCmp():
     subprocess.Popen(["docker-compose","-f","../compose.yaml","kill"])
 
 def startClient(initPop):
-    return client.containers.run(image="bistrulli/client:0.1",
+    return client.containers.run(image="bistrulli/client:0.2",
                           command="java -Xmx4G -jar client-0.0.1-SNAPSHOT-jar-with-dependencies.jar --initPop %d --queues \
                                   '[\"think\", \"e1_bl\", \"e1_ex\", \"t1_hw\", \"e2_bl\", \"e2_ex\", \"t2_hw\"]' \
                                    --jedisHost monitor"%(initPop),
@@ -313,6 +313,8 @@ if __name__ == "__main__":
     
     signal.signal(signal.SIGINT, handler)
     
+    startDockerCmp()
+    
     curpath = os.path.realpath(__file__)
     ctrl = optCtrlNN2("%s/../learnt_model/model_3tier.tflite" % (os.path.dirname(curpath)),
                      "%s/../learnt_model/open_loop_3tier_H5.mat" % (os.path.dirname(curpath)))
@@ -382,8 +384,6 @@ if __name__ == "__main__":
                     
                     # killDockerCmp()
                     # time.sleep(10)
-                    # startDockerCmp()
-                    # time.sleep(10) 
                     
                     if(isCpu):
                         resetU()
