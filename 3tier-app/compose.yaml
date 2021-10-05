@@ -10,7 +10,7 @@ services:
       - monitor
     command: ["java","-Xmx4G","-jar","tier2-0.0.1-SNAPSHOT-jar-with-dependencies.jar","--cpuEmu","1","--jedisHost","monitor"]
   tier1:
-    image: "bistrulli/tier1:0.2"
+    image: "bistrulli/tier1:0.3"
     depends_on:
       - monitor
       - tier2
