@@ -129,10 +129,14 @@ def startClient(initPop):
 
 
 def setU(optS):
-    global croot, period
-    quota=[ np.round(optS[i] * period) for i in range(len(optS))]
+    global croot, period,client
+    quota=[np.round(optS[i] * period) for i in range(len(optS))]
+
+    tier1=client.get("tier1-cnt")
+    tier2=client.get("tier2-cnt")
     
-    
+    tier1.update(cpu_period=period,cpu_quota=quota[0])
+    tier2.update(cpu_period=period,cpu_quota=quota[1])
     
     # if(croot == None):
     #     croot = trees.Tree().get_node_by_path('/cpu/t1')
@@ -159,7 +163,11 @@ def setU(optS):
 
 
 def resetU():
-    global tier1, tier2
+    pass
+    r=redis.Redis()
+    r.mset({"t1_hw":1,"t2_hw":1})
+    r.close()
+    #global tier1, tier2
     # global croot, period
     # if(croot == None):
     #     croot = trees.Tree().get_node_by_path('/cpu/t1')
@@ -331,11 +339,11 @@ if __name__ == "__main__":
                      "%s/../learnt_model/open_loop_3tier_H5.mat" % (os.path.dirname(curpath)))
     
     isAR = True
-    isCpu = False
+    isCpu = True
     dt = 10 ** (-1)
     H = 5
     N = 3
-    rep = 10
+    rep = 1
     sTime = 500
     TF = sTime * rep * dt;
     Time = np.linspace(0, TF, int(np.ceil(TF / dt)) + 1)
@@ -375,7 +383,7 @@ if __name__ == "__main__":
                     Sold = None       
                     alfa.append(genAfa())
                     #alfa.append(0.5)
-                    XSSIM[:, step] = [np.random.randint(low=30, high=150), 0, 0]
+                    XSSIM[:, step] = [np.random.randint(low=30, high=100), 0, 0]
                     #XSSIM[:, step] = getstate(r, keys, N)
                     # XSSIM[:, step] = [90, 0, 0]
                     print(alfa[-1], XSSIM[:, step])
