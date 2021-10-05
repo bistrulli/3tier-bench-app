@@ -32,7 +32,7 @@ def killSys():
     # subprocess.call(["sudo", "pkill", "-9", "-f", "client-0.0.1-SNAPSHOT"])
     # subprocess.call(["sudo", "pkill", "-9", "-f", "tier1-0.0.1-SNAPSHOT"])
     # subprocess.call(["sudo", "pkill", "-9", "-f", "tier2-0.0.1-SNAPSHOT"])
-    r=redis.Redis(host="monitor")
+    r=redis.Redis()
     r.set("stop","1");
     r.close()
 
@@ -114,7 +114,7 @@ def killDockerCmp():
     subprocess.Popen(["docker-compose","-f","../compose.yaml","kill"])
 
 def startClient(initPop):
-    r=redis.Redis(host="monitor")
+    r=redis.Redis()
     r.set("stop","0")
     r.close()
     return client.containers.run(image="bistrulli/client:0.3",
