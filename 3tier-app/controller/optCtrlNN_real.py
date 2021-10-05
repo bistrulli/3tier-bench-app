@@ -25,6 +25,9 @@ croot = None
 period = 100000
 sys = None
 
+tier1=client.containers.get("tier1-cnt")
+tier2=client.containers.get("tier2-cnt")
+
 # tf.compat.v1.disable_eager_execution()
 
 
@@ -129,14 +132,11 @@ def startClient(initPop):
 
 
 def setU(optS):
-    global croot, period,client
+    global croot, period,client,tier1,tier2
     quota=[np.round(optS[i] * period) for i in range(len(optS))]
-
-    tier1=client.containers.get("tier1-cnt")
-    tier2=client.containers.get("tier2-cnt")
     
-    tier1.update(cpu_period=period,cpu_quota=int(quota[0]))
-    tier2.update(cpu_period=period,cpu_quota=int(quota[1]))
+    tier1.update(cpu_period=period,cpu_quota=max(int(quota[0]),1000))
+    tier2.update(cpu_period=period,cpu_quota=max(int(quota[1]),1000))
     
     # if(croot == None):
     #     croot = trees.Tree().get_node_by_path('/cpu/t1')
