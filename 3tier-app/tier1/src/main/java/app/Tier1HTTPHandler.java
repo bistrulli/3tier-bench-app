@@ -69,8 +69,6 @@ public class Tier1HTTPHandler extends TierHttpHandler {
 			this.doWorkSleep(executing);
 		}
 
-		this.measureEgress();
-
 		try {
 			req.getResponseHeaders().set("Content-Type", "text/html; charset=UTF-8");
 			req.getResponseHeaders().set("Cache-Control", "no-store, no-cache, max-age=0, must-revalidate");
@@ -81,7 +79,8 @@ public class Tier1HTTPHandler extends TierHttpHandler {
 			outputStream.close();
 			outputStream = null;
 		} catch (IOException e) {
-			e.printStackTrace();
+		}finally {
+			this.measureEgress();
 		}
 	}
 

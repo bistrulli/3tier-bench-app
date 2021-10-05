@@ -48,8 +48,6 @@ public class Tier2HTTPHandler extends TierHttpHandler {
 			jedis.close();
 			this.doWorkSleep(executing);
 		}
-		
-		this.measureEgress();
 
 		try {
 			req.getResponseHeaders().set("Content-Type", "text/html; charset=UTF-8");
@@ -61,7 +59,9 @@ public class Tier2HTTPHandler extends TierHttpHandler {
 			outputStream.close();
 			outputStream = null;
 		} catch (IOException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
+		}finally {
+			this.measureEgress();
 		}
 	}
 	
