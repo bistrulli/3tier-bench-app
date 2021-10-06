@@ -411,10 +411,11 @@ if __name__ == "__main__":
                         pruneContainer()
                     
                     startDockerCmp()
-                    time.sleep(30)
+                    time.sleep(12)
                     
                     r=redis.Redis()
                     r.config_set("save", "")
+                    r.flushall()
                     # r.config_set("appendonly","no")
                     #r.config_rewrite()
                     
