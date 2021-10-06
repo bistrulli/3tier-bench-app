@@ -182,13 +182,13 @@ def resetU():
 def getstate(r, keys, N):
     str_state=r.mget(keys)
     try:
-        astate = [max(float(str_state[0]),0)]
+        astate = [float(str_state[0])]
         gidx = 1;
         for i in range(1, N):
-            astate.append(max(float(str_state[gidx]) + float(str_state[gidx + 1]),0))
-            # if(float(str_state[gidx])<0 or float(str_state[gidx + 1])<0):
-            #     raise ValueError("Error! state < 0")
-            # gidx += 3
+            astate.append(float(str_state[gidx]) + float(str_state[gidx + 1]))
+            if(float(str_state[gidx])<0 or float(str_state[gidx + 1])<0):
+                raise ValueError("Error! state < 0")
+            gidx += 3
     except:
         for i in range(len(keys)):
             print(str_state[i],keys[i])
@@ -346,7 +346,7 @@ if __name__ == "__main__":
     dt = 10 ** (-1)
     H = 5
     N = 3
-    rep = 5
+    rep = 10
     sTime = 500
     TF = sTime * rep * dt;
     Time = np.linspace(0, TF, int(np.ceil(TF / dt)) + 1)
@@ -414,10 +414,6 @@ if __name__ == "__main__":
                     time.sleep(12)
                     
                     r=redis.Redis()
-                    r.config_set("save", "")
-                    r.flushall()
-                    # r.config_set("appendonly","no")
-                    #r.config_rewrite()
                     
                     tier1=client.containers.get("tier1-cnt")
                     tier2=client.containers.get("tier2-cnt")
@@ -441,12 +437,6 @@ if __name__ == "__main__":
                 optU = optU_N * ctrl.stdu + ctrl.meanu
                 Sold = optU_N
                 
-                if(optU[1]==None):
-                    optU[1]=1
-                
-                if(optU[2]==None):
-                    optU[2]=1
-                    
                 r.mset({"t1_hw":optU[1],"t2_hw":optU[2]})
                 if(isCpu):
                     setU(optU)
