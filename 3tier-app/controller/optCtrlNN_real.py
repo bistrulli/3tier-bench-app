@@ -416,7 +416,7 @@ if __name__ == "__main__":
                     r=redis.Redis()
                     r.config_set("save", "")
                     r.config_set("appendonly","no")
-                    r.config_rewrite()
+                    #r.config_rewrite()
                     
                     tier1=client.containers.get("tier1-cnt")
                     tier2=client.containers.get("tier2-cnt")
