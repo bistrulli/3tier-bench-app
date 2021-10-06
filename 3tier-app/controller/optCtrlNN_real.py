@@ -182,10 +182,10 @@ def resetU():
 def getstate(r, keys, N):
     str_state=r.mget(keys)
     try:
-        astate = [float(str_state[0])]
+        astate = [max(float(str_state[0]),0)]
         gidx = 1;
         for i in range(1, N):
-            astate.append(float(str_state[gidx]) + float(str_state[gidx + 1]))
+            astate.append(max(float(str_state[gidx]) + float(str_state[gidx + 1]),0))
             if(float(str_state[gidx])<0 or float(str_state[gidx + 1])<0):
                 raise ValueError("Error! state < 0")
             gidx += 3
