@@ -31,6 +31,9 @@ tier2=None
 # tf.compat.v1.disable_eager_execution()
 
 
+def pruneContainer():
+    subprocess.call(["docker", "container", "prune", "-f"])
+
 def killSys():
     # subprocess.call(["sudo", "pkill", "-9", "-f", "client-0.0.1-SNAPSHOT"])
     # subprocess.call(["sudo", "pkill", "-9", "-f", "tier1-0.0.1-SNAPSHOT"])
@@ -114,7 +117,7 @@ def startDockerCmp():
     subprocess.Popen(["docker-compose","-f","../compose.yaml","up"])
 
 def killDockerCmp():
-    subprocess.Popen(["docker-compose","-f","../compose.yaml","kill"])
+    subprocess.call(["docker-compose","-f","../compose.yaml","kill"])
 
 def startClient(initPop):
     r=redis.Redis()
@@ -404,6 +407,8 @@ if __name__ == "__main__":
                     
                         killDockerCmp()
                         time.sleep(10)
+                        
+                        pruneContainer()
                     
                     startDockerCmp()
                     time.sleep(10)
