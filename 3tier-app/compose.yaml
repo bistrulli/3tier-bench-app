@@ -2,7 +2,7 @@ version: "3.9"
 services:
   monitor:
     image: "bistrulli/my_exp:my_redis_srv"
-    command: ["sh", "-c", "rm -f /data/dump.rdb && redis-server --protected-mode no"]
+    command: ["redis-server","/etc/redis-no-persistence.conf"]
     
     ports:
       - "6379:6379"
