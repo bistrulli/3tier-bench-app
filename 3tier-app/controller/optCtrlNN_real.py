@@ -25,8 +25,8 @@ croot = None
 period = 100000
 sys = None
 
-tier1=client.containers.get("tier1-cnt")
-tier2=client.containers.get("tier2-cnt")
+tier1=None
+tier2=None
 
 # tf.compat.v1.disable_eager_execution()
 
@@ -343,7 +343,7 @@ if __name__ == "__main__":
     dt = 10 ** (-1)
     H = 5
     N = 3
-    rep = 20
+    rep = 5
     sTime = 500
     TF = sTime * rep * dt;
     Time = np.linspace(0, TF, int(np.ceil(TF / dt)) + 1)
@@ -372,7 +372,7 @@ if __name__ == "__main__":
     tgtStory = [0]
     # init_cstr=["X%d_0" % (i) for i in range(P.shape[0])];
     cp = -1
-    r = redis.Redis()
+    r = None
     
     Ie = None
     
@@ -383,7 +383,7 @@ if __name__ == "__main__":
                     Sold = None       
                     alfa.append(genAfa())
                     #alfa.append(0.5)
-                    XSSIM[:, step] = [np.random.randint(low=30, high=150), 0, 0]
+                    XSSIM[:, step] = [np.random.randint(low=10, high=100), 0, 0]
                     #XSSIM[:, step] = getstate(r, keys, N)
                     # XSSIM[:, step] = [90, 0, 0]
                     print(alfa[-1], XSSIM[:, step])
@@ -398,17 +398,28 @@ if __name__ == "__main__":
                     ek = 0
                     Ie = 0
                     
-                    killSys()
+                    if(r is not None):
+                        killSys()
+                        time.sleep(10)
+                    
+                        killDockerCmp()
+                        time.sleep(10)
+                    
+                    startDockerCmp()
                     time.sleep(10)
                     
-                    # killDockerCmp()
-                    # time.sleep(10)
+                    r=redis.Redis()
+                    r.config_set("save", "")
+                    
+                    tier1=client.containers.get("tier1-cnt")
+                    tier2=client.containers.get("tier2-cnt")
                     
                     if(isCpu):
                         resetU()
                     #r.mset({"t1_hw":np.sum(XSSIM[:, step]),"t2_hw":np.sum(XSSIM[:, step])})
                     sys=startClient(np.sum(XSSIM[:, step]))
                     time.sleep(10)
+                    
                 
                 XSSIM[:, step] = getstate(r, keys, N)
                 

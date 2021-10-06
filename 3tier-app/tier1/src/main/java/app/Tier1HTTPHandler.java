@@ -38,8 +38,8 @@ public class Tier1HTTPHandler extends TierHttpHandler {
 		HttpClient client = null;
 		HttpRequest request = null;
 		client = HttpClient.newBuilder().version(Version.HTTP_1_1).build();
-		request = HttpRequest.newBuilder()
-				.uri(URI.create("http://tier2:3001/?&entry=e2" + "&snd=" + this.getName())).build();
+		request = HttpRequest.newBuilder().uri(URI.create("http://tier2:3001/?&entry=e2" + "&snd=" + this.getName()))
+				.timeout(Duration.ofMinutes(10)).build();
 		try {
 			client.send(request, BodyHandlers.ofString());
 		} catch (IOException e1) {
@@ -47,7 +47,7 @@ public class Tier1HTTPHandler extends TierHttpHandler {
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
 		}
-		
+
 		this.measureReturn();
 
 		String renderedTemplate = jinjava.render(this.getWebPageTpl(), context);
@@ -79,7 +79,7 @@ public class Tier1HTTPHandler extends TierHttpHandler {
 			outputStream.close();
 			outputStream = null;
 		} catch (IOException e) {
-		}finally {
+		} finally {
 			this.measureEgress();
 		}
 	}

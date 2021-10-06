@@ -4,6 +4,8 @@ FROM alpine
 # Download and install dependency
 RUN apk add --update redis
 
+RUN sed -e '/save/ s/^#*/#/' -i /etc/redis.conf
+
 # EXPOSE the port to the Host OS
 EXPOSE 6379
 
