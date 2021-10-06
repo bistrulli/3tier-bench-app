@@ -2,7 +2,7 @@ version: "3.9"
 services:
   monitor:
     image: "bistrulli/my_exp:my_redis_srv"
-    command: ["redis-server","/etc/redis.conf","--protected-mode","no"]
+    command: ["redis-server","--protected-mode","no","/etc/redis.conf"]
     ports:
       - "6379:6379"
   tier2:
