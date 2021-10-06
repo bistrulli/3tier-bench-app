@@ -411,11 +411,11 @@ if __name__ == "__main__":
                         pruneContainer()
                     
                     startDockerCmp()
-                    time.sleep(10)
+                    time.sleep(30)
                     
                     r=redis.Redis()
                     r.config_set("save", "")
-                    r.config_set("appendonly","no")
+                    # r.config_set("appendonly","no")
                     #r.config_rewrite()
                     
                     tier1=client.containers.get("tier1-cnt")
