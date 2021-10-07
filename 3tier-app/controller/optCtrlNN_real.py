@@ -377,7 +377,7 @@ if __name__ == "__main__":
     tgtStory = [0]
     # init_cstr=["X%d_0" % (i) for i in range(P.shape[0])];
     cp = -1
-    r = None
+    r=redis.Redis()
     
     Ie = None
     
@@ -415,8 +415,7 @@ if __name__ == "__main__":
                     startDockerCmp()
                     time.sleep(12)
                     
-                    r=redis.Redis()
-                    r.config_set("save", "")
+                    #r.config_set("save", "")
                     
                     #redis_cnt=client.containers.get("monitor-cnt")
                     tier1=client.containers.get("tier1-cnt")
