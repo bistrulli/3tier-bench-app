@@ -16,6 +16,7 @@ import subprocess
 import signal
 from cgroupspy import trees
 import docker
+from pathlib import Path
 
 
 client = docker.from_env()
@@ -117,7 +118,7 @@ def startDockerCmp():
     subprocess.Popen(["docker-compose","-f","../compose.yaml","up"])
 
 def killDockerCmp():
-    subprocess.call(["docker-compose","-f","../compose.yaml","stop","30"])
+    subprocess.call(["docker-compose","-f","../compose.yaml","stop","-t","30"])
 
 def startClient(initPop):
     r=redis.Redis()
@@ -343,7 +344,7 @@ if __name__ == "__main__":
                      "%s/../learnt_model/open_loop_3tier_H5.mat" % (os.path.dirname(curpath)))
     
     isAR = True
-    isCpu = True
+    isCpu = False
     dt = 10 ** (-1)
     H = 5
     N = 3
@@ -453,9 +454,9 @@ if __name__ == "__main__":
                 # optSPid=mitigateBottleneck(optSPid, Xsim3, tgt)
              
             # print("NN Reference error %f%% \nODE Reference error %f%% \n"%(np.abs(XSNN[0,-1]-tgt)*100/tgt,np.abs(XSODE[0,-1]-tgt)*100/tgt))
-            killSysCmp()
-            killDockerCmp()
-            plt.close('all')    
+            plt.close('all')
+            
+            Path( './figure' ).mkdir( parents=True, exist_ok=True )   
             
             xsim_cavg = []
             xsim_cavg2 = []
@@ -482,7 +483,7 @@ if __name__ == "__main__":
             plt.title("Mean Relaive Long-run Tracking Error (%)")
             plt.boxplot([np.array(e) * 100])
             plt.xticks([1], ['NN'])
-            plt.savefig("boxerror.png")
+            plt.savefig("./figure/boxerror.png")
             
             sumPop = []
             tgts = []
@@ -493,17 +494,17 @@ if __name__ == "__main__":
             plt.figure()
             plt.title("error vs total pop")
             plt.scatter(sumPop, np.array(e) * 100)
-            plt.savefig("evspop.png")
+            plt.savefig("./figure/evspop.png")
             
             plt.figure()
             plt.title("error vs alfa")
             plt.scatter(alfa, np.array(e) * 100) 
-            plt.savefig("evsalfa.png")
+            plt.savefig("./figure/evsalfa.png")
             
             plt.figure()
             plt.title("error vs tgt")
             plt.scatter(tgts, np.array(e) * 100) 
-            plt.savefig("evstgt.png")
+            plt.savefig("./figure/evstgt.png")
             
             print(np.array(e) * 100)
             # print(np.array(e2)*100)
@@ -517,14 +518,14 @@ if __name__ == "__main__":
                 # plt.axhline(y = tgt, color = 'r', linestyle = '--')
                 plt.plot(Time, np.array(tgtStory), '--', color='r')
             plt.legend()
-            plt.savefig("queue_sim.png")
+            plt.savefig("./figure/queue_sim.png")
             
             plt.figure()
             plt.plot(xsim_cavg, label="SIM_NNctrl")
             # plt.plot(xsim_cavg2,label="SIM_MDctrl",linestyle ='-.')
             plt.plot(np.array(tgtStory), '--', color='r')
             plt.legend()
-            plt.savefig("queue_avg.png")
+            plt.savefig("./figure/queue_avg.png")
             
             plt.figure()
             plt.stem(alfa)
@@ -534,7 +535,7 @@ if __name__ == "__main__":
             for i in range(1, N):
                 plt.plot(optSNN[i,:].T, label="Tier_%d" % (i))
             plt.legend()
-            plt.savefig("control.png")
+            plt.savefig("./figure/control.png")
             # plt.figure()
             # plt.title("Control Singals Model Driven")
             # plt.plot(optSMD[1:,:].T)
@@ -549,4 +550,6 @@ if __name__ == "__main__":
             plt.show()
     
     finally:
-        killSysCmp()
+        killSys()
+        time.sleep(5)
+        killDockerCmp()
