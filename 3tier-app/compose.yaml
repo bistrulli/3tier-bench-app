@@ -1,23 +1,24 @@
 version: "3.9"
 services:
-  #monitor:
-    #image: "bistrulli/my_exp:my_redis_srv"
-    #container_name: monitor-cnt
-    #command: ["redis-server","/etc/redis-no-persistence.conf"]
+  monitor:
+    image: "bistrulli/my_exp:my_redis_srv"
+    container_name: monitor-cnt
+    user: root
+    command: ["redis-server","--protected-mode","no"]
     #command: ["redis-server","--save","--dbfilename","''","--appendonly","no","--appendfsync","no","--protected-mode","no"]
-    #ports:
-      #- "6379:6379"
+    ports:
+      - "6379:6379"
   tier2:
     container_name: tier2-cnt
     image: "bistrulli/tier2:0.5"
     #depends_on:
       #- monitor
-    command: ["java","-Xmx4G","-jar","tier2-0.0.1-SNAPSHOT-jar-with-dependencies.jar","--cpuEmu","0","--jedisHost","172.17.0.1"]
+    command: ["java","-Xmx4G","-jar","tier2-0.0.1-SNAPSHOT-jar-with-dependencies.jar","--cpuEmu","0","--jedisHost","monitor"]
   tier1:
     container_name: tier1-cnt
     image: "bistrulli/tier1:0.5" 
     depends_on:
       - tier2
-    command: ["java","-Xmx4G","-jar","tier1-0.0.1-SNAPSHOT-jar-with-dependencies.jar","--cpuEmu","0","--jedisHost","172.17.0.1"]
+    command: ["java","-Xmx4G","-jar","tier1-0.0.1-SNAPSHOT-jar-with-dependencies.jar","--cpuEmu","0","--jedisHost","monitor"]
     ports:
       - "3000:3000"
