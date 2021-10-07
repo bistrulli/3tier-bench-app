@@ -445,7 +445,7 @@ if __name__ == "__main__":
                 optU = optU_N * ctrl.stdu + ctrl.meanu
                 Sold = optU_N
                 
-                r.mset({"t1_hw":optU[1],"t2_hw":optU[2]})
+                r.mset({"t1_hw":str(np.round(optU[1],4)),"t2_hw":str(np.round(optU[2],4))})
                 if(isCpu):
                     setU(optU)
                 # print(optU)
