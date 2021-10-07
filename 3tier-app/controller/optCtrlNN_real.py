@@ -414,6 +414,7 @@ if __name__ == "__main__":
                     time.sleep(12)
                     
                     r=redis.Redis()
+                    r.config_set("save", "")
                     
                     tier1=client.containers.get("tier1-cnt")
                     tier2=client.containers.get("tier2-cnt")
