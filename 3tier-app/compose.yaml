@@ -12,12 +12,12 @@ services:
     image: "bistrulli/tier2:0.5"
     #depends_on:
       #- monitor
-    command: ["java","-Xmx4G","-jar","tier2-0.0.1-SNAPSHOT-jar-with-dependencies.jar","--cpuEmu","1","--jedisHost","172.17.0.1"]
+    command: ["java","-Xmx4G","-jar","tier2-0.0.1-SNAPSHOT-jar-with-dependencies.jar","--cpuEmu","0","--jedisHost","172.17.0.1"]
   tier1:
     container_name: tier1-cnt
     image: "bistrulli/tier1:0.5" 
     depends_on:
       - tier2
-    command: ["java","-Xmx4G","-jar","tier1-0.0.1-SNAPSHOT-jar-with-dependencies.jar","--cpuEmu","1","--jedisHost","172.17.0.1"]
+    command: ["java","-Xmx4G","-jar","tier1-0.0.1-SNAPSHOT-jar-with-dependencies.jar","--cpuEmu","0","--jedisHost","172.17.0.1"]
     ports:
       - "3000:3000"
