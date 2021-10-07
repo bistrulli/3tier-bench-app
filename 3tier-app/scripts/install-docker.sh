@@ -15,7 +15,7 @@ echo \
   $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
   
 sudo apt-get update -y
-sudo apt-get install docker-ce=5:20.10.8~3-0~ubuntu-bionic \ 
-					 docker-ce-cli=5:20.10.8~3-0~ubuntu-bionic containerd.io -y
+sudo apt-get install docker-ce=20.10.8~3-0~ubuntu-bionic \ 
+					 docker-ce-cli=20.10.8~3-0~ubuntu-bionic containerd.io -y
 
 sudo usermod -aG docker $USER
