@@ -3,7 +3,7 @@ services:
   monitor:
     image: "bistrulli/my_exp:my_redis_srv"
     #command: ["redis-server","/etc/redis-no-persistence.conf"]
-    command: ["redis-server","--save","--dbfilename","''","--appendonly","no","--appendfsync","no"]
+    command: ["redis-server","--save","--dbfilename","''","--appendonly","no","--appendfsync","no","--protected-mode","no"]
     ports:
       - "6379:6379"
   tier2:
