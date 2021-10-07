@@ -182,18 +182,18 @@ def resetU():
 
 def getstate(r, keys, N):
     str_state=r.mget(keys)
-    #try:
-    astate = [max(float(str_state[0]),0)]
-    gidx = 1;
-    for i in range(1, N):
-        astate.append(max(float(str_state[gidx]),0) + max(float(str_state[gidx + 1]),0))
-        # if(float(str_state[gidx])<0 or float(str_state[gidx + 1])<0):
-        #     raise ValueError("Error! state < 0")
-        gidx += 3
-    # except:
-    #     print(time.asctime())
-    #     for i in range(len(keys)):
-    #         print(str_state[i],keys[i])
+    try:
+        astate = [float(str_state[0])]
+        gidx = 1;
+        for i in range(1, N):
+            astate.append(float(str_state[gidx]) + float(str_state[gidx + 1]))
+            if(float(str_state[gidx])<0 or float(str_state[gidx + 1])<0):
+                raise ValueError("Error! state < 0")
+            gidx += 3
+    except:
+        print(time.asctime())
+        for i in range(len(keys)):
+            print(str_state[i],keys[i])
     
     return astate
 
@@ -445,7 +445,8 @@ if __name__ == "__main__":
                 optU = optU_N * ctrl.stdu + ctrl.meanu
                 Sold = optU_N
                 
-                r.mset({"t1_hw":str(np.round(optU[1],4)),"t2_hw":str(np.round(optU[2],4))})
+                #r.mset({"t1_hw":str(np.round(optU[1],4)),"t2_hw":str(np.round(optU[2],4))})
+                r.mset({"t1_hw":str(1),"t2_hw":str(1)})
                 if(isCpu):
                     setU(optU)
                 # print(optU)
