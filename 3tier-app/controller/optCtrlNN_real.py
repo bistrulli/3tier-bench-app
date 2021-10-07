@@ -418,7 +418,7 @@ if __name__ == "__main__":
                     r=redis.Redis()
                     r.config_set("save", "")
                     
-                    redis_cnt=client.containers.get("monitor-cnt")
+                    #redis_cnt=client.containers.get("monitor-cnt")
                     tier1=client.containers.get("tier1-cnt")
                     tier2=client.containers.get("tier2-cnt")
                     
