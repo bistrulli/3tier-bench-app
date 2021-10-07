@@ -422,9 +422,9 @@ if __name__ == "__main__":
                     tier1=client.containers.get("tier1-cnt")
                     tier2=client.containers.get("tier2-cnt")
                     
-                    redis_cnt.update(cpuset_cpus="0-4")
-                    tier1.update(cpuset_cpus="5-31")
-                    tier2.update(cpuset_cpus="5-31")
+                    # redis_cnt.update(cpuset_cpus="0-4")
+                    # tier1.update(cpuset_cpus="5-31")
+                    # tier2.update(cpuset_cpus="5-31")
                     
                     if(isCpu):
                         resetU()
