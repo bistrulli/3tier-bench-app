@@ -117,7 +117,7 @@ def startDockerCmp():
     subprocess.Popen(["docker-compose","-f","../compose.yaml","up"])
 
 def killDockerCmp():
-    subprocess.call(["docker-compose","-f","../compose.yaml","kill"])
+    subprocess.call(["docker-compose","-f","../compose.yaml","stop","30"])
 
 def startClient(initPop):
     r=redis.Redis()
@@ -406,7 +406,7 @@ if __name__ == "__main__":
                         time.sleep(10)
                     
                         killDockerCmp()
-                        time.sleep(10)
+                        #time.sleep(10)
                         
                         pruneContainer()
                     
