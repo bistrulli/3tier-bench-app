@@ -446,7 +446,6 @@ if __name__ == "__main__":
                 Sold = optU_N
                 
                 r.mset({"t1_hw":str(np.round(optU[1],4)),"t2_hw":str(np.round(optU[2],4))})
-                #r.mset({"t1_hw":3.0,"t2_hw":3.0})
                 if(isCpu):
                     setU(optU)
                 # print(optU)
