@@ -428,7 +428,7 @@ if __name__ == "__main__":
                     
                     if(isCpu):
                         resetU()
-                    #r.mset({"t1_hw":np.sum(XSSIM[:, step]),"t2_hw":np.sum(XSSIM[:, step])})
+                    r.mset({"t1_hw":np.sum(XSSIM[:, step]),"t2_hw":np.sum(XSSIM[:, step])})
                     sys=startClient(np.sum(XSSIM[:, step]))
                     time.sleep(10)
                     
@@ -445,8 +445,8 @@ if __name__ == "__main__":
                 optU = optU_N * ctrl.stdu + ctrl.meanu
                 Sold = optU_N
                 
-                #r.mset({"t1_hw":str(np.round(optU[1],4)),"t2_hw":str(np.round(optU[2],4))})
-                r.mset({"t1_hw":3.0,"t2_hw":3.0})
+                r.mset({"t1_hw":str(np.round(optU[1],4)),"t2_hw":str(np.round(optU[2],4))})
+                #r.mset({"t1_hw":3.0,"t2_hw":3.0})
                 if(isCpu):
                     setU(optU)
                 # print(optU)
