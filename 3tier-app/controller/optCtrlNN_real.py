@@ -186,7 +186,7 @@ def getstate(r, keys, N):
     astate = [max(float(str_state[0]),0)]
     gidx = 1;
     for i in range(1, N):
-        astate.append(max(float(str_state[gidx]),0) + max(0,float(str_state[gidx + 1]),0))
+        astate.append(max(float(str_state[gidx]),0) + max(float(str_state[gidx + 1]),0))
         # if(float(str_state[gidx])<0 or float(str_state[gidx + 1])<0):
         #     raise ValueError("Error! state < 0")
         gidx += 3
