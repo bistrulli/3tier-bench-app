@@ -19,11 +19,9 @@ public class Tier2HTTPHandler extends TierHttpHandler {
 		super(lqntask, req, stime);
 	}
 
-	public void handleResponse(HttpExchange req, String requestParamValue) throws InterruptedException {
-		//this.getLqntask().getLogger().debug("tier2 acquierd");
+	public void handleResponse(HttpExchange req, String requestParamValue) throws InterruptedException, IOException {
+		// this.getLqntask().getLogger().debug("tier2 acquierd");
 		this.measureIngress();
-
-		Jedis jedis = this.getLqntask().getJedisPool().getResource();
 
 		Jinjava jinjava = new Jinjava();
 		Map<String, Object> context = Maps.newHashMap();
@@ -33,38 +31,32 @@ public class Tier2HTTPHandler extends TierHttpHandler {
 		String renderedTemplate = jinjava.render(this.getWebPageTpl(), context);
 
 		if (!this.getLqntask().isEmulated()) {
-			jedis.close();
 			this.doWorkCPU();
 		} else {
 			// get all entry currentyly executing on this task
 			Float executing = 0f;
 			String[] entries = this.getLqntask().getEntries().keySet().toArray(new String[0]);
 			for (String e : entries) {
-				String n = jedis.get(e + "_ex");
+				String n = this.getJedis().get(e + "_ex");
 				if (n != null) {
 					executing += Float.valueOf(n);
 				}
 			}
-			jedis.close();
 			this.doWorkSleep(executing);
 		}
 
-		try {
-			req.getResponseHeaders().set("Content-Type", "text/html; charset=UTF-8");
-			req.getResponseHeaders().set("Cache-Control", "no-store, no-cache, max-age=0, must-revalidate");
-			OutputStream outputStream = req.getResponseBody();
-			req.sendResponseHeaders(200, renderedTemplate.length());
-			outputStream.write(renderedTemplate.getBytes());
-			outputStream.flush();
-			outputStream.close();
-			outputStream = null;
-		} catch (IOException e) {
-			//e.printStackTrace();
-		}finally {
-			this.measureEgress();
-		}
+		this.measureEgress();
+
+		req.getResponseHeaders().set("Content-Type", "text/html; charset=UTF-8");
+		req.getResponseHeaders().set("Cache-Control", "no-store, no-cache, max-age=0, must-revalidate");
+		OutputStream outputStream = req.getResponseBody();
+		req.sendResponseHeaders(200, renderedTemplate.length());
+		outputStream.write(renderedTemplate.getBytes());
+		outputStream.flush();
+		outputStream.close();
+		outputStream = null;
 	}
-	
+
 	@Override
 	public String getWebPageName() {
 		return "tier2.html";
