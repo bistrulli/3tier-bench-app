@@ -190,6 +190,7 @@ def getstate(r, keys, N):
                 raise ValueError("Error! state < 0")
             gidx += 3
     except:
+        print(time.asctime())
         for i in range(len(keys)):
             print(str_state[i],keys[i])
     
