@@ -14,6 +14,7 @@ import Server.SimpleTask;
 import gnu.getopt.Getopt;
 import gnu.getopt.LongOpt;
 import net.spy.memcached.MemcachedClient;
+import net.spy.memcached.internal.OperationFuture;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Transaction;
 
@@ -33,16 +34,9 @@ public class main {
 		MemcachedClient memcachedClient=null;
 		try {
 			memcachedClient = new MemcachedClient(new InetSocketAddress(main.jedisHost, 11211));
+			memcachedClient.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
-		for (String e : main.systemQueues) {
-			System.out.println(e);
-			if (e.equals("think")) {
-				memcachedClient.set(e,200,String.valueOf(main.initPop));
-			} else {
-				memcachedClient.set(e,200,String.valueOf(0));
-			}
 		}
 		memcachedClient.shutdown();
 	}
