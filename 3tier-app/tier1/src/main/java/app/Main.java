@@ -36,6 +36,8 @@ public class Main {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		memcachedClient.set(task.getName()+"_sw", 3600,"1").get();
+		memcachedClient.set(task.getName()+"_hw", 3600,"1").get();
 		String[] entries = task.getEntries().keySet().toArray(new String[0]);
 		for (String e : entries) {
 			memcachedClient.set(e + "_bl",Integer.MAX_VALUE, "0").get();
