@@ -1,15 +1,14 @@
 package app;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpClient.Version;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
-import java.time.Duration;
 import java.util.UUID;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -17,7 +16,7 @@ import org.apache.commons.math3.distribution.AbstractRealDistribution;
 import org.apache.commons.math3.distribution.ExponentialDistribution;
 
 import Server.SimpleTask;
-import redis.clients.jedis.Jedis;
+import net.spy.memcached.MemcachedClient;
 
 public class Client implements Runnable {
 
@@ -35,35 +34,46 @@ public class Client implements Runnable {
 	}
 
 	public void run() {
-		Jedis jedis = this.task.getJedisPool().getResource();
+		//Jedis jedis = this.task.getJedisPool().getResource();
+		MemcachedClient memcachedClient=null;
+		try {
+			memcachedClient = new MemcachedClient(new InetSocketAddress(this.task.getJedisHost(), 11211));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		try {
 			HttpClient client = null;
 			HttpRequest request = null;
 			client = HttpClient.newBuilder().version(Version.HTTP_1_1).build();
+//			request = HttpRequest.newBuilder()
+//					.uri(URI.create("http://tier1:3000/?id=" + this.clietId.toString() + "&entry=e1" + "&snd=think"))
+//					.build();
+			
 			request = HttpRequest.newBuilder()
-					.uri(URI.create("http://tier1:3000/?id=" + this.clietId.toString() + "&entry=e1" + "&snd=think"))
+					.uri(URI.create("http://www.google.com"))
 					.build();
 			
-			String s=null;
-			
-			while ( jedis.get("stop")==null || !jedis.get("stop").equals("1")) {
+			while ( memcachedClient.get("stop")==null || !String.valueOf(memcachedClient.get("stop")).equals("1")) {
 				
-				SimpleTask.getLogger().debug(String.format("stop=%s", s));
+				SimpleTask.getLogger().debug(String.format("stop=%s", String.valueOf(memcachedClient.get("stop"))));
 				TimeUnit.MILLISECONDS.sleep(Double.valueOf(this.dist.sample()).longValue());
 
 				SimpleTask.getLogger().debug(String.format("%s sending", this.task.getName()));
 				HttpResponse<String> resp = client.send(request, BodyHandlers.ofString());
 				
-				jedis.incr("think");
+				long thinking = memcachedClient.incr("think",1);
+				
+				SimpleTask.getLogger().debug(String.format("%d thinking", thinking));
 			}
 			SimpleTask.getLogger().debug(String.format(" user %s stopped", this.clietId));
-			jedis.close();
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		} catch (InterruptedException e2) {
 			e2.printStackTrace();
 		} catch (Exception e) {
 			e.printStackTrace();
+		}finally {
+			memcachedClient.shutdown();
 		}
 	}
 

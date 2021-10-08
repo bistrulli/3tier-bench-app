@@ -1,5 +1,7 @@
 package app;
 
+import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -11,6 +13,7 @@ import com.google.gson.Gson;
 import Server.SimpleTask;
 import gnu.getopt.Getopt;
 import gnu.getopt.LongOpt;
+import net.spy.memcached.MemcachedClient;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Transaction;
 
@@ -27,18 +30,20 @@ public class main {
 	}
 
 	public static void resetState(SimpleTask task) {
-		Jedis jedis = new Jedis(main.jedisHost);
-		Transaction t = jedis.multi();
+		MemcachedClient memcachedClient=null;
+		try {
+			memcachedClient = new MemcachedClient(new InetSocketAddress(main.jedisHost, 11211));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		for (String e : main.systemQueues) {
 			if (e.equals("think")) {
-				t.set(e, String.valueOf(main.initPop));
+				memcachedClient.add(e,Integer.MAX_VALUE,String.valueOf(main.initPop));
 			} else {
-				t.set(e, "0");
+				memcachedClient.add(e,Integer.MAX_VALUE,String.valueOf(0));
 			}
 		}
-		t.exec();
-		t.close();
-		jedis.close();
+		memcachedClient.shutdown();
 	}
 
 	public static SimpleTask[] genSystem() {

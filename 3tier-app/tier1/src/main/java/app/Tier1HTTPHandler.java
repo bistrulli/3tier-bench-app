@@ -57,7 +57,8 @@ public class Tier1HTTPHandler extends TierHttpHandler {
 			Float executing = 0f;
 			String[] entries = this.getLqntask().getEntries().keySet().toArray(new String[0]);
 			for (String e : entries) {
-				String n = this.getJedis().get(e + "_ex");
+				//String n = this.getJedis().get(e + "_ex");
+				String n = String.valueOf(this.getMemcachedClient().get(e + "_ex"));
 				if (n != null) {
 					executing += Float.valueOf(n);
 				}
