@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.google.common.net.InetAddresses;
 import com.google.common.net.InternetDomainName;
@@ -15,9 +13,6 @@ import Server.SimpleTask;
 import gnu.getopt.Getopt;
 import gnu.getopt.LongOpt;
 import net.spy.memcached.MemcachedClient;
-import net.spy.memcached.internal.OperationFuture;
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.Transaction;
 
 public class Main {
 	private static Integer initPop = -1;
@@ -44,7 +39,11 @@ public class Main {
 				if (e.equals("think")) {
 					memcachedClient.set("think", 3600, String.valueOf(Main.initPop)).get();
 				} else {
-					memcachedClient.set(e, 3600, "0").get();
+					if(e.endsWith("_sw") || e.endsWith("_hw")) {
+						memcachedClient.set(e, 3600, "1").get();
+					}else {
+						memcachedClient.set(e, 3600, "0").get();
+					}
 				}
 			}
 		} catch (InterruptedException | ExecutionException e1) {
