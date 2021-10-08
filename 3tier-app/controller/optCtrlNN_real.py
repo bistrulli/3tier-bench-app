@@ -167,8 +167,10 @@ def setU(optS):
 
 
 def resetU():
-    pass
-    r=redis.Redis()
+    r=Client("localhost:11211")
+    r.set("stop","0")
+    r.close()
+    
     r.mset({"t1_hw":1,"t2_hw":1})
     r.close()
     #global tier1, tier2
@@ -426,8 +428,8 @@ if __name__ == "__main__":
                     # tier1.update(cpuset_cpus="5-31")
                     # tier2.update(cpuset_cpus="5-31")
                     
-                    if(isCpu):
-                        resetU()
+                    # if(isCpu):
+                    #     resetU()
                     #r.mset({"t1_hw":np.sum(XSSIM[:, step]),"t2_hw":np.sum(XSSIM[:, step])})
                     sys=startClient(np.sum(XSSIM[:, step]))
                     time.sleep(10)
