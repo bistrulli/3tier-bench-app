@@ -3,6 +3,7 @@ package app;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.HashMap;
+import java.util.concurrent.ExecutionException;
 
 import com.google.common.net.InetAddresses;
 import com.google.common.net.InternetDomainName;
@@ -20,11 +21,15 @@ public class Main {
 	public static void main(String[] args) {
 		Main.getCliOptions(args);
 		SimpleTask[] Sys = Main.genSystem();
-		Main.resetState(Sys[0]);
+		try {
+			Main.resetState(Sys[0]);
+		} catch (InterruptedException | ExecutionException e) {
+			e.printStackTrace();
+		}
 		Sys[0].start();
 	}
 
-	public static void resetState(SimpleTask task) {
+	public static void resetState(SimpleTask task) throws InterruptedException, ExecutionException {
 		MemcachedClient memcachedClient=null;
 		try {
 			memcachedClient = new MemcachedClient(new InetSocketAddress(Main.jedisHost, 11211));
@@ -33,8 +38,8 @@ public class Main {
 		}
 		String[] entries = task.getEntries().keySet().toArray(new String[0]);
 		for (String e : entries) {
-			memcachedClient.set(e + "_bl",Integer.MAX_VALUE, "0");
-			memcachedClient.set(e + "_ex",Integer.MAX_VALUE,"0");
+			memcachedClient.set(e + "_bl",Integer.MAX_VALUE, "0").get();
+			memcachedClient.set(e + "_ex",Integer.MAX_VALUE,"0").get();
 		}
 		memcachedClient.shutdown();
 	}

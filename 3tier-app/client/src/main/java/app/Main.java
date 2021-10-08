@@ -35,8 +35,7 @@ public class Main {
 		MemcachedClient memcachedClient = null;
 		try {
 			memcachedClient = new MemcachedClient(new InetSocketAddress(Main.jedisHost, 11211));
-			memcachedClient.flush().get();
-		} catch (IOException | InterruptedException | ExecutionException e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		try {

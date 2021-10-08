@@ -40,18 +40,13 @@ public class Client implements Runnable {
 		}
 	}
 
-	public void run() {
-		//Jedis jedis = this.task.getJedisPool().getResource();		
+	public void run() {		
 		try {
 			HttpClient client = null;
 			HttpRequest request = null;
 			client = HttpClient.newBuilder().version(Version.HTTP_1_1).build();
-//			request = HttpRequest.newBuilder()
-//					.uri(URI.create("http://tier1:3000/?id=" + this.clietId.toString() + "&entry=e1" + "&snd=think"))
-//					.build();
-			
 			request = HttpRequest.newBuilder()
-					.uri(URI.create("http://www.google.com"))
+					.uri(URI.create("http://tier1:3000/?id=" + this.clietId.toString() + "&entry=e1" + "&snd=think"))
 					.build();
 			
 			while ( this.memcachedClient.get("stop")==null || !String.valueOf(this.memcachedClient.get("stop")).equals("1")) {
