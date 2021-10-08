@@ -11,12 +11,12 @@ import os
 import scipy.io
 from tqdm import tqdm
 import casadi
-import redis
 import subprocess
 import signal
 from cgroupspy import trees
 import docker
 from pathlib import Path
+from pymemcache.client.base import Client
 
 
 client = docker.from_env()
@@ -39,7 +39,7 @@ def killSys():
     # subprocess.call(["sudo", "pkill", "-9", "-f", "client-0.0.1-SNAPSHOT"])
     # subprocess.call(["sudo", "pkill", "-9", "-f", "tier1-0.0.1-SNAPSHOT"])
     # subprocess.call(["sudo", "pkill", "-9", "-f", "tier2-0.0.1-SNAPSHOT"])
-    r=redis.Redis()
+    r=Client('localhost')
     r.set("stop","1");
     r.close()
 
@@ -115,16 +115,16 @@ def restartDockerCmp():
     subprocess.Popen(["docker-compose","-f","../compose.yaml","restart"])
 
 def startDockerCmp():
-    subprocess.Popen(["docker-compose","-f","../compose.yaml","up"])
+    subprocess.Popen(["docker-compose","-f","../compose.yaml","up"],stdout=subprocess.DEVNULL)
 
 def killDockerCmp():
     subprocess.call(["docker-compose","-f","../compose.yaml","stop","-t","30"])
 
 def startClient(initPop):
-    r=redis.Redis()
+    r=Client("localhost:11211")
     r.set("stop","0")
     r.close()
-    return client.containers.run(image="bistrulli/client:0.3",
+    return client.containers.run(image="bistrulli/client:0.6",
                           command="java -Xmx4G -jar client-0.0.1-SNAPSHOT-jar-with-dependencies.jar --initPop %d --queues \
                                   '[\"think\", \"e1_bl\", \"e1_ex\", \"t1_hw\", \"e2_bl\", \"e2_ex\", \"t2_hw\"]' \
                                    --jedisHost 172.17.0.1"%(initPop),
@@ -181,7 +181,7 @@ def resetU():
 
 
 def getstate(r, keys, N):
-    str_state=r.mget(keys)
+    str_state=[r.get(keys[i]) for i in range(len(keys))]
     try:
         astate = [float(str_state[0])]
         gidx = 1;
@@ -377,9 +377,10 @@ if __name__ == "__main__":
     tgtStory = [0]
     # init_cstr=["X%d_0" % (i) for i in range(P.shape[0])];
     cp = -1
-    r=redis.Redis()
     
     Ie = None
+    
+    r=None
     
     try:
             for step in tqdm(range(XSSIM.shape[1] - 1)):
@@ -415,7 +416,7 @@ if __name__ == "__main__":
                     startDockerCmp()
                     time.sleep(12)
                     
-                    #r.config_set("save", "")
+                    r=Client("localhost:11211")
                     
                     #redis_cnt=client.containers.get("monitor-cnt")
                     tier1=client.containers.get("tier1-cnt")
@@ -427,7 +428,7 @@ if __name__ == "__main__":
                     
                     if(isCpu):
                         resetU()
-                    r.mset({"t1_hw":np.sum(XSSIM[:, step]),"t2_hw":np.sum(XSSIM[:, step])})
+                    #r.mset({"t1_hw":np.sum(XSSIM[:, step]),"t2_hw":np.sum(XSSIM[:, step])})
                     sys=startClient(np.sum(XSSIM[:, step]))
                     time.sleep(10)
                     
@@ -444,7 +445,9 @@ if __name__ == "__main__":
                 optU = optU_N * ctrl.stdu + ctrl.meanu
                 Sold = optU_N
                 
-                r.mset({"t1_hw":str(np.round(optU[1],4)),"t2_hw":str(np.round(optU[2],4))})
+                r.set("t1_hw",str(np.round(optU[1],4)))
+                r.set("t2_hw",str(np.round(optU[2],4)))
+                #r.mset({"t1_hw":str(np.round(optU[1],4)),"t2_hw":str(np.round(optU[2],4))})
                 if(isCpu):
                     setU(optU)
                 # print(optU)
