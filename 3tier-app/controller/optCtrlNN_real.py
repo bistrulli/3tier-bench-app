@@ -438,8 +438,8 @@ if __name__ == "__main__":
                     time.sleep(10)
                     
                     if(step>0):
-                        r.set("t1_hw",optSNN[1, step])
-                        r.set("t2_hw",optSNN[2, step])
+                        r.set("t1_hw",optSNN[1, step-1])
+                        r.set("t2_hw",optSNN[2, step-1])
                     
                 
                 XSSIM[:, step] = getstate(r, keys, N)
