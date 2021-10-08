@@ -18,30 +18,30 @@ import net.spy.memcached.internal.OperationFuture;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Transaction;
 
-public class main {
+public class Main {
 	private static Integer initPop = -1;
 	private static String jedisHost = null;
 	private static String[] systemQueues = null;
 
 	public static void main(String[] args) {
-		main.getCliOptions(args);
-		final SimpleTask[] Sys = main.genSystem();
-		main.resetState(Sys[0]);
+		Main.getCliOptions(args);
+		final SimpleTask[] Sys = Main.genSystem();
+		Main.resetState(Sys[0]);
 		Sys[0].start();
 	}
 
 	public static void resetState(SimpleTask task) {
 		MemcachedClient memcachedClient=null;
 		try {
-			memcachedClient = new MemcachedClient(new InetSocketAddress(main.jedisHost, 11211));
+			memcachedClient = new MemcachedClient(new InetSocketAddress(Main.jedisHost, 11211));
 			memcachedClient.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		for (String e : main.systemQueues) {
+		for (String e : Main.systemQueues) {
 			System.out.println(e);
 			if (e.equals("think")) {
-				memcachedClient.set("think", 3600, String.valueOf(main.initPop));
+				memcachedClient.set("think", 3600, String.valueOf(Main.initPop));
 			} else {
 				memcachedClient.set(e,3600,"0");
 			}
@@ -54,8 +54,8 @@ public class main {
 		HashMap<String, Long> clientEntries_stimes = new HashMap<String, Long>();
 		clientEntries.put("think", Client.class);
 		clientEntries_stimes.put("think", 1000l);
-		final SimpleTask client = new SimpleTask(clientEntries, clientEntries_stimes, main.initPop, "Client",
-				main.jedisHost);
+		final SimpleTask client = new SimpleTask(clientEntries, clientEntries_stimes, Main.initPop, "Client",
+				Main.jedisHost);
 		return new SimpleTask[] { client };
 	}
 
@@ -76,17 +76,17 @@ public class main {
 			switch (c) {
 			case 0:
 				try {
-					main.initPop = Integer.valueOf(g.getOptarg());
+					Main.initPop = Integer.valueOf(g.getOptarg());
 				} catch (NumberFormatException e) {
 					System.err.println(String.format("%s is not valid, it must be 0 or 1.", g.getOptarg()));
 				}
 				break;
 			case 1:
 				try {
-					if (!main.validate(g.getOptarg())) {
+					if (!Main.validate(g.getOptarg())) {
 						throw new Exception(String.format("%s is not a valid jedis URL", g.getOptarg()));
 					}
-					main.jedisHost = String.valueOf(g.getOptarg());
+					Main.jedisHost = String.valueOf(g.getOptarg());
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -95,7 +95,7 @@ public class main {
 				try {
 					// Deserialization
 					Gson gson = new Gson();
-					main.systemQueues = gson.fromJson(String.valueOf(g.getOptarg()), String[].class);
+					Main.systemQueues = gson.fromJson(String.valueOf(g.getOptarg()), String[].class);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

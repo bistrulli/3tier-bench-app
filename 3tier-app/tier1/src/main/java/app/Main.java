@@ -12,22 +12,22 @@ import gnu.getopt.Getopt;
 import gnu.getopt.LongOpt;
 import net.spy.memcached.MemcachedClient;
 
-public class main {
+public class Main {
 
 	private static Boolean isEmu = false;
 	private static String jedisHost = null;
 
 	public static void main(String[] args) {
-		main.getCliOptions(args);
-		SimpleTask[] Sys = main.genSystem();
-		main.resetState(Sys[0]);
+		Main.getCliOptions(args);
+		SimpleTask[] Sys = Main.genSystem();
+		Main.resetState(Sys[0]);
 		Sys[0].start();
 	}
 
 	public static void resetState(SimpleTask task) {
 		MemcachedClient memcachedClient=null;
 		try {
-			memcachedClient = new MemcachedClient(new InetSocketAddress(main.jedisHost, 11211));
+			memcachedClient = new MemcachedClient(new InetSocketAddress(Main.jedisHost, 11211));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -45,8 +45,8 @@ public class main {
 		HashMap<String, Long> t1Entries_stimes = new HashMap<String, Long>();
 		t1Entries.put("e1", Tier1HTTPHandler.class);
 		t1Entries_stimes.put("e1", 100l);
-		final SimpleTask t1 = new SimpleTask("localhost", 3000, t1Entries, t1Entries_stimes, 1, main.isEmu, "t1",
-				main.jedisHost);
+		final SimpleTask t1 = new SimpleTask("localhost", 3000, t1Entries, t1Entries_stimes, 1, Main.isEmu, "t1",
+				Main.jedisHost);
 		t1.setHwCore(1f);
 		return new SimpleTask[] { t1 };
 	}
@@ -69,17 +69,17 @@ public class main {
 			switch (c) {
 			case 0:
 				try {
-					main.isEmu = Integer.valueOf(g.getOptarg()) > 0 ? true : false;
+					Main.isEmu = Integer.valueOf(g.getOptarg()) > 0 ? true : false;
 				} catch (NumberFormatException e) {
 					System.err.println(String.format("%s is not valid, it must be 0 or 1.", g.getOptarg()));
 				}
 				break;
 			case 1:
 				try {
-					if (!main.validate(g.getOptarg())) {
+					if (!Main.validate(g.getOptarg())) {
 						throw new Exception(String.format("%s is not a valid jedis HOST", g.getOptarg()));
 					}
-					main.jedisHost = String.valueOf(g.getOptarg());
+					Main.jedisHost = String.valueOf(g.getOptarg());
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

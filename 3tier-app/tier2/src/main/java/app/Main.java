@@ -14,22 +14,22 @@ import net.spy.memcached.MemcachedClient;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Transaction;
 
-public class main {
+public class Main {
 
 	private static Boolean isEmu = false;
 	private static String jedisHost = null;
 
 	public static void main(String[] args) {
-		main.getCliOptions(args);
-		SimpleTask[] Sys = main.genSystem();
-		main.resetState(Sys[0]);
+		Main.getCliOptions(args);
+		SimpleTask[] Sys = Main.genSystem();
+		Main.resetState(Sys[0]);
 		Sys[0].start();
 	}
 
 	public static void resetState(SimpleTask task) {
 		MemcachedClient memcachedClient=null;
 		try {
-			memcachedClient = new MemcachedClient(new InetSocketAddress(main.jedisHost, 11211));
+			memcachedClient = new MemcachedClient(new InetSocketAddress(Main.jedisHost, 11211));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -47,8 +47,8 @@ public class main {
 		HashMap<String, Long> t2Entries_stimes = new HashMap<String, Long>();
 		t2Entries.put("e2", Tier2HTTPHandler.class);
 		t2Entries_stimes.put("e2", 100l);
-		final SimpleTask t2 = new SimpleTask("localhost", 3001, t2Entries, t2Entries_stimes, 1, main.isEmu, "t2",
-				main.jedisHost);
+		final SimpleTask t2 = new SimpleTask("localhost", 3001, t2Entries, t2Entries_stimes, 1, Main.isEmu, "t2",
+				Main.jedisHost);
 		t2.setHwCore(1f);
 		return new SimpleTask[] { t2 };
 	}
@@ -71,17 +71,17 @@ public class main {
 			switch (c) {
 			case 0:
 				try {
-					main.isEmu = Integer.valueOf(g.getOptarg()) > 0 ? true : false;
+					Main.isEmu = Integer.valueOf(g.getOptarg()) > 0 ? true : false;
 				} catch (NumberFormatException e) {
 					System.err.println(String.format("%s is not valid, it must be 0 or 1.", g.getOptarg()));
 				}
 				break;
 			case 1:
 				try {
-					if (!main.validate(g.getOptarg())) {
+					if (!Main.validate(g.getOptarg())) {
 						throw new Exception(String.format("%s is not a valid jedis URL", g.getOptarg()));
 					}
-					main.jedisHost = String.valueOf(g.getOptarg());
+					Main.jedisHost = String.valueOf(g.getOptarg());
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
