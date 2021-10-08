@@ -26,21 +26,22 @@ public class Client implements Runnable {
 	public static AtomicInteger nrq = new AtomicInteger(0);
 	private UUID clietId = null;
 	public static AtomicInteger time = new AtomicInteger(0);
+	private MemcachedClient memcachedClient=null;
+	
 
 	public Client(SimpleTask task, Long ttime) {
 		this.setThinkTime(ttime);
 		this.task = task;
 		this.clietId = UUID.randomUUID();
-	}
-
-	public void run() {
-		//Jedis jedis = this.task.getJedisPool().getResource();
-		MemcachedClient memcachedClient=null;
 		try {
-			memcachedClient = new MemcachedClient(new InetSocketAddress(this.task.getJedisHost(), 11211));
+			this.memcachedClient = new MemcachedClient(new InetSocketAddress(this.task.getJedisHost(), 11211));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public void run() {
+		//Jedis jedis = this.task.getJedisPool().getResource();		
 		try {
 			HttpClient client = null;
 			HttpRequest request = null;
@@ -53,7 +54,7 @@ public class Client implements Runnable {
 					.uri(URI.create("http://www.google.com"))
 					.build();
 			
-			while ( memcachedClient.get("stop")==null || !String.valueOf(memcachedClient.get("stop")).equals("1")) {
+			while ( this.memcachedClient.get("stop")==null || !String.valueOf(this.memcachedClient.get("stop")).equals("1")) {
 				
 				SimpleTask.getLogger().debug(String.format("stop=%s", String.valueOf(memcachedClient.get("stop"))));
 				TimeUnit.MILLISECONDS.sleep(Double.valueOf(this.dist.sample()).longValue());
@@ -61,7 +62,7 @@ public class Client implements Runnable {
 				SimpleTask.getLogger().debug(String.format("%s sending", this.task.getName()));
 				HttpResponse<String> resp = client.send(request, BodyHandlers.ofString());
 				
-				long thinking = memcachedClient.incr("think",1);
+				long thinking = this.memcachedClient.incr("think",1);
 				
 				SimpleTask.getLogger().debug(String.format("%d thinking", thinking));
 			}
@@ -73,7 +74,7 @@ public class Client implements Runnable {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}finally {
-			memcachedClient.shutdown();
+			this.memcachedClient.shutdown();
 		}
 	}
 
