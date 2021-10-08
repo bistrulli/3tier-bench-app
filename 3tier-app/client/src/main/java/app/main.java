@@ -39,9 +39,9 @@ public class main {
 		for (String e : main.systemQueues) {
 			System.out.println(e);
 			if (e.equals("think")) {
-				memcachedClient.add(e,200,String.valueOf(main.initPop));
+				memcachedClient.set(e,200,String.valueOf(main.initPop));
 			} else {
-				memcachedClient.add(e,200,String.valueOf(0));
+				memcachedClient.set(e,200,String.valueOf(0));
 			}
 		}
 		memcachedClient.shutdown();
