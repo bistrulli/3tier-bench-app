@@ -3,7 +3,6 @@ package app;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.HashMap;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -35,14 +34,17 @@ public class main {
 		MemcachedClient memcachedClient=null;
 		try {
 			memcachedClient = new MemcachedClient(new InetSocketAddress(main.jedisHost, 11211));
-			try {
-				memcachedClient.flush().get();
-			} catch (InterruptedException | ExecutionException e) {
-				e.printStackTrace();
-			}
-			System.out.println();
+			memcachedClient.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
+		for (String e : main.systemQueues) {
+			System.out.println(e);
+			if (e.equals("think")) {
+				memcachedClient.set("think", 3600, String.valueOf(main.initPop));
+			} else {
+				memcachedClient.set(e,3600,"0");
+			}
 		}
 		memcachedClient.shutdown();
 	}
