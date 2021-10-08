@@ -350,7 +350,7 @@ if __name__ == "__main__":
     dt = 10 ** (-1)
     H = 5
     N = 3
-    rep = 20
+    rep = 2
     sTime = 500
     TF = sTime * rep * dt;
     Time = np.linspace(0, TF, int(np.ceil(TF / dt)) + 1)
@@ -406,17 +406,20 @@ if __name__ == "__main__":
                     ek = 0
                     Ie = 0
                     
+                    if(step == 0):
+                        startDockerCmp()
+                        time.sleep(12)
+                    
                     if(r is not None):
                         killSys()
                         time.sleep(10)
                     
-                        killDockerCmp()
+                        #killDockerCmp()
                         #time.sleep(10)
                         
-                        pruneContainer()
+                       # pruneContainer()
                     
-                    startDockerCmp()
-                    time.sleep(12)
+                    
                     
                     r=Client("localhost:11211")
                     
@@ -433,6 +436,10 @@ if __name__ == "__main__":
                     #r.mset({"t1_hw":np.sum(XSSIM[:, step]),"t2_hw":np.sum(XSSIM[:, step])})
                     sys=startClient(np.sum(XSSIM[:, step]))
                     time.sleep(10)
+                    
+                    if(step>0):
+                        r.set("t1_hw",optSNN[1, step])
+                        r.set("t2_hw",optSNN[2, step])
                     
                 
                 XSSIM[:, step] = getstate(r, keys, N)
