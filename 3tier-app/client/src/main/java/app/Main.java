@@ -32,27 +32,24 @@ public class Main {
 	}
 
 	public static void resetState(SimpleTask task) {
-		MemcachedClient memcachedClient=null;
+		MemcachedClient memcachedClient = null;
 		try {
 			memcachedClient = new MemcachedClient(new InetSocketAddress(Main.jedisHost, 11211));
-			memcachedClient.flush();
-		} catch (IOException e) {
+			memcachedClient.flush().get();
+		} catch (IOException | InterruptedException | ExecutionException e) {
 			e.printStackTrace();
 		}
-		for (String e : Main.systemQueues) {
-			System.out.println(e);
-			if (e.equals("think")) {
-				Boolean r;
-				try {
-					r = memcachedClient.set("think", 3600, String.valueOf(Main.initPop)).get();
-					System.out.println("porco dio lo hai scrito? "+r);
-				} catch (InterruptedException | ExecutionException e1) {
-					e1.printStackTrace();
+		try {
+			for (String e : Main.systemQueues) {
+				System.out.println(e);
+				if (e.equals("think")) {
+					memcachedClient.set("think", 3600, String.valueOf(Main.initPop)).get();
+				} else {
+					memcachedClient.set(e, 3600, "0").get();
 				}
-				
-			} else {
-				memcachedClient.set(e,3600,"0");
 			}
+		} catch (InterruptedException | ExecutionException e1) {
+			e1.printStackTrace();
 		}
 		memcachedClient.shutdown();
 	}
