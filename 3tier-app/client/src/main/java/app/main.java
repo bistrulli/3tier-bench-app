@@ -37,10 +37,11 @@ public class main {
 			e.printStackTrace();
 		}
 		for (String e : main.systemQueues) {
+			System.out.println(e);
 			if (e.equals("think")) {
-				memcachedClient.add(e,Integer.MAX_VALUE,String.valueOf(main.initPop));
+				memcachedClient.add(e,200,String.valueOf(main.initPop));
 			} else {
-				memcachedClient.add(e,Integer.MAX_VALUE,String.valueOf(0));
+				memcachedClient.add(e,200,String.valueOf(0));
 			}
 		}
 		memcachedClient.shutdown();
