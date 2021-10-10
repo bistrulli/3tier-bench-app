@@ -389,11 +389,11 @@ if __name__ == "__main__":
                 # compute ODE
                 if step == 0 or step % sTime == 0: 
                     Sold = None       
-                    alfa.append(genAfa())
-                    #alfa.append(0.5)
+                    #alfa.append(genAfa())
+                    alfa.append(1.0)
                     #XSSIM[:, step] = [np.random.randint(low=10, high=100), 0, 0]
                     #XSSIM[:, step] = getstate(r, keys, N)
-                    XSSIM[:, step] = [1, 0, 0]
+                    XSSIM[:, step] = [90, 0, 0]
                     print(alfa[-1], XSSIM[:, step])
                     # print(XSSIM[:, step])
                     XSSIM2[:, step] = XSSIM[:, step]
@@ -451,7 +451,6 @@ if __name__ == "__main__":
                 ftime = time.time() - stime
                 
                 optU = optU_N * ctrl.stdu + ctrl.meanu
-                optU= [10,10,10]
                 Sold = optU_N
                 
                 r.set("t1_hw",str(np.round(optU[1],4)))
@@ -523,7 +522,6 @@ if __name__ == "__main__":
             plt.savefig("./figure/evstgt.png")
             
             print(np.array(e) * 100)
-            print(xsim_cavg[-1])   
             # print(np.array(e2)*100)
             # print(np.array(e3)*100)
             # print(sIdx)
@@ -561,8 +559,8 @@ if __name__ == "__main__":
             # plt.plot(optSPID[1:,:].T)
             
             print(np.mean(optSPID[1:,:], axis=1))
-            #print(np.mean(optSMD[1:,:], axis=1))
-            #print(np.mean(optSNN[1:,:], axis=1))   
+            print(np.mean(optSMD[1:,:], axis=1))
+            print(np.mean(optSNN[1:,:], axis=1))         
     
             plt.show()
     
