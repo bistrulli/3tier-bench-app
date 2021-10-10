@@ -350,7 +350,7 @@ if __name__ == "__main__":
     dt = 10 ** (-1)
     H = 5
     N = 3
-    rep = 20
+    rep = 1
     sTime = 500
     TF = sTime * rep * dt;
     Time = np.linspace(0, TF, int(np.ceil(TF / dt)) + 1)
@@ -391,9 +391,9 @@ if __name__ == "__main__":
                     Sold = None       
                     alfa.append(genAfa())
                     #alfa.append(0.5)
-                    XSSIM[:, step] = [np.random.randint(low=10, high=100), 0, 0]
+                    #XSSIM[:, step] = [np.random.randint(low=10, high=100), 0, 0]
                     #XSSIM[:, step] = getstate(r, keys, N)
-                    # XSSIM[:, step] = [90, 0, 0]
+                    XSSIM[:, step] = [1, 0, 0]
                     print(alfa[-1], XSSIM[:, step])
                     # print(XSSIM[:, step])
                     XSSIM2[:, step] = XSSIM[:, step]
@@ -453,8 +453,8 @@ if __name__ == "__main__":
                 optU = optU_N * ctrl.stdu + ctrl.meanu
                 Sold = optU_N
                 
-                r.set("t1_hw",str(np.round(optU[1],4)))
-                r.set("t2_hw",str(np.round(optU[2],4)))
+                r.set("t1_hw",10)
+                r.set("t2_hw",10)
                 #r.mset({"t1_hw":str(np.round(optU[1],4)),"t2_hw":str(np.round(optU[2],4))})
                 if(isCpu):
                     setU(optU)
