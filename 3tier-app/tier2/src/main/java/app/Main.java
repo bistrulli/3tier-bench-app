@@ -21,6 +21,7 @@ public class Main {
 	private static String jedisHost = null;
 
 	public static void main(String[] args) {
+		System.setProperty("net.spy.log.LoggerImpl", "net.spy.memcached.compat.log.SLF4JLogger");
 		Main.getCliOptions(args);
 		SimpleTask[] Sys = Main.genSystem();
 		try {

@@ -20,6 +20,9 @@ public class Main {
 	private static String[] systemQueues = null;
 
 	public static void main(String[] args) {
+		
+		System.setProperty("net.spy.log.LoggerImpl", "net.spy.memcached.compat.log.SLF4JLogger");
+		
 		Main.getCliOptions(args);
 		final SimpleTask[] Sys = Main.genSystem();
 		Main.resetState(Sys[0]);
@@ -35,7 +38,6 @@ public class Main {
 		}
 		try {
 			for (String e : Main.systemQueues) {
-				System.out.println(e);
 				if (e.equals("think")) {
 					memcachedClient.set("think", 3600, String.valueOf(Main.initPop)).get();
 				} else {

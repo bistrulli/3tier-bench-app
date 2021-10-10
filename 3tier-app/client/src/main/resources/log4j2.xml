@@ -7,6 +7,9 @@
 		<Logger name="jinjava" level="ERROR">
       		<AppenderRef ref="Console" />
     	</Logger>
+    	<Logger name="net.spy" level="ERROR">
+      		<AppenderRef ref="Console" />
+    	</Logger>
 	</Loggers>
 	<Appenders>
 		<Console name="Console" target="SYSTEM_OUT">

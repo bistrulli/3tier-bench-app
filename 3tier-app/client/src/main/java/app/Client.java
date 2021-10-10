@@ -26,8 +26,7 @@ public class Client implements Runnable {
 	public static AtomicInteger nrq = new AtomicInteger(0);
 	private UUID clietId = null;
 	public static AtomicInteger time = new AtomicInteger(0);
-	private MemcachedClient memcachedClient=null;
-	
+	private MemcachedClient memcachedClient = null;
 
 	public Client(SimpleTask task, Long ttime) {
 		this.setThinkTime(ttime);
@@ -40,25 +39,28 @@ public class Client implements Runnable {
 		}
 	}
 
-	public void run() {		
+	public void run() {
 		try {
 			HttpClient client = null;
 			HttpRequest request = null;
 			client = HttpClient.newBuilder().version(Version.HTTP_1_1).build();
-			request = HttpRequest.newBuilder()
-					.uri(URI.create("http://tier1:3000/?id=" + this.clietId.toString() + "&entry=e1" + "&snd=think"))
-					.build();
-			
-			while ( this.memcachedClient.get("stop")==null || !String.valueOf(this.memcachedClient.get("stop")).equals("1")) {
-				
+//			request = HttpRequest.newBuilder()
+//					.uri(URI.create("http://tier1:3000/?id=" + this.clietId.toString() + "&entry=e1" + "&snd=think"))
+//					.build();
+
+			request = HttpRequest.newBuilder().uri(URI.create("http://www.google.com")).build();
+
+			while (this.memcachedClient.get("stop") == null
+					|| !String.valueOf(this.memcachedClient.get("stop")).equals("1")) {
+
 				SimpleTask.getLogger().debug(String.format("stop=%s", String.valueOf(memcachedClient.get("stop"))));
 				TimeUnit.MILLISECONDS.sleep(Double.valueOf(this.dist.sample()).longValue());
 
 				SimpleTask.getLogger().debug(String.format("%s sending", this.task.getName()));
 				HttpResponse<String> resp = client.send(request, BodyHandlers.ofString());
-				
-				long thinking = this.memcachedClient.incr("think",1);
-				
+
+				long thinking = this.memcachedClient.incr("think", 1);
+
 				SimpleTask.getLogger().debug(String.format("%d thinking", thinking));
 			}
 			SimpleTask.getLogger().debug(String.format(" user %s stopped", this.clietId));
@@ -68,7 +70,7 @@ public class Client implements Runnable {
 			e2.printStackTrace();
 		} catch (Exception e) {
 			e.printStackTrace();
-		}finally {
+		} finally {
 			this.memcachedClient.shutdown();
 		}
 	}
