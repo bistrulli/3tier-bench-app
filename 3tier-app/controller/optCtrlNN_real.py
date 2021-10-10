@@ -451,10 +451,11 @@ if __name__ == "__main__":
                 ftime = time.time() - stime
                 
                 optU = optU_N * ctrl.stdu + ctrl.meanu
+                optU= [10,10,10]
                 Sold = optU_N
                 
-                r.set("t1_hw",10)
-                r.set("t2_hw",10)
+                r.set("t1_hw",str(np.round(optU[1],4)))
+                r.set("t2_hw",str(np.round(optU[2],4)))
                 #r.mset({"t1_hw":str(np.round(optU[1],4)),"t2_hw":str(np.round(optU[2],4))})
                 if(isCpu):
                     setU(optU)
