@@ -350,7 +350,7 @@ if __name__ == "__main__":
     dt = 10 ** (-1)
     H = 5
     N = 3
-    rep = 2
+    rep = 10
     sTime = 500
     TF = sTime * rep * dt;
     Time = np.linspace(0, TF, int(np.ceil(TF / dt)) + 1)
@@ -442,8 +442,6 @@ if __name__ == "__main__":
                     
                 
                 XSSIM[:, step] = getstate(r, keys, N)
-                
-                tgt = np.round(alfa[-1] * 0.8257 * np.sum(XSSIM[:, step]), 5)
                 
                 if(step > 0):
                     Ie += (tgt - XSSIM[0, step])
