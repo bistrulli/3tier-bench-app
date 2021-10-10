@@ -523,6 +523,7 @@ if __name__ == "__main__":
             plt.savefig("./figure/evstgt.png")
             
             print(np.array(e) * 100)
+            print(xsim_cavg[-1])   
             # print(np.array(e2)*100)
             # print(np.array(e3)*100)
             # print(sIdx)
@@ -560,8 +561,8 @@ if __name__ == "__main__":
             # plt.plot(optSPID[1:,:].T)
             
             print(np.mean(optSPID[1:,:], axis=1))
-            print(np.mean(optSMD[1:,:], axis=1))
-            print(np.mean(optSNN[1:,:], axis=1))         
+            #print(np.mean(optSMD[1:,:], axis=1))
+            #print(np.mean(optSNN[1:,:], axis=1))   
     
             plt.show()
     
