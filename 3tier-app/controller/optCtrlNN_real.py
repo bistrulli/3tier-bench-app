@@ -350,7 +350,7 @@ if __name__ == "__main__":
     dt = 10 ** (-1)
     H = 5
     N = 3
-    rep = 1
+    rep = 2
     sTime = 500
     TF = sTime * rep * dt;
     Time = np.linspace(0, TF, int(np.ceil(TF / dt)) + 1)
@@ -391,15 +391,15 @@ if __name__ == "__main__":
                     Sold = None       
                     #alfa.append(genAfa())
                     alfa.append(1.0)
-                    #XSSIM[:, step] = [np.random.randint(low=10, high=100), 0, 0]
+                    XSSIM[:, step] = [np.random.randint(low=10, high=80), 0, 0]
                     #XSSIM[:, step] = getstate(r, keys, N)
-                    XSSIM[:, step] = [95, 0, 0]
+                    #XSSIM[:, step] = [80, 0, 0]
                     print(alfa[-1], XSSIM[:, step])
                     # print(XSSIM[:, step])
                     XSSIM2[:, step] = XSSIM[:, step]
                     XSSIMPid[:, step] = XSSIM[:, step]
                     S[0] = np.sum(XSSIM[:, step])
-                    tgt = np.round(alfa[-1] * 0.8257 * np.sum(XSSIM[:, step]), 5)
+                    tgt = np.round(alfa[-1] * 0.82 * np.sum(XSSIM[:, step]), 5)
                     sIdx.append({'alfa':alfa[-1], 'x0':XSSIM[:, step].tolist(), "tgt":tgt})
                     optSPid = [np.sum(XSSIM[:, step]), 1, 1]
                     cp += 1
