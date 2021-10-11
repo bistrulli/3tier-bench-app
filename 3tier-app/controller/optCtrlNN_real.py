@@ -415,8 +415,9 @@ if __name__ == "__main__":
                         
                         pruneContainer()
                         
-                        startDockerCmp()
-                        time.sleep(12)
+                    
+                    startDockerCmp()
+                    time.sleep(12)
                     
                     
                     r=Client("localhost:11211")
