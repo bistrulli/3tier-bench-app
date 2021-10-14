@@ -89,11 +89,13 @@ def genAfa():
 
 def startSysDocker(isCpu):
     global sys
+    print("print stating systems",isCpu)
     cpuEmu=None
     if(isCpu):
         cpuEmu=0
     else:
         cpuEmu=1
+        
     sys=[]
     sys.append(client.containers.run(image="memcached:1.6.12",
                           auto_remove=True,
@@ -104,9 +106,11 @@ def startSysDocker(isCpu):
                           #network="3tier-app_default",
                           stop_signal="SIGINT"))
     time.sleep(3)
+    print("started monitor")
     
     sys.append(client.containers.run(image="bistrulli/tier2:0.7",
-                          command=["java","-Xmx4G","-jar","tier2-0.0.1-SNAPSHOT-jar-with-dependencies.jar","--cpuEmu","%d"%cpuEmu,"--jedisHost","monitor"],
+                          command=["java","-Xmx4G","-jar","tier2-0.0.1-SNAPSHOT-jar-with-dependencies.jar",
+                                   "--cpuEmu","%d"%cpuEmu,"--jedisHost","monitor"],
                           auto_remove=True,
                           detach=True,
                           name="tier2-cnt",
@@ -114,9 +118,11 @@ def startSysDocker(isCpu):
                           #network="3tier-app_default",
                           stop_signal="SIGINT"))
     time.sleep(3)
+    print("started tier2")
     
     sys.append(client.containers.run(image="bistrulli/tier1:0.7",
-                          command=["java","-Xmx4G","-jar","tier1-0.0.1-SNAPSHOT-jar-with-dependencies.jar","--cpuEmu","%d"%cpuEmu,"--jedisHost","monitor"],
+                          command=["java","-Xmx4G","-jar","tier1-0.0.1-SNAPSHOT-jar-with-dependencies.jar",
+                                   "--cpuEmu","%d"%cpuEmu,"--jedisHost","monitor"],
                           auto_remove=True,
                           detach=True,
                           name="tier1-cnt",
@@ -124,7 +130,8 @@ def startSysDocker(isCpu):
                           #network="3tier-app_default",
                           stop_signal="SIGINT"))
     time.sleep(3)
-    
+    print("started tier1")
+    print(sys)
     
 
 def startSys(initPop, isCpu):
@@ -462,7 +469,6 @@ if __name__ == "__main__":
                         
                     if(step==0):
                         startSysDocker(isCpu)
-                        time.sleep(12)
                     
                     #memcached client
                     r=Client("localhost:11211")
