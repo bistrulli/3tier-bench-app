@@ -95,6 +95,8 @@ def startSysDocker(isCpu):
         cpuEmu=0
     else:
         cpuEmu=1
+    
+    print(cpuEmu)
         
     sys=[]
     sys.append(client.containers.run(image="memcached:1.6.12",
@@ -118,7 +120,7 @@ def startSysDocker(isCpu):
                           #network="3tier-app_default",
                           stop_signal="SIGINT"))
     time.sleep(3)
-    print("started tier2")
+    print("started monitor")
     
     sys.append(client.containers.run(image="bistrulli/tier1:0.7",
                           command=["java","-Xmx4G","-jar","tier1-0.0.1-SNAPSHOT-jar-with-dependencies.jar",
@@ -130,8 +132,7 @@ def startSysDocker(isCpu):
                           #network="3tier-app_default",
                           stop_signal="SIGINT"))
     time.sleep(3)
-    print("started tier1")
-    print()
+    
     
 
 def startSys(initPop, isCpu):
@@ -473,9 +474,13 @@ if __name__ == "__main__":
                     #memcached client
                     r=Client("localhost:11211")
                     
-                    redis_cnt=client.containers.get("monitor-cnt")
-                    tier1=client.containers.get("tier1-cnt")
-                    tier2=client.containers.get("tier2-cnt")
+                    # redis_cnt=client.containers.get("monitor-cnt")
+                    # tier1=client.containers.get("tier1-cnt")
+                    # tier2=client.containers.get("tier2-cnt")
+                    
+                    redis_cnt=sys[0]
+                    tier2=sys[1]
+                    tier1=sys[2]
                     
                     # redis_cnt.update(cpuset_cpus="0-4")
                     # tier1.update(cpuset_cpus="5-31")
