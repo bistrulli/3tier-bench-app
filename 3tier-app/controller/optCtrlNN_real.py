@@ -175,7 +175,7 @@ def startClient(initPop):
                           auto_remove=True,
                           detach=True,
                           hostname="client",
-                          network="3tier-app_default",
+                          #network="3tier-app_default",
                           stop_signal="SIGINT")
 
 
