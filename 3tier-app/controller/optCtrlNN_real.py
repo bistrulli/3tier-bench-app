@@ -463,13 +463,13 @@ if __name__ == "__main__":
                         killClient()
                         time.sleep(10)
                     
-                        #killDockerCmp()
+                        killSys()
                         #time.sleep(10)
                     
-                        #pruneContainer()
+                        pruneContainer()
                         
-                    if(step==0):
-                        startSysDocker(isCpu)
+                    
+                    startSysDocker(isCpu)
                     
                     #memcached client
                     r=Client("localhost:11211")
