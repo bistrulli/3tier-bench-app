@@ -99,7 +99,7 @@ def startSysDocker(isCpu):
                           name="monitor-cnt",
                           ports={'11211/tcp': 11211},
                           hostname="monitor",
-                          network="3tier-app_default",
+                          #network="3tier-app_default",
                           stop_signal="SIGINT"))
     time.sleep(3)
     
@@ -109,7 +109,7 @@ def startSysDocker(isCpu):
                           detach=True,
                           name="tier2-cnt",
                           hostname="tier2",
-                          network="3tier-app_default",
+                          #network="3tier-app_default",
                           stop_signal="SIGINT"))
     time.sleep(3)
     
@@ -119,7 +119,7 @@ def startSysDocker(isCpu):
                           detach=True,
                           name="tier1-cnt",
                           hostname="tier1",
-                          network="3tier-app_default",
+                          #network="3tier-app_default",
                           stop_signal="SIGINT"))
     time.sleep(3)
     
