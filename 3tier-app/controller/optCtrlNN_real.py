@@ -491,9 +491,9 @@ if __name__ == "__main__":
                     #r.mset({"t1_hw":np.sum(XSSIM[:, step]),"t2_hw":np.sum(XSSIM[:, step])})
                     startClient(np.sum(XSSIM[:, step]))
                     time.sleep(3)
-                    if(step>0):
-                        r.set("t1_hw",optSNN[1, step-1])
-                        r.set("t2_hw",optSNN[2, step-1])
+                    # if(step>0):
+                    #     r.set("t1_hw",optSNN[1, step-1])
+                    #     r.set("t2_hw",optSNN[2, step-1])
                     
                     
                 
