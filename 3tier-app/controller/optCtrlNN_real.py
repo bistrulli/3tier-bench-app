@@ -25,6 +25,8 @@ curpath = os.path.realpath(__file__)
 croot = None
 period = 100000
 sys = None
+tier1= None
+tier2= None
 
 # tf.compat.v1.disable_eager_execution()
 
