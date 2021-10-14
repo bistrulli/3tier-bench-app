@@ -26,16 +26,13 @@ croot = None
 period = 100000
 sys = None
 
-tier1=None
-tier2=None
-
 # tf.compat.v1.disable_eager_execution()
 
 
 def pruneContainer():
     subprocess.call(["docker", "container", "prune", "-f"])
 
-def killSys():
+def killClient():
     # subprocess.call(["sudo", "pkill", "-9", "-f", "client-0.0.1-SNAPSHOT"])
     # subprocess.call(["sudo", "pkill", "-9", "-f", "tier1-0.0.1-SNAPSHOT"])
     # subprocess.call(["sudo", "pkill", "-9", "-f", "tier2-0.0.1-SNAPSHOT"])
@@ -50,13 +47,20 @@ def killSysCmp():
         sys.stop()
         sys=None
 
+def killSys():
+    global sys
+    if(sys is not None):
+        for cnt in sys:
+            #sys.kill(signal="SIGINT")
+            cnt.stop()
+    sys=None
+
 def handler(signum, frame):
     print('Signal handler called with signal', signum)
-    subprocess.call(["sudo", "pkill", "-9", "-f", "client-0.0.1-SNAPSHOT"])
-    subprocess.call(["sudo", "pkill", "-9", "-f", "tier1-0.0.1-SNAPSHOT"])
-    subprocess.call(["sudo", "pkill", "-9", "-f", "tier2-0.0.1-SNAPSHOT"])
-    sys.exit(1)
-
+    
+    ls_cnt = subprocess.Popen(["docker","container","ls","-q"], stdout=subprocess.PIPE)
+    killp = subprocess.check_output(["docker","kill"],stdin=ls_cnt.stdout)
+    ls_cnt.wait()
 
 def mitigateBottleneck(S, X, tgt):
     # devo definire il numero di server da assegnare
@@ -80,6 +84,46 @@ def genAfa():
     return np.round(np.random.rand() * 0.1 + (r - 0.1), 4)
     # return np.round(np.random.rand()*0.3+0.7,4)
 
+
+def startSysDocker(isCpu):
+    global sys
+    cpuEmu=None
+    if(isCpu):
+        cpuEmu=0
+    else:
+        cpuEmu=1
+    sys=[]
+    sys.append(client.containers.run(image="memcached:1.6.12",
+                          auto_remove=True,
+                          detach=True,
+                          name="monitor-cnt",
+                          ports={'11211/tcp': 11211},
+                          hostname="monitor",
+                          network="3tier-app_default",
+                          stop_signal="SIGINT"))
+    time.sleep(3)
+    
+    sys.append(client.containers.run(image="bistrulli/tier2:0.7",
+                          command=["java","-Xmx4G","-jar","tier2-0.0.1-SNAPSHOT-jar-with-dependencies.jar","--cpuEmu","%d"%cpuEmu,"--jedisHost","monitor"],
+                          auto_remove=True,
+                          detach=True,
+                          name="tier2-cnt",
+                          hostname="tier2",
+                          network="3tier-app_default",
+                          stop_signal="SIGINT"))
+    time.sleep(3)
+    
+    sys.append(client.containers.run(image="bistrulli/tier1:0.7",
+                          command=["java","-Xmx4G","-jar","tier1-0.0.1-SNAPSHOT-jar-with-dependencies.jar","--cpuEmu","%d"%cpuEmu,"--jedisHost","monitor"],
+                          auto_remove=True,
+                          detach=True,
+                          name="tier1-cnt",
+                          hostname="tier1",
+                          network="3tier-app_default",
+                          stop_signal="SIGINT"))
+    time.sleep(3)
+    
+    
 
 def startSys(initPop, isCpu):
     sys = []
@@ -124,7 +168,7 @@ def startClient(initPop):
     r=Client("localhost:11211")
     r.set("stop","0")
     r.close()
-    return client.containers.run(image="bistrulli/client:0.7",
+    client.containers.run(image="bistrulli/client:0.7",
                           command="java -Xmx4G -jar client-0.0.1-SNAPSHOT-jar-with-dependencies.jar --initPop %d --queues \
                                   '[\"think\", \"e1_bl\", \"e1_ex\", \"t1_hw\", \"e2_bl\", \"e2_ex\", \"t2_hw\"]' \
                                    --jedisHost 172.17.0.1"%(initPop),
@@ -346,11 +390,11 @@ if __name__ == "__main__":
                      "%s/../learnt_model/open_loop_3tier_H5.mat" % (os.path.dirname(curpath)))
     
     isAR = True
-    isCpu = True
+    isCpu = False
     dt = 10 ** (-1)
     H = 5
     N = 3
-    rep = 2
+    rep = 10
     sTime = 500
     TF = sTime * rep * dt;
     Time = np.linspace(0, TF, int(np.ceil(TF / dt)) + 1)
@@ -381,7 +425,6 @@ if __name__ == "__main__":
     cp = -1
     
     Ie = None
-    
     r=None
     
     try:
@@ -389,8 +432,8 @@ if __name__ == "__main__":
                 # compute ODE
                 if step == 0 or step % sTime == 0: 
                     Sold = None       
-                    #alfa.append(genAfa())
-                    alfa.append(1.0)
+                    alfa.append(genAfa())
+                    #alfa.append(1.0)
                     XSSIM[:, step] = [np.random.randint(low=10, high=80), 0, 0]
                     #XSSIM[:, step] = getstate(r, keys, N)
                     #XSSIM[:, step] = [80, 0, 0]
@@ -407,24 +450,28 @@ if __name__ == "__main__":
                     Ie = 0
                        
                     if(r is not None):
-                        killSys()
+                        killClient()
                         time.sleep(10)
                     
-                        killDockerCmp()
+                        #killDockerCmp()
                         #time.sleep(10)
+                    
+                        #pruneContainer()
                         
-                        pruneContainer()
-                        
+                    if(step==0):
+                        startSysDocker(isCpu)
+                        time.sleep(12)
                     
-                    startDockerCmp()
-                    time.sleep(12)
-                    
-                    
+                    #memcached client
                     r=Client("localhost:11211")
                     
-                    #redis_cnt=client.containers.get("monitor-cnt")
-                    tier1=client.containers.get("tier1-cnt")
-                    tier2=client.containers.get("tier2-cnt")
+                    # redis_cnt=client.containers.get("monitor-cnt")
+                    # tier1=client.containers.get("tier1-cnt")
+                    # tier2=client.containers.get("tier2-cnt")
+                    
+                    redis_cnt=sys[0]
+                    tier2=sys[1]
+                    tier1=sys[2]
                     
                     # redis_cnt.update(cpuset_cpus="0-4")
                     # tier1.update(cpuset_cpus="5-31")
@@ -433,7 +480,7 @@ if __name__ == "__main__":
                     # if(isCpu):
                     #     resetU()
                     #r.mset({"t1_hw":np.sum(XSSIM[:, step]),"t2_hw":np.sum(XSSIM[:, step])})
-                    sys=startClient(np.sum(XSSIM[:, step]))
+                    startClient(np.sum(XSSIM[:, step]))
                     time.sleep(3)
                     if(step>0):
                         r.set("t1_hw",optSNN[1, step-1])
@@ -565,6 +612,7 @@ if __name__ == "__main__":
             plt.show()
     
     finally:
-        killSys()
+        killClient()
         time.sleep(5)
-        killDockerCmp()
+        killSys()
+        #killDockerCmp()
