@@ -99,7 +99,7 @@ def startSysDocker(isCpu):
     sys=[]
     sys.append(client.containers.run(image="memcached:1.6.12",
                           auto_remove=True,
-                          detach=False,
+                          detach=True,
                           name="monitor-cnt",
                           ports={'11211/tcp': 11211},
                           hostname="monitor",
@@ -112,7 +112,7 @@ def startSysDocker(isCpu):
                           command=["java","-Xmx4G","-jar","tier2-0.0.1-SNAPSHOT-jar-with-dependencies.jar",
                                    "--cpuEmu","%d"%cpuEmu,"--jedisHost","monitor"],
                           auto_remove=True,
-                          detach=False,
+                          detach=True,
                           name="tier2-cnt",
                           hostname="tier2",
                           #network="3tier-app_default",
@@ -124,14 +124,14 @@ def startSysDocker(isCpu):
                           command=["java","-Xmx4G","-jar","tier1-0.0.1-SNAPSHOT-jar-with-dependencies.jar",
                                    "--cpuEmu","%d"%cpuEmu,"--jedisHost","monitor"],
                           auto_remove=True,
-                          detach=False,
+                          detach=True,
                           name="tier1-cnt",
                           hostname="tier1",
                           #network="3tier-app_default",
                           stop_signal="SIGINT"))
     time.sleep(3)
     print("started tier1")
-    print(sys)
+    print()
     
 
 def startSys(initPop, isCpu):
@@ -473,13 +473,9 @@ if __name__ == "__main__":
                     #memcached client
                     r=Client("localhost:11211")
                     
-                    # redis_cnt=client.containers.get("monitor-cnt")
-                    # tier1=client.containers.get("tier1-cnt")
-                    # tier2=client.containers.get("tier2-cnt")
-                    
-                    redis_cnt=sys[0]
-                    tier2=sys[1]
-                    tier1=sys[2]
+                    redis_cnt=client.containers.get("monitor-cnt")
+                    tier1=client.containers.get("tier1-cnt")
+                    tier2=client.containers.get("tier2-cnt")
                     
                     # redis_cnt.update(cpuset_cpus="0-4")
                     # tier1.update(cpuset_cpus="5-31")
