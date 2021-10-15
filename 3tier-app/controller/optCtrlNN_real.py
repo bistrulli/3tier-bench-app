@@ -443,7 +443,7 @@ if __name__ == "__main__":
                 if step == 0 or step % sTime == 0: 
                     Sold = None       
                     #alfa.append(genAfa())
-                    alfa.append(1.0)
+                    alfa.append(0.98)
                     XSSIM[:, step] = [np.random.randint(low=10, high=60), 0, 0]
                     #XSSIM[:, step] = getstate(r, keys, N)
                     #XSSIM[:, step] = [80, 0, 0]
