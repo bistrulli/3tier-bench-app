@@ -444,7 +444,7 @@ if __name__ == "__main__":
                     Sold = None       
                     #alfa.append(genAfa())
                     alfa.append(1.0)
-                    XSSIM[:, step] = [np.random.randint(low=10, high=100), 0, 0]
+                    XSSIM[:, step] = [np.random.randint(low=10, high=60), 0, 0]
                     #XSSIM[:, step] = getstate(r, keys, N)
                     #XSSIM[:, step] = [80, 0, 0]
                     print(alfa[-1], XSSIM[:, step])
