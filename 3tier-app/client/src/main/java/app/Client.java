@@ -64,8 +64,6 @@ public class Client implements Runnable {
 				SimpleTask.getLogger().debug(String.format("%s sending", this.task.getName()));
 				HttpResponse<String> resp = client.send(request, BodyHandlers.ofString());
 
-				
-
 				SimpleTask.getLogger().debug(String.format("%d thinking", thinking));
 				
 				if(Client.getToKill()>0) {
