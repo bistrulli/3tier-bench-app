@@ -27,7 +27,7 @@ public class Main {
 
 	public static void main(String[] args) {
 
-		System.setProperty("net.spy.log.LoggerImpl", "net.spy.memcached.compat.log.SLF4JLogger");
+		//System.setProperty("net.spy.log.LoggerImpl", "net.spy.memcached.compat.log.SLF4JLogger");
 
 		Main.getCliOptions(args);
 		final SimpleTask[] Sys = Main.genSystem();
