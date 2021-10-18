@@ -178,12 +178,13 @@ def startClient(initPop):
     r=Client("localhost:11211")
     r.set("stop","0")
     r.close()
-    client.containers.run(image="bistrulli/client:0.7",
+    client.containers.run(image="bistrulli/client:0.8",
                           command="java -Xmx4G -jar client-0.0.1-SNAPSHOT-jar-with-dependencies.jar --initPop %d --queues \
                                   '[\"think\", \"e1_bl\", \"e1_ex\", \"t1_hw\", \"e2_bl\", \"e2_ex\", \"t2_hw\"]' \
-                                   --jedisHost 172.17.0.1"%(initPop),
+                                   --jedisHost monitor"%(initPop),
                           auto_remove=True,
                           detach=True,
+                          name="client-cnt",
                           hostname="client",
                           network="3tier-app_default",
                           stop_signal="SIGINT")
@@ -379,7 +380,7 @@ class optCtrlNN2:
             for ui in range(1, P.shape[0]):
                 ru += (uvar_dn[ui] - Sold[ui]) ** 2
         
-        model.minimize(obj + 0.1 * ru + 0.0 * casadi.sumsqr(uvar_dn[1:]))
+        model.minimize(obj + 0.1 * ru + 0.05 * casadi.sumsqr(uvar_dn[1:]))
         
         optionsIPOPT = {'print_time':False, 'ipopt':{'print_level':0}}
         optionsOSQP = {'print_time':False, 'osqp':{'verbose':False}}
@@ -400,11 +401,11 @@ if __name__ == "__main__":
                      "%s/../learnt_model/open_loop_3tier_H5.mat" % (os.path.dirname(curpath)))
     
     isAR = True
-    isCpu = True
+    isCpu = False
     dt = 10 ** (-1)
     H = 5
     N = 3
-    rep = 10
+    rep = 2
     sTime = 500
     TF = sTime * rep * dt;
     Time = np.linspace(0, TF, int(np.ceil(TF / dt)) + 1)
@@ -436,16 +437,26 @@ if __name__ == "__main__":
     
     Ie = None
     r=None
+    tgt=None
     
     try:
             for step in tqdm(range(XSSIM.shape[1] - 1)):
                 # compute ODE
-                if step == 0 or step % sTime == 0: 
+                if step == 0 or step % sTime == 0:
+                    
+                    if(step==0):
+                        startSysDocker(isCpu)
+                        startClient(np.random.randint(low=10, high=100))
+                        time.sleep(2)
+                    
+                        #memcached client
+                        r=Client("localhost:11211")
+                    
                     Sold = None       
-                    #alfa.append(genAfa())
-                    alfa.append(1.0)
-                    XSSIM[:, step] = [np.random.randint(low=10, high=100), 0, 0]
-                    #XSSIM[:, step] = getstate(r, keys, N)
+                    alfa.append(genAfa())
+                    #alfa.append(1.0)
+                    #XSSIM[:, step] = [np.random.randint(low=10, high=100), 0, 0]
+                    XSSIM[:, step] = getstate(r, keys, N)
                     #XSSIM[:, step] = [100, 0, 0]
                     print(alfa[-1], XSSIM[:, step])
                     # print(XSSIM[:, step])
@@ -459,20 +470,15 @@ if __name__ == "__main__":
                     ek = 0
                     Ie = 0
                        
-                    if(r is not None):
-                        killClient()
-                        time.sleep(10)
+                    # if(r is not None):
+                    #     killClient()
+                    #     time.sleep(10)
+                    #
+                    #     killSys()
+                    #     #time.sleep(10)
+                    #
+                    #     pruneContainer()
                     
-                        killSys()
-                        #time.sleep(10)
-                    
-                        pruneContainer()
-                        
-                    
-                    startSysDocker(isCpu)
-                    
-                    #memcached client
-                    r=Client("localhost:11211")
                     
                     # redis_cnt=client.containers.get("monitor-cnt")
                     # tier1=client.containers.get("tier1-cnt")
@@ -489,8 +495,8 @@ if __name__ == "__main__":
                     # if(isCpu):
                     #     resetU()
                     #r.mset({"t1_hw":np.sum(XSSIM[:, step]),"t2_hw":np.sum(XSSIM[:, step])})
-                    startClient(np.sum(XSSIM[:, step]))
-                    time.sleep(3)
+                    # startClient(np.sum(XSSIM[:, step]))
+                    # time.sleep(3)
                     # if(step>0):
                     #     r.set("t1_hw",optSNN[1, step-1])
                     #     r.set("t2_hw",optSNN[2, step-1])
@@ -498,6 +504,8 @@ if __name__ == "__main__":
                     
                 
                 XSSIM[:, step] = getstate(r, keys, N)
+                tgt = np.round(alfa[-1] * 0.82 * np.sum(XSSIM[:, step]), 5)
+                print( XSSIM[:, step],tgt,np.sum(XSSIM[:, step]))
                 
                 if(step > 0):
                     Ie += (tgt - XSSIM[0, step])

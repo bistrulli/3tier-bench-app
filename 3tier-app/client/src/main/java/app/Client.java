@@ -45,13 +45,13 @@ public class Client implements Runnable {
 			HttpClient client = null;
 			HttpRequest request = null;
 			client = HttpClient.newBuilder().version(Version.HTTP_1_1).build();
-			request = HttpRequest.newBuilder()
-					.uri(URI.create("http://tier1:3000/?id=" + this.clietId.toString() + "&entry=e1" + "&snd=think"))
-					.build();
-			
 //			request = HttpRequest.newBuilder()
-//					.uri(URI.create("https://www.random.org/integers/?num=1&min=1&max=100&col=1&base=10&format=html&rnd=new"))
+//					.uri(URI.create("http://tier1:3000/?id=" + this.clietId.toString() + "&entry=e1" + "&snd=think"))
 //					.build();
+			
+			request = HttpRequest.newBuilder()
+					.uri(URI.create("https://www.random.org/integers/?num=1&min=1&max=100&col=1&base=10&format=html&rnd=new"))
+					.build();
 
 			while ((this.memcachedClient.get("stop") == null
 					|| !String.valueOf(this.memcachedClient.get("stop")).equals("1")) && !this.dying) {
@@ -65,10 +65,13 @@ public class Client implements Runnable {
 				long thinking = this.memcachedClient.incr("think", 1);
 
 				SimpleTask.getLogger().debug(String.format("%d thinking", thinking));
-				synchronized (this) {
-					if(Client.getToKill()>0) {
-						Client.setToKill(Client.getToKill()-1);
-						this.dying=true;
+				
+				if(Client.getToKill()>0) {
+					synchronized (Client.getToKill()) {
+						if(Client.getToKill()>0) {
+							Client.setToKill(Client.toKill-1);
+							this.dying=true;
+						}
 					}
 				}
 			}

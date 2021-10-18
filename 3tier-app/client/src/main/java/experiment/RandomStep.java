@@ -53,6 +53,7 @@ public class RandomStep implements Runnable {
 	private void tick() {
 		int nc=0;
 		if (this.tick % 150 == 0) {
+			System.out.println("change point");
 			if(this.rnd.nextBoolean()) {
 				nc=this.rnd.nextInt(100-this.workGenerator.getThreadpool().getCorePoolSize());
 				System.out.println(String.format("delta clients %d-%d", nc,this.workGenerator.getThreadpool().getCorePoolSize()));
