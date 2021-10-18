@@ -1,22 +1,32 @@
 package experiment;
 
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.net.InetSocketAddress;
 import java.util.Random;
+import java.util.concurrent.ExecutionException;
 
 import Server.SimpleTask;
 import app.Client;
+import net.spy.memcached.MemcachedClient;
 
 public class RandomStep implements Runnable {
 
 	private Integer tick = null;
 	private SimpleTask workGenerator = null;
 	private Random rnd=null;
+	private MemcachedClient memClient=null;
 
 	public RandomStep(SimpleTask workGenerator) {
 		this.tick = 0;
 		this.workGenerator = workGenerator;
 		this.rnd=new Random();
+		try {
+			this.memClient = new MemcachedClient(new InetSocketAddress(this.workGenerator.getJedisHost(), 11211));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void addClients(int delta) {
@@ -53,7 +63,6 @@ public class RandomStep implements Runnable {
 	private void tick() {
 		int nc=0;
 		if (this.tick % 150 == 0) {
-			System.out.println("change point");
 			if(this.rnd.nextBoolean()) {
 				nc=this.rnd.nextInt(100-this.workGenerator.getThreadpool().getCorePoolSize());
 				System.out.println(String.format("delta clients %d-%d", nc,this.workGenerator.getThreadpool().getCorePoolSize()));
@@ -62,6 +71,11 @@ public class RandomStep implements Runnable {
 				nc=this.rnd.nextInt(this.workGenerator.getThreadpool().getCorePoolSize());
 				System.out.println(String.format("delta clients %d-%d", -nc,this.workGenerator.getThreadpool().getCorePoolSize()));
 				this.addClients(-nc);
+			}
+			try {
+				this.memClient.set("sim", 3600,"step").get();
+			} catch (InterruptedException | ExecutionException e) {
+				e.printStackTrace();
 			}
 		}
 		this.tick++;
