@@ -1,15 +1,20 @@
 package app;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import com.google.common.net.InetAddresses;
 import com.google.common.net.InternetDomainName;
 import com.google.gson.Gson;
 
 import Server.SimpleTask;
+import experiment.RandomStep;
 import gnu.getopt.Getopt;
 import gnu.getopt.LongOpt;
 import net.spy.memcached.MemcachedClient;
@@ -18,15 +23,17 @@ public class Main {
 	private static Integer initPop = -1;
 	private static String jedisHost = null;
 	private static String[] systemQueues = null;
+	private static File expFile = null;
 
 	public static void main(String[] args) {
-		
+
 		System.setProperty("net.spy.log.LoggerImpl", "net.spy.memcached.compat.log.SLF4JLogger");
-		
+
 		Main.getCliOptions(args);
 		final SimpleTask[] Sys = Main.genSystem();
 		Main.resetState(Sys[0]);
 		Sys[0].start();
+		Main.startSim(Sys[0]);
 	}
 
 	public static void resetState(SimpleTask task) {
@@ -41,9 +48,9 @@ public class Main {
 				if (e.equals("think")) {
 					memcachedClient.set("think", 3600, String.valueOf(Main.initPop)).get();
 				} else {
-					if(e.endsWith("_sw") || e.endsWith("_hw")) {
+					if (e.endsWith("_sw") || e.endsWith("_hw")) {
 						memcachedClient.set(e, 3600, "1").get();
-					}else {
+					} else {
 						memcachedClient.set(e, 3600, "0").get();
 					}
 				}
@@ -59,13 +66,18 @@ public class Main {
 		HashMap<String, Long> clientEntries_stimes = new HashMap<String, Long>();
 		clientEntries.put("think", Client.class);
 		clientEntries_stimes.put("think", 1000l);
-		final SimpleTask client = new SimpleTask(clientEntries, clientEntries_stimes, Main.initPop, "Client",
-				Main.jedisHost);
+		final SimpleTask client = new SimpleTask(clientEntries, clientEntries_stimes, Main.initPop, "Client", Main.jedisHost);
 		return new SimpleTask[] { client };
 	}
 
 	public static boolean validate(final String hostname) {
 		return InetAddresses.isUriInetAddress(hostname) || InternetDomainName.isValid(hostname);
+	}
+
+	private static void startSim(SimpleTask client) {
+		ScheduledExecutorService se = Executors.newSingleThreadScheduledExecutor();
+		RandomStep simClock = new RandomStep(client);
+		se.scheduleAtFixedRate(simClock, 0, 1, TimeUnit.SECONDS);
 	}
 
 	public static void getCliOptions(String[] args) {
@@ -98,7 +110,6 @@ public class Main {
 				break;
 			case 2:
 				try {
-					// Deserialization
 					Gson gson = new Gson();
 					Main.systemQueues = gson.fromJson(String.valueOf(g.getOptarg()), String[].class);
 				} catch (Exception e) {
