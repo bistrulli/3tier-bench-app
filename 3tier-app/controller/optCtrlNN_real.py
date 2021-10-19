@@ -52,7 +52,7 @@ def killSysCmp():
 def killSys():
     global sys
     if(sys is not None):
-        for cnt in sys:
+        for cnt in reversed(sys):
             #sys.kill(signal="SIGINT")
             cnt.stop()
     sys=None
@@ -175,10 +175,11 @@ def killDockerCmp():
     subprocess.call(["docker-compose","-f","../compose.yaml","stop","-t","30"])
 
 def startClient(initPop):
+    global sys
     r=Client("localhost:11211")
     r.set("stop","0")
     r.close()
-    client.containers.run(image="bistrulli/client:0.8",
+    c=client.containers.run(image="bistrulli/client:0.8",
                           command="java -Xmx4G -jar client-0.0.1-SNAPSHOT-jar-with-dependencies.jar --initPop %d --queues \
                                   '[\"think\", \"e1_bl\", \"e1_ex\", \"t1_hw\", \"e2_bl\", \"e2_ex\", \"t2_hw\"]' \
                                    --jedisHost monitor"%(initPop),
@@ -188,6 +189,7 @@ def startClient(initPop):
                           hostname="client",
                           network="3tier-app_default",
                           stop_signal="SIGINT")
+    sys.append(c)
 
 
 def setU(optS):
@@ -255,6 +257,8 @@ def getstate(r, keys, N):
     return astate
 
 
+
+
 class optCtrlNN2:
     model = None
     stateVar = None
@@ -301,7 +305,7 @@ class optCtrlNN2:
         ub = [np.sum(X0) + 1]
         for i in range(1, P.shape[0]):
             lb.append(1*10 ** (-1))
-            ub.append(100)
+            ub.append(np.sum(X0))
         
         for i in range(P.shape[0] * P.shape[1]):
             lb.append(0)
@@ -380,7 +384,7 @@ class optCtrlNN2:
             for ui in range(1, P.shape[0]):
                 ru += (uvar_dn[ui] - Sold[ui]) ** 2
         
-        model.minimize(obj + 0.1 * ru + 0.05 * casadi.sumsqr(uvar_dn[1:]))
+        model.minimize(obj + 0.1 * ru + 0.1 * casadi.sumsqr(uvar_dn[1:]))
         
         optionsIPOPT = {'print_time':False, 'ipopt':{'print_level':0}}
         optionsOSQP = {'print_time':False, 'osqp':{'verbose':False}}
@@ -401,11 +405,12 @@ if __name__ == "__main__":
                      "%s/../learnt_model/open_loop_3tier_H5.mat" % (os.path.dirname(curpath)))
     
     isAR = True
-    isCpu = False
+    isCpu = True
     dt = 10 ** (-1)
     H = 5
     N = 3
-    rep = 2
+    rep = 3
+    drep = 0
     sTime = 500
     TF = sTime * rep * dt;
     Time = np.linspace(0, TF, int(np.ceil(TF / dt)) + 1)
@@ -438,23 +443,37 @@ if __name__ == "__main__":
     Ie = None
     r=None
     tgt=None
+    step=0
     
     try:
-            for step in tqdm(range(XSSIM.shape[1] - 1)):
+            #for step in tqdm(range(XSSIM.shape[1] - 1)):
+            while drep<=rep and step<(XSNN.shape[1]-1):
                 # compute ODE
-                if step == 0 or step % sTime == 0:
-                    
+                if step == 0 or r.get("sim").decode('UTF-8')=="step":
+                    print("drep=",drep)
                     if(step==0):
                         startSysDocker(isCpu)
                         startClient(np.random.randint(low=10, high=100))
-                        time.sleep(2)
-                    
+                        time.sleep(3)
+                        
                         #memcached client
                         r=Client("localhost:11211")
+                        r.set("sim","-1")
+                    else:
+                        #memcached client
+                        if(r is not None):
+                            r.close()
+                        r=Client("localhost:11211")
+                        r.set("sim","-1")
+                        print(r.get("sim").decode('UTF-8'))
+                        if(r.get("sim").decode('UTF-8')=="step"):
+                            r.set("sim","-1")
+                            
+                    drep+=1
                     
                     Sold = None       
-                    alfa.append(genAfa())
-                    #alfa.append(1.0)
+                    #alfa.append(genAfa())
+                    alfa.append(1.0)
                     #XSSIM[:, step] = [np.random.randint(low=10, high=100), 0, 0]
                     XSSIM[:, step] = getstate(r, keys, N)
                     #XSSIM[:, step] = [100, 0, 0]
@@ -464,7 +483,7 @@ if __name__ == "__main__":
                     XSSIMPid[:, step] = XSSIM[:, step]
                     S[0] = np.sum(XSSIM[:, step])
                     tgt = np.round(alfa[-1] * 0.82 * np.sum(XSSIM[:, step]), 5)
-                    sIdx.append({'alfa':alfa[-1], 'x0':XSSIM[:, step].tolist(), "tgt":tgt})
+                    sIdx.append({'alfa':alfa[-1], 'x0':XSSIM[:, step].tolist(), "tgt":tgt,"idx":step})
                     optSPid = [np.sum(XSSIM[:, step]), 1, 1]
                     cp += 1
                     ek = 0
@@ -501,11 +520,11 @@ if __name__ == "__main__":
                     #     r.set("t1_hw",optSNN[1, step-1])
                     #     r.set("t2_hw",optSNN[2, step-1])
                     
-                    
+                #print(r.get("sim").decode('UTF-8'))
                 
                 XSSIM[:, step] = getstate(r, keys, N)
                 tgt = np.round(alfa[-1] * 0.82 * np.sum(XSSIM[:, step]), 5)
-                print( XSSIM[:, step],tgt,np.sum(XSSIM[:, step]))
+                print(XSSIM[:, step],tgt,np.sum(XSSIM[:, step]),step)
                 
                 if(step > 0):
                     Ie += (tgt - XSSIM[0, step])
@@ -531,6 +550,8 @@ if __name__ == "__main__":
                 
                 # optSPID[:,step]=optSPid
                 # optSPid=mitigateBottleneck(optSPid, Xsim3, tgt)
+                
+                step+=1
              
             # print("NN Reference error %f%% \nODE Reference error %f%% \n"%(np.abs(XSNN[0,-1]-tgt)*100/tgt,np.abs(XSODE[0,-1]-tgt)*100/tgt))
             plt.close('all')
@@ -543,20 +564,35 @@ if __name__ == "__main__":
             e = []
             e2 = []
             e3 = []
+            print("nrep",len(sIdx))
             for i in range(len(sIdx)):
-                xsim_cavg += np.divide(np.cumsum(XSSIM[:, i * sTime:(i + 1) * sTime], axis=1), np.arange(1, sTime + 1)).T[:, 0].tolist()
-                xsim_cavg2 += np.divide(np.cumsum(XSSIM2[:, i * sTime:(i + 1) * sTime], axis=1), np.arange(1, sTime + 1)).T[:, 0].tolist()
-                xsim_cavg3 += np.divide(np.cumsum(XSSIMPid[:, i * sTime:(i + 1) * sTime], axis=1), np.arange(1, sTime + 1)).T[:, 0].tolist()
-                e.append(np.abs(xsim_cavg[-1] - tgtStory[i * sTime + 1]) / tgtStory[i * sTime + 1])
-                e2.append(np.abs(xsim_cavg2[-1] - tgtStory[i * sTime + 1]) / tgtStory[i * sTime + 1])
-                e3.append(np.abs(xsim_cavg3[-1] - tgtStory[i * sTime + 1]) / tgtStory[i * sTime + 1])
+                stepTime=None
+                iIdx=None
+                fIdx=None
+                
+                iIdx=sIdx[i]["idx"]
+                
+                if(i<len(sIdx)-1):    
+                    fIdx=sIdx[i+1]["idx"]
+                else:
+                    fIdx=min(XSSIM.shape[1]-1,len(tgtStory)-1) 
+                        
+                stepTime=fIdx-iIdx
+                    
+                xsim_cavg += np.divide(np.cumsum(XSSIM[:, iIdx:fIdx], axis=1), np.arange(1, stepTime + 1)).T[:, 0].tolist()
+                # xsim_cavg2 += np.divide(np.cumsum(XSSIM2[:, i * sTime:(i + 1) * sTime], axis=1), np.arange(1, sTime + 1)).T[:, 0].tolist()
+                # xsim_cavg3 += np.divide(np.cumsum(XSSIMPid[:, i * sTime:(i + 1) * sTime], axis=1), np.arange(1, sTime + 1)).T[:, 0].tolist()
+                print(len(tgtStory),fIdx)
+                e.append(np.abs(xsim_cavg[-1] - tgtStory[fIdx]) / tgtStory[fIdx])
+                # e2.append(np.abs(xsim_cavg2[-1] - tgtStory[i * sTime + 1]) / tgtStory[i * sTime + 1])
+                # e3.append(np.abs(xsim_cavg3[-1] - tgtStory[i * sTime + 1]) / tgtStory[i * sTime + 1])
                 
                 sIdx[i]["e"] = e[-1] * 100;
         
-            # f=plt.figure()
-            # plt.title("Mean Relaive Long-run Tracking Error (%)")
-            # plt.boxplot([np.array(e)*100,np.array(e2)*100,np.array(e3)*100])
-            # plt.xticks([1,2,3],['NN','MD','PID'])
+            f=plt.figure()
+            plt.title("Mean Relaive Long-run Tracking Error (%)")
+            plt.boxplot([np.array(e)*100,np.array(e2)*100,np.array(e3)*100])
+            plt.xticks([1,2,3],['NN','MD','PID'])
             
             f = plt.figure()
             plt.title("Mean Relaive Long-run Tracking Error (%)")
@@ -586,16 +622,16 @@ if __name__ == "__main__":
             plt.savefig("./figure/evstgt.png")
             
             print(np.array(e) * 100)
-            # print(np.array(e2)*100)
-            # print(np.array(e3)*100)
-            # print(sIdx)
+            print(np.array(e2)*100)
+            print(np.array(e3)*100)
+            print(sIdx)
                 
             for k in range(0, 1):
                 plt.figure()
-                plt.plot(Time, XSSIM.T[:, k], label="SIM_NNctrl")
+                plt.plot(Time[0:len(tgtStory)], XSSIM.T[0:len(tgtStory), k], label="SIM_NNctrl")
                 # plt.plot(Time,XSSIM2.T[:,k],label="SIM_MDctrl",linestyle ='-.')
                 # plt.axhline(y = tgt, color = 'r', linestyle = '--')
-                plt.plot(Time, np.array(tgtStory), '--', color='r')
+                plt.plot(Time[0:len(tgtStory)], np.array(tgtStory), '--', color='r')
             plt.legend()
             plt.savefig("./figure/queue_sim.png")
             
@@ -629,7 +665,8 @@ if __name__ == "__main__":
             plt.show()
     
     finally:
+        #pass
         killClient()
         time.sleep(5)
         killSys()
-        #killDockerCmp()
+        killDockerCmp()
