@@ -409,7 +409,7 @@ if __name__ == "__main__":
     dt = 10 ** (-1)
     H = 5
     N = 3
-    rep = 10
+    rep = 20
     drep = 0
     sTime = 500
     TF = sTime * rep * dt;
@@ -669,4 +669,4 @@ if __name__ == "__main__":
         killClient()
         time.sleep(5)
         killSys()
-        killDockerCmp()
+        #killDockerCmp()
