@@ -1,21 +1,21 @@
 apiVersion: "apps/v1"
 kind: "Deployment"
 metadata:
-  name: "redis-server"
+  name: "monitor-pod"
   namespace: "default"
   labels:
-    app: "redis-server"
+    app: "monitor-pod"
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: "redis-server"
+      app: "monitor-pod"
   template:
     metadata:
       labels:
-        app: "redis-server"
+        app: "monitor-pod"
     spec:
       containers:
-      - name: "redis-server"
-        image: "bistrulli/my_exp:my_redis_srv"
+      - name: "monitor-pod"
+        image: "memcached:1.6.12"
         imagePullPolicy: "Always"

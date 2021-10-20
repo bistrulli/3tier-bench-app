@@ -5,12 +5,12 @@ metadata:
   name: "monitor"
   namespace: "default"
   labels:
-    app: "redis-server"
+    app: "monitor-pod"
 spec:
   ports:
   - protocol: "TCP"
-    port: 6379
-    targetPort: 6379
+    port: 11211
+    targetPort: 11211
   selector:
-    app: "redis-server"
+    app: "monitor-pod"
   type: "ClusterIP"
