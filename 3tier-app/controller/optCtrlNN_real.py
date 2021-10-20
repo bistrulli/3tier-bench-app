@@ -110,7 +110,7 @@ def startSysDocker(isCpu):
     time.sleep(3)
     print("started monitor")
     
-    sys.append(client.containers.run(image="bistrulli/tier2:0.7",
+    sys.append(client.containers.run(image="bistrulli/tier2:noah_0.1",
                           command=["java","-Xmx4G","-jar","tier2-0.0.1-SNAPSHOT-jar-with-dependencies.jar",
                                    "--cpuEmu","%d"%cpuEmu,"--jedisHost","monitor"],
                           auto_remove=True,
@@ -122,7 +122,7 @@ def startSysDocker(isCpu):
     time.sleep(3)
     print("started monitor")
     
-    sys.append(client.containers.run(image="bistrulli/tier1:0.7",
+    sys.append(client.containers.run(image="bistrulli/tier1:noah_0.1",
                           command=["java","-Xmx4G","-jar","tier1-0.0.1-SNAPSHOT-jar-with-dependencies.jar",
                                    "--cpuEmu","%d"%cpuEmu,"--jedisHost","monitor"],
                           auto_remove=True,
