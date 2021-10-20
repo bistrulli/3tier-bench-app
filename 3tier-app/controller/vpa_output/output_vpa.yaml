@@ -1,0 +1,42 @@
+apiVersion: autoscaling.k8s.io/v1
+kind: VerticalPodAutoscaler
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"autoscaling.k8s.io/v1","kind":"VerticalPodAutoscaler","metadata":{"annotations":{},"name":"tier1-vpa","namespace":"default"},"spec":{"targetRef":{"apiVersion":"apps/v1","kind":"Deployment","name":"tier1-pod"},"updatePolicy":{"updateMode":"Off"}}}
+  creationTimestamp: "2021-10-20T12:52:21Z"
+  generation: 18
+  name: tier1-vpa
+  namespace: default
+  resourceVersion: "16569"
+  uid: ad2ee096-74fa-40e6-a2e5-ef4d4686b230
+spec:
+  targetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: tier1-pod
+  updatePolicy:
+    updateMode: "Off"
+status:
+  conditions:
+  - lastTransitionTime: "2021-10-20T12:53:07Z"
+    status: "False"
+    type: LowConfidence
+  - lastTransitionTime: "2021-10-20T12:53:07Z"
+    status: "True"
+    type: RecommendationProvided
+  recommendation:
+    containerRecommendations:
+    - containerName: tier1-pod
+      lowerBound:
+        cpu: 1495m
+        memory: "2468347904"
+      target:
+        cpu: 8915m
+        memory: "2593128448"
+      uncappedTarget:
+        cpu: 8915m
+        memory: "2593128448"
+      upperBound:
+        cpu: 242820m
+        memory: "67118301184"

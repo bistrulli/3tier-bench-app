@@ -17,6 +17,9 @@ from cgroupspy import trees
 import docker
 from pathlib import Path
 from pymemcache.client.base import Client
+import yaml
+import re
+from scipy import integrate
 
 
 client = docker.from_env()
@@ -30,6 +33,14 @@ tier2= None
 
 # tf.compat.v1.disable_eager_execution()
 
+
+def get_vpaout(vpa_name):
+    p=subprocess.Popen(["kubectl","get","vpa",vpa_name,"--output","yaml"],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+    out,error = p.communicate()
+    yaml_out=yaml.safe_load(out.decode('UTF-8'))
+    
+    temp=re.findall(r'\d+', yaml_out["status"]["recommendation"]["containerRecommendations"][0]["target"]["cpu"])
+    return  list(map(float, temp))[0]
 
 def pruneContainer():
     subprocess.call(["docker", "container", "prune", "-f"])
@@ -384,11 +395,11 @@ class optCtrlNN2:
             for ui in range(1, P.shape[0]):
                 ru += (uvar_dn[ui] - Sold[ui]) ** 2
         
-        model.minimize(obj + 0.1 * ru + 0.05 * casadi.sumsqr(uvar_dn[1:]))
+        model.minimize(obj + 0.1 * ru + 0.1 * casadi.sumsqr(uvar_dn[1:]))
         
         optionsIPOPT = {'print_time':False, 'ipopt':{'print_level':0}}
         optionsOSQP = {'print_time':False, 'osqp':{'verbose':False}}
-        # model.solver('ipopt',optionsIPOPT)
+        #model.solver('ipopt',optionsIPOPT)
         model.solver('osqp', optionsOSQP)
         model.solve()
         return model.value(Uvar), model.value(stateVar[:, 1])
@@ -409,9 +420,9 @@ if __name__ == "__main__":
     dt = 10 ** (-1)
     H = 5
     N = 3
-    rep = 20
+    rep = 10
     drep = 0
-    sTime = 500
+    sTime = 300
     TF = sTime * rep * dt;
     Time = np.linspace(0, TF, int(np.ceil(TF / dt)) + 1)
     XSNN = np.zeros([N, len(Time)])
@@ -424,6 +435,7 @@ if __name__ == "__main__":
     optSNN = np.zeros([N, XSNN.shape[1]])
     optSMD = np.zeros([N, XSNN.shape[1]])
     optSPID = np.zeros([N, XSNN.shape[1]])
+    optSGKE = np.zeros([N, XSNN.shape[1]])
     P = np.matrix([[0, 1., 0], [0, 0, 1.], [1., 0, 0]])
     S = np.matrix([-1, -1, -1]).T
     MU = np.matrix([1, 10, 10]).T
@@ -445,6 +457,8 @@ if __name__ == "__main__":
     tgt=None
     step=0
     
+    s=None
+    
     try:
             #for step in tqdm(range(XSSIM.shape[1] - 1)):
             while drep<=rep and step<(XSNN.shape[1]-1):
@@ -452,18 +466,18 @@ if __name__ == "__main__":
                 if step == 0 or r.get("sim").decode('UTF-8')=="step":
                     print("drep=",drep)
                     if(step==0):
-                        startSysDocker(isCpu)
-                        startClient(np.random.randint(low=10, high=100))
-                        time.sleep(3)
+                        #startSysDocker(isCpu)
+                        #startClient(np.random.randint(low=10, high=100))
+                        #time.sleep(3)
                         
                         #memcached client
-                        r=Client("localhost:11211")
+                        r=Client("monitor:11211")
                         r.set("sim","-1")
                     else:
                         #memcached client
                         if(r is not None):
                             r.close()
-                        r=Client("localhost:11211")
+                        r=Client("monitor:11211")
                         r.set("sim","-1")
                         print(r.get("sim").decode('UTF-8'))
                         if(r.get("sim").decode('UTF-8')=="step"):
@@ -503,9 +517,9 @@ if __name__ == "__main__":
                     # tier1=client.containers.get("tier1-cnt")
                     # tier2=client.containers.get("tier2-cnt")
                     
-                    redis_cnt=sys[0]
-                    tier2=sys[1]
-                    tier1=sys[2]
+                    # redis_cnt=sys[0]
+                    # tier2=sys[1]
+                    # tier1=sys[2]
                     
                     # redis_cnt.update(cpuset_cpus="0-4")
                     # tier1.update(cpuset_cpus="5-31")
@@ -515,16 +529,16 @@ if __name__ == "__main__":
                     #     resetU()
                     #r.mset({"t1_hw":np.sum(XSSIM[:, step]),"t2_hw":np.sum(XSSIM[:, step])})
                     # startClient(np.sum(XSSIM[:, step]))
-                    # time.sleep(3)
-                    # if(step>0):
-                    #     r.set("t1_hw",optSNN[1, step-1])
-                    #     r.set("t2_hw",optSNN[2, step-1])
+                    #time.sleep(3)
+                    if(step==0):
+                        r.set("t1_hw","120")
+                        r.set("t2_hw","120")
                     
                 #print(r.get("sim").decode('UTF-8'))
                 
                 XSSIM[:, step] = getstate(r, keys, N)
                 tgt = np.round(alfa[-1] * 0.82 * np.sum(XSSIM[:, step]), 5)
-                print(XSSIM[:, step],tgt,np.sum(XSSIM[:, step]),step)
+                
                 
                 if(step > 0):
                     Ie += (tgt - XSSIM[0, step])
@@ -536,22 +550,27 @@ if __name__ == "__main__":
                 optU = optU_N * ctrl.stdu + ctrl.meanu
                 Sold = optU_N
                 
-                r.set("t1_hw",str(np.round(optU[1],4)))
-                r.set("t2_hw",str(np.round(optU[2],4)))
+                #r.set("t1_hw",str(np.round(optU[1],4)))
+                #r.set("t2_hw",str(np.round(optU[2],4)))
                 #r.mset({"t1_hw":str(np.round(optU[1],4)),"t2_hw":str(np.round(optU[2],4))})
-                if(isCpu):
-                    setU(optU)
-                # print(optU)
+                #if(isCpu):
+                #    setU(optU)
+                #print(optU)
+                
+                print(XSSIM[:, step],tgt,np.sum(XSSIM[:, step]),step,optU[1:3])
                             
                 optSNN[:, step] = optU[0:N]
+                optSGKE[:,step] = [0,get_vpaout("tier1-vpa")/1000.0,get_vpaout("tier2-vpa")/1000.0]
                 tgtStory += [tgt]
                 
-                time.sleep(0.3)
+                #time.sleep(0.3)
                 
                 # optSPID[:,step]=optSPid
                 # optSPid=mitigateBottleneck(optSPid, Xsim3, tgt)
                 
+                
                 step+=1
+                
              
             # print("NN Reference error %f%% \nODE Reference error %f%% \n"%(np.abs(XSNN[0,-1]-tgt)*100/tgt,np.abs(XSODE[0,-1]-tgt)*100/tgt))
             plt.close('all')
@@ -648,9 +667,17 @@ if __name__ == "__main__":
             plt.figure()
             plt.title("Control Signals NN")
             for i in range(1, N):
-                plt.plot(optSNN[i,:].T, label="Tier_%d" % (i))
+                plt.plot(optSNN[i,0:min(step,len(tgtStory))].T, label="Tier_%d" % (i))
             plt.legend()
             plt.savefig("./figure/control.png")
+            
+            plt.figure()
+            plt.title("Control Signals GKE")
+            for i in range(1, N):
+                plt.plot(optSGKE[i,0:min(step,len(tgtStory))].T, label="Tier_%d" % (i))
+            plt.legend()
+            plt.savefig("./figure/controlGKE.png")
+            
             # plt.figure()
             # plt.title("Control Singals Model Driven")
             # plt.plot(optSMD[1:,:].T)
@@ -658,15 +685,22 @@ if __name__ == "__main__":
             # plt.title("Control Singals PID")
             # plt.plot(optSPID[1:,:].T)
             
-            print(np.mean(optSPID[1:,:], axis=1))
-            print(np.mean(optSMD[1:,:], axis=1))
-            print(np.mean(optSNN[1:,:], axis=1))         
+            #print(np.mean(optSPID[1:,:], axis=1))
+            #print(np.mean(optSMD[1:,:], axis=1))
+            print("NN core",np.mean(optSNN[1:,0:min(step,len(tgtStory))], axis=1))  
+            print("GKE Core",np.mean(optSGKE[1:,0:min(step,len(tgtStory))], axis=1)) 
+            
+            print("NN core int",integrate.trapezoid(y=optSNN[1,0:min(step,len(tgtStory))],dx=2.3),
+                  integrate.trapezoid(y=optSNN[2,0:min(step,len(tgtStory))],dx=2.3))
+            print("GKE core int",integrate.trapezoid(y=optSGKE[1,0:min(step,len(tgtStory))],dx=2.3),
+                  integrate.trapezoid(y=optSGKE[2,0:min(step,len(tgtStory))],dx=2.3))
     
             plt.show()
+            
     
     finally:
-        #pass
-        killClient()
-        time.sleep(5)
-        killSys()
+        pass
+        # killClient()
+        # time.sleep(5)
+        # killSys()
         #killDockerCmp()
