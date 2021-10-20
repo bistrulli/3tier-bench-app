@@ -49,7 +49,7 @@ public class Main {
 					memcachedClient.set("think", 3600, String.valueOf(0)).get();
 				} else {
 					if (e.endsWith("_sw") || e.endsWith("_hw")) {
-						memcachedClient.set(e, 3600, "1").get();
+						memcachedClient.set(e, 3600, "120").get();
 					} else {
 						memcachedClient.set(e, 3600, "0").get();
 					}
