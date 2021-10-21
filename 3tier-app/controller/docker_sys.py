@@ -21,7 +21,7 @@ class dockersys(system_interface):
         r=Client("localhost:11211")
         r.set("stop","0")
         
-        self.client_cnt=self.dck_client.containers.run(image="bistrulli/client:0.8",
+        self.client_cnt=self.dck_client.containers.run(image="bistrulli/client:0.7",
                               command="java -Xmx4G -jar client-0.0.1-SNAPSHOT-jar-with-dependencies.jar --initPop %d --queues \
                                       '[\"think\", \"e1_bl\", \"e1_ex\", \"t1_hw\", \"e2_bl\", \"e2_ex\", \"t2_hw\"]' \
                                        --jedisHost monitor"%(initPop),
@@ -50,10 +50,10 @@ class dockersys(system_interface):
             r=Client("localhost:11211")
             r.set("stop","1")
             r.close()
-            self.client_cnt.reload()
-            while(self.client_cnt.status!="exited"):
-                time.sleep(0.2)
-                self.client_cnt.reload()
+            # self.client_cnt.reload()
+            # while(self.client_cnt.status!="exited"):
+            #     time.sleep(0.2)
+            #     self.client_cnt.reload()
             self.client_cnt.reload()
             self.client_cnt.remove()
             self.dck_client.containers.prune()
@@ -156,7 +156,7 @@ if __name__ == "__main__":
         dck_sys.startSys(False)
         dck_sys.startClient(10)
         
-        mnt=Client("monitor:11211")
+        mnt=Client("localhost:11211")
         for i in range(20):
             print(dck_sys.getstate(mnt))
             time.sleep(0.3)
