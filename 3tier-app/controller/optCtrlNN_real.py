@@ -304,8 +304,8 @@ class optCtrlNN2:
         lb = [np.sum(X0) - 1]
         ub = [np.sum(X0) + 1]
         for i in range(1, P.shape[0]):
-            lb.append(1*10 ** (-1))
-            ub.append(np.sum(X0))
+            lb.append(2*10 ** (-1))
+            ub.append(100)
         
         for i in range(P.shape[0] * P.shape[1]):
             lb.append(0)
@@ -409,7 +409,7 @@ if __name__ == "__main__":
     dt = 10 ** (-1)
     H = 5
     N = 3
-    rep = 5
+    rep = 2
     drep = 0
     sTime = 500
     TF = sTime * rep * dt;
