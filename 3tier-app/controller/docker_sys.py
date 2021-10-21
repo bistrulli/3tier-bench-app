@@ -55,7 +55,7 @@ class dockersys(system_interface):
             #     time.sleep(0.2)
             #     self.client_cnt.reload()
             self.client_cnt.reload()
-            elf.client_cnt.kill()
+            self.client_cnt.kill()
             self.client_cnt.remove()
             self.dck_client.containers.prune()
             self.client_cnt=None
