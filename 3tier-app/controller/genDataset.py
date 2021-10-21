@@ -27,7 +27,7 @@ def stopSystem():
     dck_sys.stopSystem()
 
 def getTr():
-    prob=np.exp(np.linspace(5,1,10))/np.sum(np.exp(np.linspace(5,1,10)))
+    prob=np.exp(np.linspace(2,1,10))/np.sum(np.exp(np.linspace(2,1,10)))
     r=np.random.choice([.1,.2,.3,.4,.5,.6,.7,.8,.9,1],p=prob)
     return np.random.rand()*0.1+(r-0.1)
 
