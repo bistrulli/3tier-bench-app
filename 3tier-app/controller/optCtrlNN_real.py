@@ -648,7 +648,7 @@ if __name__ == "__main__":
             plt.figure()
             plt.title("Control Signals NN")
             for i in range(1, N):
-                plt.plot(optSNN[i,0:max(optSPID.shape[1],len(tgtStory))-1].T, label="Tier_%d" % (i))
+                plt.plot(optSNN[i,0:min(optSPID.shape[1],len(tgtStory))-1].T, label="Tier_%d" % (i))
             plt.legend()
             plt.savefig("./figure/control.png")
             # plt.figure()
@@ -658,9 +658,9 @@ if __name__ == "__main__":
             # plt.title("Control Singals PID")
             # plt.plot(optSPID[1:,:].T)
             
-            print(np.mean(optSPID[1:,0:max(optSPID.shape[1],len(tgtStory))-1], axis=1))
-            print(np.mean(optSMD[1:,0:max(optSPID.shape[1],len(tgtStory))-1], axis=1))
-            print(np.mean(optSNN[1:,0:max(optSPID.shape[1],len(tgtStory))-1], axis=1))         
+            print(np.mean(optSPID[1:,0:min(optSPID.shape[1],len(tgtStory))-1], axis=1))
+            print(np.mean(optSMD[1:,0:min(optSPID.shape[1],len(tgtStory))-1], axis=1))
+            print(np.mean(optSNN[1:,0:min(optSPID.shape[1],len(tgtStory))-1], axis=1))         
     
             plt.show()
     
