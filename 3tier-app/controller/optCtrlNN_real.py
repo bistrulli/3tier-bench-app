@@ -384,7 +384,7 @@ class optCtrlNN2:
             for ui in range(1, P.shape[0]):
                 ru += (uvar_dn[ui] - Sold[ui]) ** 2
         
-        model.minimize(obj + 1 * ru + 0.1 * uvar_dn[1]**2+0.2 * uvar_dn[2]**2)
+        model.minimize(obj + 1 * ru + 0.2 * uvar_dn[1]**2+0.2 * uvar_dn[2]**2)
         
         optionsIPOPT = {'print_time':False, 'ipopt':{'print_level':0}}
         optionsOSQP = {'print_time':False, 'osqp':{'verbose':False}}
