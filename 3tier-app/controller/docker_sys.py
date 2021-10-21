@@ -108,7 +108,7 @@ class dockersys(system_interface):
                 print("killing %s "%(cnt.name))
                 cnt.reload()
                 cnt.kill()
-                cnt.remove()
+                #cnt.remove()
             except docker.errors.NotFound:
                 pass
         self.sys=[]
