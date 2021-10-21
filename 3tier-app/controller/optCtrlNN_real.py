@@ -304,7 +304,7 @@ class optCtrlNN2:
         lb = [np.sum(X0) - 1]
         ub = [np.sum(X0) + 1]
         for i in range(1, P.shape[0]):
-            lb.append(2*10 ** (-1))
+            lb.append(1*10 ** (-1))
             ub.append(100)
         
         for i in range(P.shape[0] * P.shape[1]):
@@ -472,8 +472,8 @@ if __name__ == "__main__":
                     drep+=1
                     
                     Sold = None       
-                    alfa.append(genAfa())
-                    #alfa.append(1.0)
+                    #alfa.append(genAfa())
+                    alfa.append(1.0)
                     #XSSIM[:, step] = [np.random.randint(low=10, high=100), 0, 0]
                     XSSIM[:, step] = getstate(r, keys, N)
                     #XSSIM[:, step] = [100, 0, 0]
