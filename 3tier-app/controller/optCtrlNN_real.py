@@ -336,8 +336,8 @@ class optCtrlNN2:
         # print(self.tfmodel.get_tensor(output_details[1]['index']).shape)
         # print(self.tfmodel.get_tensor(output_details[2]['index']).shape)
         
-        Bias = self.tfmodel.get_tensor(output_details[0]['index'])
-        Gain = self.tfmodel.get_tensor(output_details[2]['index'])
+        Bias = self.tfmodel.get_tensor(output_details[1]['index'])
+        Gain = self.tfmodel.get_tensor(output_details[0]['index'])
 
         # Bias=Ypredicted_N[-1]
         # Gain=Ypredicted_N[1]
@@ -405,11 +405,11 @@ if __name__ == "__main__":
                      "%s/../learnt_model/open_loop_3tier_H5.mat" % (os.path.dirname(curpath)))
     
     isAR = True
-    isCpu = True
+    isCpu = False
     dt = 10 ** (-1)
     H = 5
     N = 3
-    rep = 5
+    rep = 1
     drep = 0
     sTime = 500
     TF = sTime * rep * dt;
