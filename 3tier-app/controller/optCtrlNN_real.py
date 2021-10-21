@@ -384,7 +384,7 @@ class optCtrlNN2:
             for ui in range(1, P.shape[0]):
                 ru += (uvar_dn[ui] - Sold[ui]) ** 2
         
-        model.minimize(obj + 0.1 * ru + 1 * casadi.sumsqr(uvar_dn[1:]))
+        model.minimize(obj + 0.1 * ru + 0.5 * casadi.sumsqr(uvar_dn[1:]))
         
         optionsIPOPT = {'print_time':False, 'ipopt':{'print_level':0}}
         optionsOSQP = {'print_time':False, 'osqp':{'verbose':False}}
@@ -409,7 +409,7 @@ if __name__ == "__main__":
     dt = 10 ** (-1)
     H = 5
     N = 3
-    rep = 5
+    rep = 1
     drep = 0
     sTime = 500
     TF = sTime * rep * dt;
