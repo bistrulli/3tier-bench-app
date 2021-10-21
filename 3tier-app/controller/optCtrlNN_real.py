@@ -384,7 +384,7 @@ class optCtrlNN2:
             for ui in range(1, P.shape[0]):
                 ru += (uvar_dn[ui] - Sold[ui]) ** 2
         
-        model.minimize(obj + 0.3 * ru + 0.15 * uvar_dn[1]**2+0.15 * uvar_dn[2]**2)
+        model.minimize(obj + 0.3 * ru + 0.1 * uvar_dn[1]**2+0.2 * uvar_dn[2]**2)
         
         optionsIPOPT = {'print_time':False, 'ipopt':{'print_level':0}}
         optionsOSQP = {'print_time':False, 'osqp':{'verbose':False}}
@@ -524,7 +524,6 @@ if __name__ == "__main__":
                 
                 XSSIM[:, step] = getstate(r, keys, N)
                 tgt = np.round(alfa[-1] * 0.82 * np.sum(XSSIM[:, step]), 5)
-                print(XSSIM[:, step],tgt,np.sum(XSSIM[:, step]),step)
                 
                 if(step > 0):
                     Ie += (tgt - XSSIM[0, step])
@@ -536,17 +535,19 @@ if __name__ == "__main__":
                 optU = optU_N * ctrl.stdu + ctrl.meanu
                 Sold = optU_N
                 
-                r.set("t1_hw",str(np.round(optU[1],4)))
-                r.set("t2_hw",str(np.round(optU[2],4)))
+                # r.set("t1_hw",str(np.round(optU[1],4)))
+                # r.set("t2_hw",str(np.round(optU[2],4)))
                 #r.mset({"t1_hw":str(np.round(optU[1],4)),"t2_hw":str(np.round(optU[2],4))})
                 if(isCpu):
                     setU(optU)
                 # print(optU)
+                
+                print(XSSIM[:, step],tgt,np.sum(XSSIM[:, step]),step,optU[1:N])
                             
                 optSNN[:, step] = optU[0:N]
                 tgtStory += [tgt]
                 
-                time.sleep(0.3)
+                #time.sleep(0.3)
                 
                 # optSPID[:,step]=optSPid
                 # optSPid=mitigateBottleneck(optSPid, Xsim3, tgt)
