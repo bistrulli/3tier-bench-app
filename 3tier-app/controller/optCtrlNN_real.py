@@ -401,8 +401,8 @@ if __name__ == "__main__":
     #startDockerCmp()
     
     curpath = os.path.realpath(__file__)
-    ctrl = optCtrlNN2("%s/../learnt_model/model_3tier.tflite" % (os.path.dirname(curpath)),
-                     "%s/../learnt_model/open_loop_3tier_H5.mat" % (os.path.dirname(curpath)))
+    ctrl = optCtrlNN2("%s/../learnt_model/old/model_3tier.tflite" % (os.path.dirname(curpath)),
+                     "%s/../learnt_model/old/open_loop_3tier_H5.mat" % (os.path.dirname(curpath)))
     
     isAR = True
     isCpu = True
