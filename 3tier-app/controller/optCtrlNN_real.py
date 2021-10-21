@@ -336,8 +336,8 @@ class optCtrlNN2:
         # print(self.tfmodel.get_tensor(output_details[1]['index']).shape)
         # print(self.tfmodel.get_tensor(output_details[2]['index']).shape)
         
-        Bias = self.tfmodel.get_tensor(output_details[1]['index'])
-        Gain = self.tfmodel.get_tensor(output_details[0]['index'])
+        Bias = self.tfmodel.get_tensor(output_details[0]['index'])
+        Gain = self.tfmodel.get_tensor(output_details[2]['index'])
 
         # Bias=Ypredicted_N[-1]
         # Gain=Ypredicted_N[1]
