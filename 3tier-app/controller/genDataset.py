@@ -84,7 +84,7 @@ try:
             
             if(r is not None):
                 r.close()
-            r = Client("monitor:11211")
+            r = Client("localhost:11211")
             
             #get fake P
             P=np.random.rand(N,N);
