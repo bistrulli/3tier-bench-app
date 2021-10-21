@@ -18,7 +18,7 @@ class dockersys(system_interface):
         self.sys=[]
     
     def startClient(self,initPop):
-        r=Client("monitor:11211")
+        r=Client("localhost:11211")
         r.set("stop","0")
         
         self.client_cnt=self.dck_client.containers.run(image="bistrulli/client:0.7",
@@ -47,7 +47,7 @@ class dockersys(system_interface):
     def stopClient(self):
         if(self.client_cnt is not None):
             print("stopping client gracefully")
-            r=Client("monitor:11211")
+            r=Client("localhost:11211")
             r.set("stop","1")
             r.close()
             self.client_cnt.reload()
