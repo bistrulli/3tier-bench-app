@@ -304,7 +304,7 @@ class optCtrlNN2:
         lb = [np.sum(X0) - 1]
         ub = [np.sum(X0) + 1]
         for i in range(1, P.shape[0]):
-            lb.append(2*10 ** (-1))
+            lb.append(1*10 ** (-1))
             ub.append(100)
         
         for i in range(P.shape[0] * P.shape[1]):
@@ -384,7 +384,7 @@ class optCtrlNN2:
             for ui in range(1, P.shape[0]):
                 ru += (uvar_dn[ui] - Sold[ui]) ** 2
         
-        model.minimize(obj + 1 * ru + 0.1 * uvar_dn[1]**2+0.2 * uvar_dn[2]**2)
+        model.minimize(obj + 1 * ru + 0.1 * uvar_dn[1]**2+0.1 * uvar_dn[2]**2)
         
         optionsIPOPT = {'print_time':False, 'ipopt':{'print_level':0}}
         optionsOSQP = {'print_time':False, 'osqp':{'verbose':False}}
