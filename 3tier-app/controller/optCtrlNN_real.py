@@ -336,7 +336,7 @@ class optCtrlNN2:
         # print(self.tfmodel.get_tensor(output_details[1]['index']).shape)
         # print(self.tfmodel.get_tensor(output_details[2]['index']).shape)
         
-        Bias = self.tfmodel.get_tensor(output_details[1]['index'])
+        Bias = self.tfmodel.get_tensor(output_details[2]['index'])
         Gain = self.tfmodel.get_tensor(output_details[0]['index'])
 
         # Bias=Ypredicted_N[-1]
@@ -384,7 +384,7 @@ class optCtrlNN2:
             for ui in range(1, P.shape[0]):
                 ru += (uvar_dn[ui] - Sold[ui]) ** 2
         
-        model.minimize(obj + 0.1 * ru + 0.3 * casadi.sumsqr(uvar_dn[1:]))
+        model.minimize(obj + 0.1 * ru + 0.1 * casadi.sumsqr(uvar_dn[1:]))
         
         optionsIPOPT = {'print_time':False, 'ipopt':{'print_level':0}}
         optionsOSQP = {'print_time':False, 'osqp':{'verbose':False}}
