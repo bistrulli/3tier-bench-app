@@ -153,16 +153,16 @@ if __name__ == "__main__":
     
     try:
         dck_sys=dockersys()
-        # dck_sys.startSys(False)
-        # dck_sys.startClient(10)
+        dck_sys.startSys(False)
+        dck_sys.startClient(10)
         
-        # mnt=Client("monitor:11211")
-        # for i in range(20):
-        #     print(dck_sys.getstate(mnt))
-        #     time.sleep(0.3)
-        # mnt.close()
-        #
-        # dck_sys.setU(2, "tier1-k")
+        mnt=Client("monitor:11211")
+        for i in range(20):
+            print(dck_sys.getstate(mnt))
+            time.sleep(0.3)
+        mnt.close()
+        
+        dck_sys.setU(2, "tier1-k")
     
         dck_sys.stopClient()
         dck_sys.stopSystem()
