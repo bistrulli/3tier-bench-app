@@ -384,7 +384,7 @@ class optCtrlNN2:
             for ui in range(1, P.shape[0]):
                 ru += (uvar_dn[ui] - Sold[ui]) ** 2
         
-        model.minimize(obj + 0.1 * ru + 0.5 * casadi.sumsqr(uvar_dn[1:]))
+        model.minimize(obj + 0.1 * ru + 0.3 * casadi.sumsqr(uvar_dn[1:]))
         
         optionsIPOPT = {'print_time':False, 'ipopt':{'print_level':0}}
         optionsOSQP = {'print_time':False, 'osqp':{'verbose':False}}
@@ -648,7 +648,7 @@ if __name__ == "__main__":
             plt.figure()
             plt.title("Control Signals NN")
             for i in range(1, N):
-                plt.plot(optSNN[i,:].T, label="Tier_%d" % (i))
+                plt.plot(optSNN[i,0:max(optSPID.shape[1],len(tgtStory))-1].T, label="Tier_%d" % (i))
             plt.legend()
             plt.savefig("./figure/control.png")
             # plt.figure()
@@ -658,9 +658,9 @@ if __name__ == "__main__":
             # plt.title("Control Singals PID")
             # plt.plot(optSPID[1:,:].T)
             
-            print(np.mean(optSPID[1:,:], axis=1))
-            print(np.mean(optSMD[1:,:], axis=1))
-            print(np.mean(optSNN[1:,:], axis=1))         
+            print(np.mean(optSPID[1:,0:max(optSPID.shape[1],len(tgtStory))-1], axis=1))
+            print(np.mean(optSMD[1:,0:max(optSPID.shape[1],len(tgtStory))-1], axis=1))
+            print(np.mean(optSNN[1:,0:max(optSPID.shape[1],len(tgtStory))-1], axis=1))         
     
             plt.show()
     
