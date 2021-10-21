@@ -388,8 +388,8 @@ class optCtrlNN2:
         
         optionsIPOPT = {'print_time':False, 'ipopt':{'print_level':0}}
         optionsOSQP = {'print_time':False, 'osqp':{'verbose':False}}
-        #model.solver('ipopt',optionsIPOPT)
-        model.solver('osqp', optionsOSQP)
+        model.solver('ipopt',optionsIPOPT)
+        #model.solver('osqp', optionsOSQP)
         model.solve()
         return model.value(Uvar), model.value(stateVar[:, 1])
 
