@@ -36,7 +36,7 @@ signal.signal(signal.SIGINT, handler)
 repcount=0;
 
 #per npoints intendo il numero di diverso di stati iniziali che considero
-rep=100
+rep=10
 H=5
 ssTime=(H+1)*30
 N=3
@@ -91,7 +91,7 @@ try:
             P=P/np.sum(P,1,keepdims=True);
             
             XS[tick,:]=dck_sys.getstate(r)
-            X0=XS[[tick],:]
+            #X0=XS[[tick],:]
             
         else:
             XS[tick,:]=dck_sys.getstate(r)
