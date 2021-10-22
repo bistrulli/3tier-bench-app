@@ -332,9 +332,9 @@ class optCtrlNN2:
         # Ypredicted_N=self.tfmodel({'inputx':input_N,'inputu':Sin})
         # Ypredicted_N=[0,np.zeros([1,2,38]),np.zeros([1,10])]
         
-        # print(self.tfmodel.get_tensor(output_details[0]['index']).shape)
-        # print(self.tfmodel.get_tensor(output_details[1]['index']).shape)
-        # print(self.tfmodel.get_tensor(output_details[2]['index']).shape)
+        print(self.tfmodel.get_tensor(output_details[0]['index']).shape)
+        print(self.tfmodel.get_tensor(output_details[1]['index']).shape)
+        print(self.tfmodel.get_tensor(output_details[2]['index']).shape)
         
         Bias = self.tfmodel.get_tensor(output_details[0]['index'])
         Gain = self.tfmodel.get_tensor(output_details[2]['index'])
