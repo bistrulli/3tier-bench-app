@@ -27,7 +27,7 @@ def stopSystem():
     dck_sys.stopSystem()
 
 def getTr():
-    prob=np.exp(np.linspace(2,1,10))/np.sum(np.exp(np.linspace(2,1,10)))
+    prob=np.exp(np.linspace(5,1,10))/np.sum(np.exp(np.linspace(5,1,10)))
     r=np.random.choice([.1,.2,.3,.4,.5,.6,.7,.8,.9,1],p=prob)
     return np.random.rand()*0.1+(r-0.1)
 
@@ -36,7 +36,7 @@ signal.signal(signal.SIGINT, handler)
 repcount=0;
 
 #per npoints intendo il numero di diverso di stati iniziali che considero
-rep=10
+rep=100
 H=5
 ssTime=(H+1)*30
 N=3
@@ -55,7 +55,7 @@ P=None
 X0=None
 myuuid = uuid.uuid4()
 
-fname="open_loop_3tier_H5_v"
+fname="open_loop_3tier_H5"
 
 dck_sys=dockersys()
 
@@ -68,7 +68,7 @@ try:
                 Path(str(script_dir)+"/../data/%s/"%(str(myuuid)) ).mkdir( parents=True, exist_ok=True )
                 sp.savemat(str(script_dir)+"/../data/%s/%s.mat"%(myuuid,fname),{"DS_X":DS_X,"DS_Y":DS_Y,"DS_U":DS_U})
             
-            XS[tick,:]=[np.random.randint(low=1,high=120)]+[0]*(N-1)
+            XS[tick,:]=[np.random.randint(low=1,high=100)]+[0]*(N-1)
             X0=XS[[tick],:]
            
             optS=np.round(np.matrix([np.sum(X0),getTr()*14.8+0.2,getTr()*14.8+0.2]),4)
@@ -112,7 +112,7 @@ try:
                 
                 dck_sys.setU(optS[0,1], "tier1-cnt")
                 dck_sys.setU(optS[0,2], "tier2-cnt")
-        time.sleep(0.5)
+        time.sleep(1.0)
         
     #salvo risultati intermedi
     Path(str(script_dir)+"/../data/%s/"%(str(myuuid)) ).mkdir( parents=True, exist_ok=True )
