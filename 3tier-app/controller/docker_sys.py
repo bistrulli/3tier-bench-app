@@ -9,7 +9,7 @@ class dockersys(system_interface):
     sys = None
     client_cnt = None
     dck_client = None
-    cnt_names = ["monitor-cnt","tier2-cnt","tier1-cnt"]
+    cnt_names = ["tier1-cnt","tier2-cnt","monitor-cnt"]
     keys = ["think", "e1_bl", "e1_ex", "t1_hw", "e2_bl", "e2_ex", "t2_hw"]
     period = 100000
     
