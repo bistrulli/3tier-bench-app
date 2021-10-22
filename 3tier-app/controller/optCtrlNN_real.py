@@ -110,7 +110,7 @@ def startSysDocker(isCpu):
     time.sleep(3)
     print("started monitor")
     
-    sys.append(client.containers.run(image="bistrulli/tier2:noah_0.1",
+    sys.append(client.containers.run(image="bistrulli/tier2:0.7",
                           command=["java","-Xmx4G","-jar","tier2-0.0.1-SNAPSHOT-jar-with-dependencies.jar",
                                    "--cpuEmu","%d"%cpuEmu,"--jedisHost","monitor"],
                           auto_remove=True,
@@ -122,7 +122,7 @@ def startSysDocker(isCpu):
     time.sleep(3)
     print("started monitor")
     
-    sys.append(client.containers.run(image="bistrulli/tier1:noah_0.1",
+    sys.append(client.containers.run(image="bistrulli/tier1:0.7",
                           command=["java","-Xmx4G","-jar","tier1-0.0.1-SNAPSHOT-jar-with-dependencies.jar",
                                    "--cpuEmu","%d"%cpuEmu,"--jedisHost","monitor"],
                           auto_remove=True,
@@ -337,7 +337,7 @@ class optCtrlNN2:
         # print(self.tfmodel.get_tensor(output_details[2]['index']).shape)
         
         Bias = self.tfmodel.get_tensor(output_details[1]['index'])
-        Gain = self.tfmodel.get_tensor(output_details[2]['index'])
+        Gain = self.tfmodel.get_tensor(output_details[0]['index'])
 
         # Bias=Ypredicted_N[-1]
         # Gain=Ypredicted_N[1]
@@ -384,7 +384,7 @@ class optCtrlNN2:
             for ui in range(1, P.shape[0]):
                 ru += (uvar_dn[ui] - Sold[ui]) ** 2
         
-        model.minimize(obj + 0.2 * ru + 0.1 * uvar_dn[1]**2+0.1 * uvar_dn[2]**2)
+        model.minimize(obj + 0.1 * ru + 0.1 * uvar_dn[1]**2+0.1 * uvar_dn[2]**2)
         
         optionsIPOPT = {'print_time':False, 'ipopt':{'print_level':0}}
         optionsOSQP = {'print_time':False, 'osqp':{'verbose':False}}
@@ -405,11 +405,11 @@ if __name__ == "__main__":
                      "%s/../learnt_model/open_loop_3tier_H5.mat" % (os.path.dirname(curpath)))
     
     isAR = True
-    isCpu = True
+    isCpu = False
     dt = 10 ** (-1)
     H = 5
     N = 3
-    rep = 5
+    rep = 2
     drep = 0
     sTime = 500
     TF = sTime * rep * dt;
@@ -535,8 +535,8 @@ if __name__ == "__main__":
                 optU = optU_N * ctrl.stdu + ctrl.meanu
                 Sold = optU_N
                 
-                # r.set("t1_hw",str(np.round(optU[1],4)))
-                # r.set("t2_hw",str(np.round(optU[2],4)))
+                r.set("t1_hw",str(np.round(optU[1],4)))
+                r.set("t2_hw",str(np.round(optU[2],4)))
                 #r.mset({"t1_hw":str(np.round(optU[1],4)),"t2_hw":str(np.round(optU[2],4))})
                 if(isCpu):
                     setU(optU)
