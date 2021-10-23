@@ -20,6 +20,8 @@ import Server.TierHttpHandler;
 @SuppressWarnings("restriction")
 public class Tier1HTTPHandler extends TierHttpHandler {
 
+	private static String tier2Host = null;
+
 	public Tier1HTTPHandler(SimpleTask lqntask, HttpExchange req, long stime) {
 		super(lqntask, req, stime);
 	}
@@ -35,7 +37,10 @@ public class Tier1HTTPHandler extends TierHttpHandler {
 		HttpClient client = null;
 		HttpRequest request = null;
 		client = HttpClient.newBuilder().version(Version.HTTP_1_1).build();
-		request = HttpRequest.newBuilder().uri(URI.create("http://tier2:3001/?&entry=e2" + "&snd=" + this.getName())).build();
+		request = HttpRequest.newBuilder()
+				.uri(URI.create(
+						"http://" + Tier1HTTPHandler.getTier2Host() + ":3001/?&entry=e2" + "&snd=" + this.getName()))
+				.build();
 		try {
 			client.send(request, BodyHandlers.ofString());
 		} catch (IOException e1) {
@@ -55,7 +60,7 @@ public class Tier1HTTPHandler extends TierHttpHandler {
 			Float executing = 0f;
 			String[] entries = this.getLqntask().getEntries().keySet().toArray(new String[0]);
 			for (String e : entries) {
-				//String n = this.getJedis().get(e + "_ex");
+				// String n = this.getJedis().get(e + "_ex");
 				String n = String.valueOf(this.getMemcachedClient().get(e + "_ex"));
 				if (n != null) {
 					executing += Float.valueOf(n);
@@ -85,4 +90,13 @@ public class Tier1HTTPHandler extends TierHttpHandler {
 	public String getName() {
 		return "e1";
 	}
+
+	public static String getTier2Host() {
+		return tier2Host;
+	}
+
+	public static void setTier2Host(String tier2Host) {
+		Tier1HTTPHandler.tier2Host = tier2Host;
+	}
+
 }

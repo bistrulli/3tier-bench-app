@@ -28,6 +28,8 @@ public class Client implements Runnable {
 	private MemcachedClient memcachedClient = null;
 	private static Integer toKill = 0;
 	private Boolean dying=false;
+	private static String tier1Host=null;
+
 
 	public Client(SimpleTask task, Long ttime) {
 		this.setThinkTime(ttime);
@@ -46,7 +48,7 @@ public class Client implements Runnable {
 			HttpRequest request = null;
 			client = HttpClient.newBuilder().version(Version.HTTP_1_1).build();
 			request = HttpRequest.newBuilder()
-					.uri(URI.create("http://tier1:3000/?id=" + this.clietId.toString() + "&entry=e1" + "&snd=think"))
+					.uri(URI.create("http://"+Client.getTier1Host()+":3000/?id=" + this.clietId.toString() + "&entry=e1" + "&snd=think"))
 					.build();
 			
 //			request = HttpRequest.newBuilder()
@@ -106,6 +108,14 @@ public class Client implements Runnable {
 
 	public static void setToKill(Integer toKill) {
 		Client.toKill = toKill;
+	}
+	
+	public static String getTier1Host() {
+		return tier1Host;
+	}
+
+	public static void setTier1Host(String tier1Host) {
+		Client.tier1Host = tier1Host;
 	}
 
 }

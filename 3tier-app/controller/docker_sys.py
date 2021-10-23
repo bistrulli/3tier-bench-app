@@ -24,11 +24,11 @@ class dockersys(system_interface):
         self.client_cnt=self.dck_client.containers.run(image="bistrulli/client:0.7",
                               command="java -Xmx4G -jar client-0.0.1-SNAPSHOT-jar-with-dependencies.jar --initPop %d --queues \
                                       '[\"think\", \"e1_bl\", \"e1_ex\", \"t1_hw\", \"e2_bl\", \"e2_ex\", \"t2_hw\"]' \
-                                       --jedisHost monitor"%(initPop),
+                                       --jedisHost monitor.3tier --tier1Host tier1.3tier"%(initPop),
                               auto_remove=False,
                               detach=True,
                               name="client-cnt",
-                              hostname="client",
+                              hostname="client.3tier",
                               network="3tier-app_default",
                               stop_signal="SIGINT")
         
@@ -71,31 +71,31 @@ class dockersys(system_interface):
                               detach=True,
                               name="monitor-cnt",
                               ports={'11211/tcp': 11211},
-                              hostname="monitor.app",
+                              hostname="monitor.3tier",
                               network="3tier-app_default",
                               stop_signal="SIGINT"))
         
         self.waitRunning(self.sys[-1])
         
-        self.sys.append(self.dck_client.containers.run(image="bistrulli/tier2:noah_0.1",
+        self.sys.append(self.dck_client.containers.run(image="bistrulli/tier2:0.8",
                               command=["java","-Xmx4G","-jar","tier2-0.0.1-SNAPSHOT-jar-with-dependencies.jar",
-                                       "--cpuEmu","%d"%cpuEmu,"--jedisHost","monitor"],
+                                       "--cpuEmu","%d"%cpuEmu,"--jedisHost","monitor.3tier"],
                               auto_remove=True,
                               detach=True,
                               name="tier2-cnt",
-                              hostname="tier2",
+                              hostname="tier2.3tier",
                               network="3tier-app_default",
                               stop_signal="SIGINT"))
         
         self.waitRunning(self.sys[-1])
         
-        self.sys.append(self.dck_client.containers.run(image="bistrulli/tier1:noah_0.1",
+        self.sys.append(self.dck_client.containers.run(image="bistrulli/tier1:0.8",
                               command=["java","-Xmx4G","-jar","tier1-0.0.1-SNAPSHOT-jar-with-dependencies.jar",
-                                       "--cpuEmu","%d"%cpuEmu,"--jedisHost","monitor"],
+                                       "--cpuEmu","%d"%cpuEmu,"--jedisHost","monitor.3tier","--tier2Host","tier2.3tier"],
                               auto_remove=True,
                               detach=True,
                               name="tier1-cnt",
-                              hostname="tier1",
+                              hostname="tier1.3tier",
                               network="3tier-app_default",
                               stop_signal="SIGINT"))
         
