@@ -21,14 +21,14 @@ class dockersys(system_interface):
         r=Client("localhost:11211")
         r.set("stop","0")
         
-        self.client_cnt=self.dck_client.containers.run(image="bistrulli/client:0.7",
+        self.client_cnt=self.dck_client.containers.run(image="bistrulli/client:0.9",
                               command="java -Xmx4G -jar client-0.0.1-SNAPSHOT-jar-with-dependencies.jar --initPop %d --queues \
                                       '[\"think\", \"e1_bl\", \"e1_ex\", \"t1_hw\", \"e2_bl\", \"e2_ex\", \"t2_hw\"]' \
-                                       --jedisHost monitor.3tier --tier1Host tier1.3tier"%(initPop),
+                                       --jedisHost monitor.ThreeTier --tier1Host tier1.ThreeTier"%(initPop),
                               auto_remove=False,
                               detach=True,
                               name="client-cnt",
-                              hostname="client.3tier",
+                              hostname="client.ThreeTier",
                               network="3tier-app_default",
                               stop_signal="SIGINT")
         
@@ -55,7 +55,7 @@ class dockersys(system_interface):
                 time.sleep(0.2)
                 self.client_cnt.reload()
             self.client_cnt.reload()
-            self.client_cnt.kill()
+            #self.client_cnt.kill()
             self.client_cnt.remove()
             self.dck_client.containers.prune()
             self.client_cnt=None
@@ -71,31 +71,31 @@ class dockersys(system_interface):
                               detach=True,
                               name="monitor-cnt",
                               ports={'11211/tcp': 11211},
-                              hostname="monitor.3tier",
+                              hostname="monitor.ThreeTier",
                               network="3tier-app_default",
                               stop_signal="SIGINT"))
         
         self.waitRunning(self.sys[-1])
         
-        self.sys.append(self.dck_client.containers.run(image="bistrulli/tier2:0.8",
+        self.sys.append(self.dck_client.containers.run(image="bistrulli/tier2:0.9",
                               command=["java","-Xmx4G","-jar","tier2-0.0.1-SNAPSHOT-jar-with-dependencies.jar",
-                                       "--cpuEmu","%d"%cpuEmu,"--jedisHost","monitor.3tier"],
+                                       "--cpuEmu","%d"%cpuEmu,"--jedisHost","monitor.ThreeTier"],
                               auto_remove=True,
                               detach=True,
                               name="tier2-cnt",
-                              hostname="tier2.3tier",
+                              hostname="tier2.ThreeTier",
                               network="3tier-app_default",
                               stop_signal="SIGINT"))
         
         self.waitRunning(self.sys[-1])
         
-        self.sys.append(self.dck_client.containers.run(image="bistrulli/tier1:0.8",
+        self.sys.append(self.dck_client.containers.run(image="bistrulli/tier1:0.9",
                               command=["java","-Xmx4G","-jar","tier1-0.0.1-SNAPSHOT-jar-with-dependencies.jar",
-                                       "--cpuEmu","%d"%cpuEmu,"--jedisHost","monitor.3tier","--tier2Host","tier2.3tier"],
+                                       "--cpuEmu","%d"%cpuEmu,"--jedisHost","monitor.ThreeTier","--tier2Host","tier2.ThreeTier"],
                               auto_remove=True,
                               detach=True,
                               name="tier1-cnt",
-                              hostname="tier1.3tier",
+                              hostname="tier1.ThreeTier",
                               network="3tier-app_default",
                               stop_signal="SIGINT"))
         
@@ -108,7 +108,7 @@ class dockersys(system_interface):
                 print("killing %s "%(cnt.name))
                 cnt.reload()
                 cnt.kill()
-                #cnt.remove()
+                cnt.remove()
             except docker.errors.NotFound:
                 pass
         self.sys=[]
@@ -160,10 +160,10 @@ if __name__ == "__main__":
         mnt=Client("localhost:11211")
         for i in range(20):
             print(dck_sys.getstate(mnt))
-            time.sleep(0.3)
+            time.sleep(0.2)
         mnt.close()
         
-        dck_sys.setU(2, "tier1-k")
+        #dck_sys.setU(2, "tier1-k")
     
         dck_sys.stopClient()
         dck_sys.stopSystem()
