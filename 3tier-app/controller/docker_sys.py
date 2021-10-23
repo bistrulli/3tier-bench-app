@@ -29,7 +29,7 @@ class dockersys(system_interface):
                               detach=True,
                               name="client-cnt",
                               hostname="client",
-                              network="3tier-app_default",
+                              #network="3tier-app_default",
                               stop_signal="SIGINT")
         
         self.waitRunning(self.client_cnt)
@@ -72,31 +72,31 @@ class dockersys(system_interface):
                               name="monitor-cnt",
                               ports={'11211/tcp': 11211},
                               hostname="monitor",
-                              network="3tier-app_default",
+                              #network="3tier-app_default",
                               stop_signal="SIGINT"))
         
         self.waitRunning(self.sys[-1])
         
-        self.sys.append(self.dck_client.containers.run(image="bistrulli/tier2:noah_0.1",
+        self.sys.append(self.dck_client.containers.run(image="bistrulli/tier2:0.7",
                               command=["java","-Xmx4G","-jar","tier2-0.0.1-SNAPSHOT-jar-with-dependencies.jar",
                                        "--cpuEmu","%d"%cpuEmu,"--jedisHost","monitor"],
                               auto_remove=True,
                               detach=True,
                               name="tier2-cnt",
                               hostname="tier2",
-                              network="3tier-app_default",
+                              #network="3tier-app_default",
                               stop_signal="SIGINT"))
         
         self.waitRunning(self.sys[-1])
         
-        self.sys.append(self.dck_client.containers.run(image="bistrulli/tier1:noah_0.1",
+        self.sys.append(self.dck_client.containers.run(image="bistrulli/tier1:0.7",
                               command=["java","-Xmx4G","-jar","tier1-0.0.1-SNAPSHOT-jar-with-dependencies.jar",
                                        "--cpuEmu","%d"%cpuEmu,"--jedisHost","monitor"],
                               auto_remove=True,
                               detach=True,
                               name="tier1-cnt",
                               hostname="tier1",
-                              network="3tier-app_default",
+                              #network="3tier-app_default",
                               stop_signal="SIGINT"))
         
         self.waitRunning(self.sys[-1])
