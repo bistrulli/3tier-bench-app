@@ -79,6 +79,8 @@ try:
             dck_sys.startSys(True)
             dck_sys.startClient(np.sum(XS[tick,:]))
             
+            time.sleep(2)
+            
             if(r is not None):
                 r.close()
             r = Client("localhost:11211")
