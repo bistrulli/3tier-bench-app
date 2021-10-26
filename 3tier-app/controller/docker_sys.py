@@ -164,9 +164,9 @@ if __name__ == "__main__":
         mnt.close()
         
         #dck_sys.setU(2, "tier1-k")
-    
-        dck_sys.stopClient()
-        dck_sys.stopSystem()
+        
+        # dck_sys.stopClient()
+        # dck_sys.stopSystem()
     except Exception as e:
         print(e)
         dck_sys.stopClient()
