@@ -51,11 +51,11 @@ class dockersys(system_interface):
             r.set("stop","1")
             r.close()
             self.client_cnt.reload()
-            while(self.client_cnt.status!="exited"):
-                time.sleep(0.2)
-                self.client_cnt.reload()
+            # while(self.client_cnt.status!="exited"):
+            #     time.sleep(0.2)
+            #     self.client_cnt.reload()
             self.client_cnt.reload()
-            #self.client_cnt.kill()
+            self.client_cnt.kill()
             self.client_cnt.remove()
             self.dck_client.containers.prune()
             self.client_cnt=None
