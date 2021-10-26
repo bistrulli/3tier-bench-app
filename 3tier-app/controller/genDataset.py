@@ -79,12 +79,16 @@ try:
             dck_sys.startSys(True)
             dck_sys.startClient(np.sum(XS[tick,:]))
             
-            dck_sys.setU(optS[0,1], "tier1-cnt")
-            dck_sys.setU(optS[0,2], "tier2-cnt")
-            
             if(r is not None):
                 r.close()
             r = Client("localhost:11211")
+            
+            r.set("t1_hw","%.4f"%(optS[0,1]))
+            r.set("t2_hw","%.4f"%(optS[0,2]))
+            dck_sys.setU(optS[0,1], "tier1-cnt")
+            dck_sys.setU(optS[0,2], "tier2-cnt")
+            
+            
             
             #get fake P
             P=np.random.rand(N,N);
@@ -110,6 +114,8 @@ try:
                 #gen rnd S
                 optS=np.round(np.matrix([np.sum(X0),getTr()*14.8+0.2,getTr()*14.8+0.2]),4)
                 
+                r.set("t1_hw","%.4f"%(optS[0,1]))
+                r.set("t2_hw","%.4f"%(optS[0,2]))
                 dck_sys.setU(optS[0,1], "tier1-cnt")
                 dck_sys.setU(optS[0,2], "tier2-cnt")
         time.sleep(0.5)
