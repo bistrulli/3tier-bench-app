@@ -31,6 +31,34 @@ def getTr():
     r=np.random.choice([.1,.2,.3,.4,.5,.6,.7,.8,.9,1],p=prob)
     return np.random.rand()*0.1+(r-0.1)
 
+def getServer(X,S,rand):
+    #print("queue=",X,"server",S)
+    optS=None
+    if(rand):
+        optS=np.round(np.matrix([np.sum(X),getTr()*14.8+0.2,getTr()*14.8+0.2]),4)
+    else:
+        #devo definire il numero di server da assegnare
+        optS=S
+        
+        #findBootleneck
+        eps=np.ones(S.shape)*10**(-5)
+        U=np.divide(np.minimum(X,S),S)
+        #print("utiliation=",U)
+        b=np.argmax(np.mean(U,axis=0))
+        
+        #print("bottelneck",b)
+         
+        optS[0,b]=np.maximum(np.minimum(optS[0,b]*15*np.random.rand(),100),0.1)
+        if(b==1):
+             optS[0,2]=max(np.random.rand()*optS[0,2]/10.0,0.1)
+        else:
+             optS[0,1]=max(np.random.rand()*optS[0,1]/10.0,0.1)
+    
+    #print("New=",optS)
+    
+    return optS;
+        
+
 signal.signal(signal.SIGINT, handler)
 
 repcount=0;
@@ -71,7 +99,8 @@ try:
             XS[tick,:]=[np.random.randint(low=1,high=100)]+[0]*(N-1)
             X0=XS[[tick],:]
            
-            optS=np.round(np.matrix([np.sum(X0),getTr()*14.8+0.2,getTr()*14.8+0.2]),4)
+            #optS=np.round(np.matrix([np.sum(X0),getTr()*14.8+0.2,getTr()*14.8+0.2]),4)
+            optS=getServer(X0,None,True)
             
             dck_sys.stopClient()
             dck_sys.stopSystem()
@@ -114,7 +143,8 @@ try:
                 P=P/np.sum(P,1,keepdims=True);
                 
                 #gen rnd S
-                optS=np.round(np.matrix([np.sum(X0),getTr()*14.8+0.2,getTr()*14.8+0.2]),4)
+                #optS=np.round(np.matrix([np.sum(X0),getTr()*14.8+0.2,getTr()*14.8+0.2]),4)
+                optS=getServer(np.mean(XS[tick-(H-1):tick+1],axis=0,keepdims=True),optS,False)
                 
                 r.set("t1_hw","%.4f"%(optS[0,1]))
                 r.set("t2_hw","%.4f"%(optS[0,2]))
