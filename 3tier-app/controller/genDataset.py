@@ -64,7 +64,7 @@ signal.signal(signal.SIGINT, handler)
 repcount=0;
 
 #per npoints intendo il numero di diverso di stati iniziali che considero
-rep=100
+rep=10
 H=5
 ssTime=(H+1)*30
 N=3
@@ -83,7 +83,7 @@ P=None
 X0=None
 myuuid = uuid.uuid4()
 
-fname="open_loop_3tier_H5"
+fname="open_loop_3tier_H5_v"
 
 dck_sys=dockersys()
 
