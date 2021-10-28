@@ -15,6 +15,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.commons.math3.distribution.AbstractRealDistribution;
 import org.apache.commons.math3.distribution.ExponentialDistribution;
 
+import Server.MCAtomicUpdater;
 import Server.SimpleTask;
 import net.spy.memcached.MemcachedClient;
 
@@ -27,9 +28,8 @@ public class Client implements Runnable {
 	public static AtomicInteger time = new AtomicInteger(0);
 	private MemcachedClient memcachedClient = null;
 	private static Integer toKill = 0;
-	private Boolean dying=false;
-	private static String tier1Host=null;
-
+	private Boolean dying = false;
+	private static String tier1Host = null;
 
 	public Client(SimpleTask task, Long ttime) {
 		this.setThinkTime(ttime);
@@ -47,32 +47,32 @@ public class Client implements Runnable {
 			HttpClient client = null;
 			HttpRequest request = null;
 			client = HttpClient.newBuilder().version(Version.HTTP_1_1).build();
-			request = HttpRequest.newBuilder()
-					.uri(URI.create("http://"+Client.getTier1Host()+":3000/?id=" + this.clietId.toString() + "&entry=e1" + "&snd=think"))
-					.build();
-			
+			request = HttpRequest.newBuilder().uri(URI.create("http://" + Client.getTier1Host() + ":3000/?id="
+					+ this.clietId.toString() + "&entry=e1" + "&snd=think")).build();
+
 //			request = HttpRequest.newBuilder()
 //					.uri(URI.create("https://www.random.org/integers/?num=1&min=1&max=100&col=1&base=10&format=html&rnd=new"))
 //					.build();
 
 			while ((this.memcachedClient.get("stop") == null
 					|| !String.valueOf(this.memcachedClient.get("stop")).equals("1")) && !this.dying) {
-				
-				long thinking = this.memcachedClient.incr("think", 1);
-				
+
+				// long thinking = this.memcachedClient.incr("think", 1);
+				MCAtomicUpdater.AtomicIncr(this.memcachedClient, 1, "think", 100);
+
 				SimpleTask.getLogger().debug(String.format("stop=%s", String.valueOf(memcachedClient.get("stop"))));
 				TimeUnit.MILLISECONDS.sleep(Double.valueOf(this.dist.sample()).longValue());
 
 				SimpleTask.getLogger().debug(String.format("%s sending", this.task.getName()));
 				HttpResponse<String> resp = client.send(request, BodyHandlers.ofString());
 
-				SimpleTask.getLogger().debug(String.format("%d thinking", thinking));
-				
-				if(Client.getToKill()>0) {
+				// SimpleTask.getLogger().debug(String.format("%d thinking", thinking));
+
+				if (Client.getToKill() > 0) {
 					synchronized (Client.getToKill()) {
-						if(Client.getToKill()>0) {
-							Client.setToKill(Client.toKill-1);
-							this.dying=true;
+						if (Client.getToKill() > 0) {
+							Client.setToKill(Client.toKill - 1);
+							this.dying = true;
 						}
 					}
 				}
@@ -109,7 +109,7 @@ public class Client implements Runnable {
 	public static void setToKill(Integer toKill) {
 		Client.toKill = toKill;
 	}
-	
+
 	public static String getTier1Host() {
 		return tier1Host;
 	}

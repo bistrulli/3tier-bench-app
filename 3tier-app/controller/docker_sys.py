@@ -77,7 +77,7 @@ class dockersys(system_interface):
         
         self.waitRunning(self.sys[-1])
         
-        self.sys.append(self.dck_client.containers.run(image="bistrulli/tier2:0.9",
+        self.sys.append(self.dck_client.containers.run(image="bistrulli/tier2:0.10",
                               command=["java","-Xmx4G","-jar","tier2-0.0.1-SNAPSHOT-jar-with-dependencies.jar",
                                        "--cpuEmu","%d"%cpuEmu,"--jedisHost","monitor.app"],
                               auto_remove=True,
@@ -89,7 +89,7 @@ class dockersys(system_interface):
         
         self.waitRunning(self.sys[-1])
         
-        self.sys.append(self.dck_client.containers.run(image="bistrulli/tier1:0.9",
+        self.sys.append(self.dck_client.containers.run(image="bistrulli/tier1:0.10",
                               command=["java","-Xmx4G","-jar","tier1-0.0.1-SNAPSHOT-jar-with-dependencies.jar",
                                        "--cpuEmu","%d"%cpuEmu,"--jedisHost","monitor.app","--tier2Host","tier2.app"],
                               auto_remove=True,

@@ -105,7 +105,7 @@ try:
             dck_sys.stopClient()
             dck_sys.stopSystem()
             
-            dck_sys.startSys(True)
+            dck_sys.startSys(False)
             dck_sys.startClient(np.sum(XS[tick,:]))
             
             time.sleep(2)
@@ -116,8 +116,8 @@ try:
             
             r.set("t1_hw","%.4f"%(optS[0,1]))
             r.set("t2_hw","%.4f"%(optS[0,2]))
-            dck_sys.setU(15, "tier1-cnt")
-            dck_sys.setU(15, "tier2-cnt")
+            # dck_sys.setU(15, "tier1-cnt")
+            # dck_sys.setU(15, "tier2-cnt")
             
             
             
@@ -148,8 +148,8 @@ try:
                 
                 r.set("t1_hw","%.4f"%(optS[0,1]))
                 r.set("t2_hw","%.4f"%(optS[0,2]))
-                dck_sys.setU(15, "tier1-cnt")
-                dck_sys.setU(15, "tier2-cnt")
+                # dck_sys.setU(15, "tier1-cnt")
+                # dck_sys.setU(15, "tier2-cnt")
         time.sleep(0.5)
         
     #salvo risultati intermedi
