@@ -100,7 +100,7 @@ try:
             X0=XS[[tick],:]
            
             #optS=np.round(np.matrix([np.sum(X0),getTr()*14.8+0.2,getTr()*14.8+0.2]),4)
-            optS=getServer(X0,None,True)
+            optS=getServer(X0,None,False)
             
             dck_sys.stopClient()
             dck_sys.stopSystem()

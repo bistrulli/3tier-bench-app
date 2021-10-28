@@ -337,7 +337,7 @@ class optCtrlNN2:
         # print(self.tfmodel.get_tensor(output_details[2]['index']).shape)
         
         Bias = self.tfmodel.get_tensor(output_details[1]['index'])
-        Gain = self.tfmodel.get_tensor(output_details[0]['index'])
+        Gain = self.tfmodel.get_tensor(output_details[2]['index'])
 
         # Bias=Ypredicted_N[-1]
         # Gain=Ypredicted_N[1]
@@ -384,7 +384,7 @@ class optCtrlNN2:
             for ui in range(1, P.shape[0]):
                 ru += (uvar_dn[ui] - Sold[ui]) ** 2
         
-        model.minimize(obj + 0.1 * ru + 0.1 * uvar_dn[1]**2+0.1 * uvar_dn[2]**2)
+        model.minimize(obj + 0.1 * ru + 0.1*casadi.sumsqr(uvar_dn[0:3]))
         
         optionsIPOPT = {'print_time':False, 'ipopt':{'print_level':0}}
         optionsOSQP = {'print_time':False, 'osqp':{'verbose':False}}
@@ -472,8 +472,8 @@ if __name__ == "__main__":
                     drep+=1
                     
                     Sold = None       
-                    #alfa.append(genAfa())
-                    alfa.append(1.0)
+                    alfa.append(genAfa())
+                    #alfa.append(1.0)
                     #XSSIM[:, step] = [np.random.randint(low=10, high=100), 0, 0]
                     XSSIM[:, step] = getstate(r, keys, N)
                     #XSSIM[:, step] = [100, 0, 0]
