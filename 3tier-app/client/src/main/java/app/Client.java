@@ -59,6 +59,7 @@ public class Client implements Runnable {
 
 				// long thinking = this.memcachedClient.incr("think", 1);
 				MCAtomicUpdater.AtomicIncr(this.memcachedClient, 1, "think", 100);
+				String thinking=String.valueOf(this.memcachedClient.get("think"));
 
 				SimpleTask.getLogger().debug(String.format("stop=%s", String.valueOf(memcachedClient.get("stop"))));
 				TimeUnit.MILLISECONDS.sleep(Double.valueOf(this.dist.sample()).longValue());
@@ -66,7 +67,7 @@ public class Client implements Runnable {
 				SimpleTask.getLogger().debug(String.format("%s sending", this.task.getName()));
 				HttpResponse<String> resp = client.send(request, BodyHandlers.ofString());
 
-				// SimpleTask.getLogger().debug(String.format("%d thinking", thinking));
+				SimpleTask.getLogger().debug(String.format("%s thinking", thinking));
 
 				if (Client.getToKill() > 0) {
 					synchronized (Client.getToKill()) {

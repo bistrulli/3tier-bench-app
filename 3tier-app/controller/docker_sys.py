@@ -21,7 +21,7 @@ class dockersys(system_interface):
         r=Client("localhost:11211")
         r.set("stop","0")
         
-        self.client_cnt=self.dck_client.containers.run(image="bistrulli/client:0.9",
+        self.client_cnt=self.dck_client.containers.run(image="bistrulli/client:0.12",
                               command="java -Xmx4G -jar client-0.0.1-SNAPSHOT-jar-with-dependencies.jar --initPop %d --queues \
                                       '[\"think\", \"e1_bl\", \"e1_ex\", \"t1_hw\", \"e2_bl\", \"e2_ex\", \"t2_hw\"]' \
                                        --jedisHost monitor.app --tier1Host tier1.app"%(initPop),
@@ -77,7 +77,7 @@ class dockersys(system_interface):
         
         self.waitRunning(self.sys[-1])
         
-        self.sys.append(self.dck_client.containers.run(image="bistrulli/tier2:0.10",
+        self.sys.append(self.dck_client.containers.run(image="bistrulli/tier2:0.12",
                               command=["java","-Xmx4G","-jar","tier2-0.0.1-SNAPSHOT-jar-with-dependencies.jar",
                                        "--cpuEmu","%d"%cpuEmu,"--jedisHost","monitor.app"],
                               auto_remove=True,
@@ -89,7 +89,7 @@ class dockersys(system_interface):
         
         self.waitRunning(self.sys[-1])
         
-        self.sys.append(self.dck_client.containers.run(image="bistrulli/tier1:0.10",
+        self.sys.append(self.dck_client.containers.run(image="bistrulli/tier1:0.12",
                               command=["java","-Xmx4G","-jar","tier1-0.0.1-SNAPSHOT-jar-with-dependencies.jar",
                                        "--cpuEmu","%d"%cpuEmu,"--jedisHost","monitor.app","--tier2Host","tier2.app"],
                               auto_remove=True,
@@ -117,10 +117,10 @@ class dockersys(system_interface):
         N=int((len(self.keys)-1)/2)
         str_state=[monitor.get(self.keys[i]) for i in range(len(self.keys))]
         try:
-            astate = [float(str_state[0])]
+            astate = [float(str_state[0].decode('UTF-8'))]
             gidx = 1;
             for i in range(1, N):
-                astate.append(float(str_state[gidx]) + float(str_state[gidx + 1]))
+                astate.append(float(str_state[gidx].decode('UTF-8')) + float(str_state[gidx + 1].decode('UTF-8')))
                 if(float(str_state[gidx])<0 or float(str_state[gidx + 1])<0):
                     raise ValueError("Error! state < 0")
                 gidx += 3
@@ -155,18 +155,18 @@ if __name__ == "__main__":
     try:
         dck_sys=dockersys()
         dck_sys.startSys(False)
-        dck_sys.startClient(10)
+        dck_sys.startClient(1)
         
         mnt=Client("localhost:11211")
-        for i in range(20):
+        for i in range(100):
             print(dck_sys.getstate(mnt))
             time.sleep(0.2)
         mnt.close()
         
         #dck_sys.setU(2, "tier1-k")
         
-        # dck_sys.stopClient()
-        # dck_sys.stopSystem()
+        dck_sys.stopClient()
+        dck_sys.stopSystem()
     except Exception as e:
         print(e)
         dck_sys.stopClient()
