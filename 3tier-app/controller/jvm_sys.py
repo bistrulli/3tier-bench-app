@@ -68,9 +68,9 @@ class jvm_sys(system_interface):
     
     def initCgroups(self):
         try:
-            subprocess.check_output(["sudo","cgget", "-g", "cpu:t1"])
+            out=subprocess.check_output(["sudo","cgget", "-g", "cpu:t1"])
+            print(out)
         except Exception as e:
-            print("porca madonna")
             subprocess.check_output(["sudo","cgcreate","-g","cpu:t1"])
         
         try:
