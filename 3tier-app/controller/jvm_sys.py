@@ -71,9 +71,8 @@ class jvm_sys(system_interface):
         if(str(out).find("Cgroup does not exist")==-1):
             subprocess.check_output(["sudo","cgcreate","-g","cpu:t1"])
         
-        out=subprocess.check_call(["sudo","cgget", "-g", "cpu:t2"])
-        out.decode("UTF-8")
-        if(out.find("Cgroup does not exist")==-1):
+        out=subprocess.check_output(["sudo","cgget", "-g", "cpu:t2"])
+        if(str(out).find("Cgroup does not exist")==-1):
             subprocess.check_output(["sudo","cgcreate","-g","cpu:t2"])
         
             
