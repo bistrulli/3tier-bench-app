@@ -33,16 +33,16 @@ class jvm_sys(system_interface):
         else:
             raise ValueError("Impossible to connected to memcached")
         
-        # self.sys["tier2-cnt"]=subprocess.Popen(["sudo","cgexec", "-g", "cpu:t2", "--sticky", "java", "-Xmx4G",
-        #                              "-Djava.compiler=NONE", "-jar",
-        #                              '%s/tier2/target/tier2-0.0.1-SNAPSHOT-jar-with-dependencies.jar'%(self.sysRootPath),
-        #                              '--cpuEmu', '%d'%(cpuEmu), '--jedisHost', 'localhost'])
-        #
-        # self.sys["tier1-cnt"]=subprocess.Popen(["sudo","cgexec", "-g", "cpu:t1", "--sticky", "java", "-Xmx4G",
-        #                                  "-Djava.compiler=NONE", "-jar",
-        #                                  '%s/tier1/target/tier1-0.0.1-SNAPSHOT-jar-with-dependencies.jar'%(self.sysRootPath),
-        #                                  '--cpuEmu', "%d"%(cpuEmu), '--jedisHost', 'localhost',
-        #                                  "--tier2Host","localhost"])
+        self.sys["tier2-cnt"] = subprocess.Popen(["sudo", "cgexec", "-g", "cpu:t2", "--sticky", "java", "-Xmx4G",
+                                     "-Djava.compiler=NONE", "-jar",
+                                     '%s/tier2/target/tier2-0.0.1-SNAPSHOT-jar-with-dependencies.jar' % (self.sysRootPath),
+                                     '--cpuEmu', '%d' % (cpuEmu), '--jedisHost', 'localhost'])
+        
+        self.sys["tier1-cnt"] = subprocess.Popen(["sudo", "cgexec", "-g", "cpu:t1", "--sticky", "java", "-Xmx4G",
+                                         "-Djava.compiler=NONE", "-jar",
+                                         '%s/tier1/target/tier1-0.0.1-SNAPSHOT-jar-with-dependencies.jar' % (self.sysRootPath),
+                                         '--cpuEmu', "%d" % (cpuEmu), '--jedisHost', 'localhost',
+                                         "--tier2Host", "localhost"])
     
     def stopSystem(self):
         pass
@@ -68,18 +68,17 @@ class jvm_sys(system_interface):
         base_client.close()
         return connected
     
-    def initCgroups(self):        
-        out=subprocess.check_output(["sudo","cgget", "-g", "cpu:t1"])
-        if(str(out).find("Cgroup does not exist")==-1):
-            subprocess.check_output(["sudo","cgcreate","-g","cpu:t1"])
+    def initCgroups(self): 
+        out = subprocess.check_output(["sudo", "cgget", "-g", "cpu:t1"])
+        if(str(out).find("Cgroup does not exist") == -1):
+            subprocess.check_output(["sudo", "cgcreate", "-g", "cpu:t1"])
         
-        out=subprocess.check_output(["sudo","cgget", "-g", "cpu:t2"])
-        if(str(out).find("Cgroup does not exist")==-1):
-            subprocess.check_output(["sudo","cgcreate","-g","cpu:t2"])
-        
-            
+        out = subprocess.check_output(["sudo", "cgget", "-g", "cpu:t2"])
+        if(str(out).find("Cgroup does not exist") == -1):
+            subprocess.check_output(["sudo", "cgcreate", "-g", "cpu:t2"])
        
             
 if __name__ == "__main__":
     jvm_sys = jvm_sys("../")
     jvm_sys.startSys(True)
+        
