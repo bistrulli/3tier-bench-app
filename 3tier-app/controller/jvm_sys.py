@@ -4,6 +4,9 @@ import numpy as np
 import subprocess
 from cgroupspy import trees
 from pymemcache.client.base import Client
+from pathlib import Path
+
+javaCmd=Path.home()+"/jdk-15/bin/java"
 
 
 class jvm_sys(system_interface):
@@ -33,12 +36,12 @@ class jvm_sys(system_interface):
         else:
             raise ValueError("Impossible to connected to memcached")
         
-        self.sys["tier2-cnt"] = subprocess.Popen(["sudo", "cgexec", "-g", "cpu:t2", "--sticky", "~/jdk-15/bin/java", "-Xmx4G",
+        self.sys["tier2-cnt"] = subprocess.Popen(["sudo", "cgexec", "-g", "cpu:t2", "--sticky", javaCmd, "-Xmx4G",
                                      "-Djava.compiler=NONE", "-jar",
                                      '%s/tier2/target/tier2-0.0.1-SNAPSHOT-jar-with-dependencies.jar' % (self.sysRootPath),
                                      '--cpuEmu', '%d' % (cpuEmu), '--jedisHost', 'localhost'])
         
-        self.sys["tier1-cnt"] = subprocess.Popen(["sudo", "cgexec", "-g", "cpu:t1", "--sticky", "~/jdk-15/bin/java", "-Xmx4G",
+        self.sys["tier1-cnt"] = subprocess.Popen(["sudo", "cgexec", "-g", "cpu:t1", "--sticky", javaCmd, "-Xmx4G",
                                          "-Djava.compiler=NONE", "-jar",
                                          '%s/tier1/target/tier1-0.0.1-SNAPSHOT-jar-with-dependencies.jar' % (self.sysRootPath),
                                          '--cpuEmu', "%d" % (cpuEmu), '--jedisHost', 'localhost',
