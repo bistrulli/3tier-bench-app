@@ -4,9 +4,9 @@ import numpy as np
 import subprocess
 from cgroupspy import trees
 from pymemcache.client.base import Client
-from pathlib import Path
+import os
 
-javaCmd=Path.home()+"/jdk-15/bin/java"
+javaCmd=os.path.expanduser('~')+"/jdk-15/bin/java"
 
 
 class jvm_sys(system_interface):
