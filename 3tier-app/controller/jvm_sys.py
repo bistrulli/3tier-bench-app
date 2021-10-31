@@ -80,4 +80,4 @@ class jvm_sys(system_interface):
             
 if __name__ == "__main__":
     jvm_sys = jvm_sys("../")
-    
+    jvm_sys.startSys(True)
