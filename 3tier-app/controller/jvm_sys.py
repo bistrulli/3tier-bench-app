@@ -68,14 +68,14 @@ class jvm_sys(system_interface):
     
     def initCgroups(self):
         try:
-            subprocess.check_call(["sudo","cgget", "-g", "cpu:t1"])
+            subprocess.check_output(["sudo","cgget", "-g", "cpu:t1"])
         except Exception as e:
-            subprocess.check_call(["sudo","cgcreate","-g","cpu:t1"])
+            subprocess.check_output(["sudo","cgcreate","-g","cpu:t1"])
         
         try:
-            subprocess.check_call(["sudo","cgget", "-g", "cpu:t2"])
+            subprocess.check_output(["sudo","cgget", "-g", "cpu:t2"])
         except Exception as e:
-            subprocess.check_call(["sudo","cgcreate","-g","cpu:t2"])
+            subprocess.check_output(["sudo","cgcreate","-g","cpu:t2"])
             
        
             
