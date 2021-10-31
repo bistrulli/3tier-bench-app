@@ -69,6 +69,9 @@ class jvm_sys(system_interface):
     
     def initCgroups(self):
         self.croot=trees.Tree()
+        
+        self.cgroups={}
+        
         self.cgroups["tier2-cnt"]=self.croot.get_node_by_path('/cpu/t2')
         if(self.cgroups["tier2-cnt"]==None):
             self.cgroups["tier2-cnt"]=self.croot.create_cgroup('/cpu/t2')
