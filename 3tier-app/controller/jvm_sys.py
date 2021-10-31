@@ -8,13 +8,13 @@ from pymemcache.client.base import Client
 
 class jvm_sys(system_interface):
     
-    sysRootPath=None
-    sys=None
-    croot=None
-    cgroups=None
+    sysRootPath = None
+    sys = None
+    croot = None
+    cgroups = None
     
-    def __init__(self,sysRootPath):
-        self.sysRootPath=sysRootPath
+    def __init__(self, sysRootPath):
+        self.sysRootPath = sysRootPath
         self.initCgroups()
     
     def startClient(self):
@@ -23,11 +23,11 @@ class jvm_sys(system_interface):
     def stopClient(self):
         pass
     
-    def startSys(self,isCpu):
-        cpuEmu=0 if(isCpu) else 1
+    def startSys(self, isCpu):
+        cpuEmu = 0 if(isCpu) else 1
         
         self.sys = {}
-        self.sys["monitor-cnt"]=subprocess.Popen(["memcached"])
+        self.sys["monitor-cnt"] = subprocess.Popen(["memcached"])
         if(self.waitMemCached()):
             print("connected to memcached")
         else:
@@ -47,39 +47,33 @@ class jvm_sys(system_interface):
     def stopSystem(self):
         pass
     
-    def getstate(self,monitor,keys):
+    def getstate(self, monitor, keys):
         pass
     
-    def waitTier(self,tier):
+    def waitTier(self, tier):
         pass
     
     def waitMemCached(self):
-        connected=False
+        connected = False
         base_client = Client(("localhost", 11211))
         for i in range(10):
             try:
                 client.get('some_key')
-                connected=True
+                connected = True
                 break
             except ConnectionRefusedError:
                 print("connection error")
                 time.sleep(0.2)
         return connected
-            
     
     def initCgroups(self):
-        self.croot=trees.Tree()
-        
-        self.cgroups={}
-        
-        self.cgroups["tier2-cnt"]=self.croot.get_node_by_path('/cpu/t2')
-        if(self.cgroups["tier2-cnt"]==None):
-            self.cgroups["tier2-cnt"]=self.croot.get_node_by_path('/cpu').create_cgroup('t2')
+        try:
+            subprocess.check_call(["cgget", "-g", "cpu:t1"])
+        except Exception as e:
+            print(e)
             
-        self.cgroups["tier1-cnt"]=self.croot.get_node_by_path('/cpu/t1')
-        if(self.cgroups["tier1-cnt"]==None):
-            self.cgroups["tier1-cnt"]=self.croot.get_node_by_path('/cpu').create_cgroup('t1')
+       
             
 if __name__ == "__main__":
-    jvm_sys=jvm_sys("../")
+    jvm_sys = jvm_sys("../")
     
