@@ -155,7 +155,7 @@ if __name__ == "__main__":
     try:
         dck_sys=dockersys()
         dck_sys.startSys(False)
-        dck_sys.startClient(1)
+        dck_sys.startClient(30)
         
         mnt=Client("localhost:11211")
         for i in range(100):
