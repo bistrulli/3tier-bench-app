@@ -66,17 +66,17 @@ class jvm_sys(system_interface):
                 time.sleep(0.2)
         return connected
     
-    def initCgroups(self):
-        try:
-            out=subprocess.check_output(["sudo","cgget", "-g", "cpu:t1"])
-            print(out.decode("UTF-8"))
-        except Exception as e:
+    def initCgroups(self):        
+        out=subprocess.check_output(["sudo","cgget", "-g", "cpu:t1"])
+        out.decode("UTF-8")
+        if(out.find("Cgroup does not exist")==-1):
             subprocess.check_output(["sudo","cgcreate","-g","cpu:t1"])
         
-        try:
-            subprocess.check_output(["sudo","cgget", "-g", "cpu:t2"])
-        except Exception as e:
+        out=subprocess.check_output(["sudo","cgget", "-g", "cpu:t2"])
+        out.decode("UTF-8")
+        if(out.find("Cgroup does not exist")==-1):
             subprocess.check_output(["sudo","cgcreate","-g","cpu:t2"])
+        
             
        
             
