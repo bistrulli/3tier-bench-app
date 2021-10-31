@@ -74,11 +74,11 @@ class jvm_sys(system_interface):
         
         self.cgroups["tier2-cnt"]=self.croot.get_node_by_path('/cpu/t2')
         if(self.cgroups["tier2-cnt"]==None):
-            self.cgroups["tier2-cnt"]=self.croot.create_cgroup('/cpu/t2')
+            self.cgroups["tier2-cnt"]=self.croot.get_node_by_path('/cpu').create_cgroup('t2')
             
         self.cgroups["tier1-cnt"]=self.croot.get_node_by_path('/cpu/t1')
         if(self.cgroups["tier1-cnt"]==None):
-            self.cgroups["tier1-cnt"]=self.croot.create_cgroup('/cpu/t1')
+            self.cgroups["tier1-cnt"]=self.croot.get_node_by_path('/cpu').create_cgroup('t1')
             
 if __name__ == "__main__":
     jvm_sys=jvm_sys("../")
