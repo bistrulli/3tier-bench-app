@@ -70,6 +70,7 @@ class jvm_sys(system_interface):
         try:
             subprocess.check_output(["sudo","cgget", "-g", "cpu:t1"])
         except Exception as e:
+            print("porca madonna")
             subprocess.check_output(["sudo","cgcreate","-g","cpu:t1"])
         
         try:
