@@ -28,7 +28,7 @@ class jvm_sys(system_interface):
         
         self.sys = {}
         self.sys["monitor-cnt"]=subprocess.Popen(["memcached"])
-        if(self.waitMemCached())
+        if(self.waitMemCached()):
             print("connected to memcached")
         else:
             raise ValueError("Impossible to connected to memcached")
