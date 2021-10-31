@@ -68,14 +68,12 @@ class jvm_sys(system_interface):
     
     def initCgroups(self):        
         out=subprocess.check_output(["sudo","cgget", "-g", "cpu:t1"])
-        out.decode("UTF-8")
-        out.join("")
+        #out.decode("UTF-8")
         if(out.find("Cgroup does not exist")==-1):
             subprocess.check_output(["sudo","cgcreate","-g","cpu:t1"])
         
         out=subprocess.check_output(["sudo","cgget", "-g", "cpu:t2"])
-        out.decode("UTF-8")
-        out.join("")
+        #out.decode("UTF-8")
         if(out.find("Cgroup does not exist")==-1):
             subprocess.check_output(["sudo","cgcreate","-g","cpu:t2"])
         
