@@ -58,12 +58,14 @@ class jvm_sys(system_interface):
         base_client = Client(("localhost", 11211))
         for i in range(10):
             try:
-                client.get('some_key')
+                base_client.get('some_key')
                 connected = True
+                base_client.close()
                 break
             except ConnectionRefusedError:
                 print("connection error")
                 time.sleep(0.2)
+        base_client.close()
         return connected
     
     def initCgroups(self):        
