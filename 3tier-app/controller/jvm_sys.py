@@ -259,9 +259,14 @@ if __name__ == "__main__":
             jvm_sys.startClient(100)
                 
             mnt = Client("localhost:11211")
+            g = Client("localhost:11211")
+            g.set("t1_hw","10")
+            g.set("t2_hw","5")
+            g.close()
             for i in range(200):
                 state=jvm_sys.getstate(mnt)
                 print(state,np.sum(state))
+                
                 jvm_sys.setU(10.,"tier1")
                 jvm_sys.setU(5.,"tier2")
                 time.sleep(0.2)
