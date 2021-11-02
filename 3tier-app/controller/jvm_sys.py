@@ -5,57 +5,202 @@ import subprocess
 from cgroupspy import trees
 from pymemcache.client.base import Client
 import os
+import psutil
+import requests as req
 
-javaCmd=os.path.expanduser('~')+"/jdk-15/bin/java"
+try:
+    javaCmd = os.environ['JAVA_HOME'] + "/bin/java"
+except:
+    raise ValueError("Need to setup JAVA_HOME env variable")
 
 
 class jvm_sys(system_interface):
     
     sysRootPath = None
     sys = None
+    client = None
     croot = None
     cgroups = None
+    keys = ["think", "e1_bl", "e1_ex", "t1_hw", "e2_bl", "e2_ex", "t2_hw"]
     
     def __init__(self, sysRootPath):
         self.sysRootPath = sysRootPath
         self.initCgroups()
     
-    def startClient(self):
-        pass
+    def startClient(self, pop):
+        r=Client("localhost:11211")
+        r.set("stop","0")
+        r.set("started","0")
+        r.close()
+        
+        
+        subprocess.Popen([javaCmd, "-Xmx4G",
+                         "-Djava.compiler=NONE", "-jar",
+                         '%sclient/target/client-0.0.1-SNAPSHOT-jar-with-dependencies.jar' % (self.sysRootPath),
+                         '--initPop', '%d' % (pop), '--jedisHost','localhost', '--tier1Host','localhost',
+                         '--queues','[\"think\", \"e1_bl\", \"e1_ex\", \"t1_hw\", \"e2_bl\", \"e2_ex\", \"t2_hw\"]'])
+        
+        self.waitClient()
+        
+        self.client = self.findProcessIdByName("client-0.0.1")[0]
+        
     
     def stopClient(self):
-        pass
+        if(self.client!=None):
+            r=Client("localhost:11211")
+            r.set("stop","1")
+            r.close()
+            
+            self.client.wait()
+            self.client=None
+        
     
     def startSys(self, isCpu):
         cpuEmu = 0 if(isCpu) else 1
         
-        self.sys = {}
-        self.sys["monitor-cnt"] = subprocess.Popen(["memcached"])
-        if(self.waitMemCached()):
-            print("connected to memcached")
+        self.sys = []
+        subprocess.Popen(["memcached"])
+        self.waitMemCached()
+        self.sys.append(self.findProcessIdByName("memcached")[0])
+        
+        if(not isCpu):
+            subprocess.Popen([javaCmd, "-Xmx4G",
+                             "-Djava.compiler=NONE", "-jar",
+                             '%stier2/target/tier2-0.0.1-SNAPSHOT-jar-with-dependencies.jar' % (self.sysRootPath),
+                             '--cpuEmu', '%d' % (cpuEmu), '--jedisHost', 'localhost'])
+            
+            
+            self.waitTier2()
+            self.sys.append(self.findProcessIdByName("tier2-0.0.1")[0])
+            
+            
+            subprocess.Popen([javaCmd, "-Xmx4G",
+                             "-Djava.compiler=NONE", "-jar",
+                             '%stier1/target/tier1-0.0.1-SNAPSHOT-jar-with-dependencies.jar' % (self.sysRootPath),
+                             '--cpuEmu', "%d" % (cpuEmu), '--jedisHost', 'localhost',
+                             "--tier2Host", "localhost"])
+            
+            self.waitTier1()
+            self.sys.append(self.findProcessIdByName("tier1-0.0.1")[0])
         else:
-            raise ValueError("Impossible to connected to memcached")
-        
-        self.sys["tier2-cnt"] = subprocess.Popen(["sudo", "cgexec", "-g", "cpu:t2", "--sticky", javaCmd, "-Xmx4G",
-                                     "-Djava.compiler=NONE", "-jar",
-                                     '%s/tier2/target/tier2-0.0.1-SNAPSHOT-jar-with-dependencies.jar' % (self.sysRootPath),
-                                     '--cpuEmu', '%d' % (cpuEmu), '--jedisHost', 'localhost'])
-        
-        self.sys["tier1-cnt"] = subprocess.Popen(["sudo", "cgexec", "-g", "cpu:t1", "--sticky", javaCmd, "-Xmx4G",
-                                         "-Djava.compiler=NONE", "-jar",
-                                         '%s/tier1/target/tier1-0.0.1-SNAPSHOT-jar-with-dependencies.jar' % (self.sysRootPath),
-                                         '--cpuEmu', "%d" % (cpuEmu), '--jedisHost', 'localhost',
-                                         "--tier2Host", "localhost"])
+            subprocess.Popen(["cgexec", "-g", "cpu:t2", "--sticky", javaCmd, "-Xmx4G",
+                             "-Djava.compiler=NONE", "-jar",
+                             '%stier2/target/tier2-0.0.1-SNAPSHOT-jar-with-dependencies.jar' % (self.sysRootPath),
+                             '--cpuEmu', '%d' % (cpuEmu), '--jedisHost', 'localhost'])
+            self.waitTier2()
+            self.sys.append(self.findProcessIdByName("tier2-0.0.1")[0])
+            
+            
+            subprocess.Popen(["cgexec", "-g", "cpu:t1", "--sticky", javaCmd, "-Xmx4G",
+                             "-Djava.compiler=NONE", "-jar",
+                             '%stier1/target/tier1-0.0.1-SNAPSHOT-jar-with-dependencies.jar' % (self.sysRootPath),
+                             '--cpuEmu', "%d" % (cpuEmu), '--jedisHost', 'localhost',
+                             "--tier2Host", "localhost"])
+            self.waitTier1()
+            self.sys.append(self.findProcessIdByName("tier1-0.0.1")[0])
+    
+    def findProcessIdByName(self,processName):
+        '''
+        Get a list of all the PIDs of a all the running process whose name contains
+        the given string processName
+        '''
+        listOfProcessObjects = []
+        # Iterate over the all the running process
+        for proc in psutil.process_iter():
+           try:
+               pinfo = proc.as_dict(attrs=['pid', 'name', 'create_time'])
+               # Check if process name contains the given name string.
+               if processName.lower() in pinfo['name'].lower() or processName.lower() in " ".join(proc.cmdline()).lower():
+                   listOfProcessObjects.append(proc)
+           except (psutil.NoSuchProcess, psutil.AccessDenied , psutil.ZombieProcess):
+               pass
+        if(len(listOfProcessObjects)!=1):
+            print(len(listOfProcessObjects))
+            raise ValueError("process %s not found!"%processName)
+        return listOfProcessObjects;
     
     def stopSystem(self):
-        pass
+        if(self.sys is not None):
+            for i in range(len(self.sys),0,-1):
+                proc=self.sys[i-1]
+                print("killing %s"%(proc.name()+" "+"".join(proc.cmdline())))
+                proc.terminate()
+                proc.kill()
+                proc.wait(timeout=2)
+                
+        self.sys=None
     
-    def getstate(self, monitor, keys):
-        pass
+    def getstate(self, monitor):
+
+        N = int((len(self.keys) - 1) / 2)
+        str_state = [monitor.get(self.keys[i]) for i in range(len(self.keys))]
+        try:
+            astate = [float(str_state[0].decode('UTF-8'))]
+            gidx = 1;
+            for i in range(1, N):
+                astate.append(float(str_state[gidx].decode('UTF-8')) + float(str_state[gidx + 1].decode('UTF-8')))
+                if(float(str_state[gidx]) < 0 or float(str_state[gidx + 1]) < 0):
+                    raise ValueError("Error! state < 0")
+                gidx += 3
+        except:
+            print(time.asctime())
+            for i in range(len(self.keys)):
+                print(str_state[i], self.keys[i])
+        
+        return astate
     
-    def waitTier(self, tier):
-        pass
+    def waitTier1(self):
+        connected=False
+        limit=10
+        atpt=0
+        base_client = Client(("localhost", 11211))
+        base_client.set("test_ex","1")
+        while(atpt<limit and not connected):
+            try:
+                r = req.get('http://localhost:3000?entry=e1&snd=test')
+                connected=True
+            except:
+                time.sleep(0.2)
+            finally:
+                atpt+=1
+        
+        base_client.close()
+        if(connected):
+            print("connected to tier1")
+        else:
+            raise ValueError("error while connceting to tier1")
     
+    def waitTier2(self):
+        connected=False
+        limit=10
+        atpt=0
+        base_client = Client(("localhost", 11211))
+        base_client.set("test_ex","1")
+        while(atpt<limit and not connected):
+            try:
+                r = req.get('http://localhost:3001?entry=e2&snd=test')
+                connected=True
+            except:
+                time.sleep(0.2)
+            finally:
+                atpt+=1
+        
+        base_client.close()
+        if(connected):
+            print("connected to tier2")
+        else:
+            raise ValueError("error while connceting to tier2")
+    
+    def waitClient(self):
+        connected=False
+        limit=10
+        atpt=0
+        base_client = Client(("localhost", 11211))
+        while(atpt<limit and (base_client.get("started")==None or base_client.get("started").decode('UTF-8')=="0")):
+           time.sleep(0.2)
+           atpt+=1
+            
+        
     def waitMemCached(self):
         connected = False
         base_client = Client(("localhost", 11211))
@@ -66,10 +211,15 @@ class jvm_sys(system_interface):
                 base_client.close()
                 break
             except ConnectionRefusedError:
-                print("connection error")
                 time.sleep(0.2)
         base_client.close()
-        return connected
+        
+        if(connected):
+            print("connected to memcached")
+        else:
+            raise ValueError("Impossible to connected to memcached")
+        
+        time.sleep(0.5)
     
     def initCgroups(self): 
         out = subprocess.check_output(["sudo", "cgget", "-g", "cpu:t1"])
@@ -82,6 +232,26 @@ class jvm_sys(system_interface):
        
             
 if __name__ == "__main__":
-    jvm_sys = jvm_sys("../")
-    jvm_sys.startSys(True)
+    try:
+        jvm_sys = jvm_sys("../")
+        
+        for i in range(2):
+            jvm_sys.startSys(True)
+            jvm_sys.startClient(100)
+                
+            mnt = Client("localhost:11211")
+            for i in range(10):
+                state=jvm_sys.getstate(mnt)
+                print(state,np.sum(state))
+                time.sleep(0.2)
+            mnt.close()
+            
+            jvm_sys.stopClient()
+            jvm_sys.stopSystem()
+        
+    except Exception as e:
+        pass
+        print(e)
+        jvm_sys.stopClient()
+        jvm_sys.stopSystem()
         

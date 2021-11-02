@@ -53,6 +53,8 @@ public class Client implements Runnable {
 //			request = HttpRequest.newBuilder()
 //					.uri(URI.create("https://www.random.org/integers/?num=1&min=1&max=100&col=1&base=10&format=html&rnd=new"))
 //					.build();
+			
+			this.memcachedClient.set("started", 3600, String.valueOf(1)).get();
 
 			while ((this.memcachedClient.get("stop") == null
 					|| !String.valueOf(this.memcachedClient.get("stop")).equals("1")) && !this.dying) {

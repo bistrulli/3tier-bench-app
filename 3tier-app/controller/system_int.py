@@ -18,6 +18,9 @@ class system_interface:
     def getstate(self,monitor,keys):
         pass
     
+    def setU(self,RL,cnt_name):
+        pass
+    
 
 
 

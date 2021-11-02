@@ -10,7 +10,8 @@ from pathlib import Path
 from sys import platform
 import docker
 from pymemcache.client.base import Client
-from docker_sys import dockersys
+#from docker_sys import dockersys
+from jvm_sys import jvm_sys
 import pathlib
 import uuid
 
@@ -18,7 +19,7 @@ script_dir=pathlib.Path(__file__).parent.resolve()
 
 def handler(signum, frame):
     print('Signal handler called with signal', signum)
-    stopSystem()
+    dck_sys.stopSystem()
     sys.exit(1)
 
 def stopSystem():
@@ -85,7 +86,8 @@ myuuid = uuid.uuid4()
 
 fname="open_loop_3tier_H5_v"
 
-dck_sys=dockersys()
+#dck_sys=dockersys()
+dck_sys=jvm_sys("../")
 
 try:
     for tick in tqdm(range(npoints),ascii=True):
@@ -105,7 +107,7 @@ try:
             dck_sys.stopClient()
             dck_sys.stopSystem()
             
-            dck_sys.startSys(True)
+            dck_sys.startSys(False)
             dck_sys.startClient(np.sum(XS[tick,:]))
             
             time.sleep(2)
@@ -167,5 +169,6 @@ try:
     plt.show()
     
 finally:
-    stopSystem()
     r.close()
+    dck_sys.stopClient()
+    dck_sys.stopSystem()

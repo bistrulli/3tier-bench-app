@@ -9,6 +9,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang3.ArrayUtils;
+
 import com.google.common.net.InetAddresses;
 import com.google.common.net.InternetDomainName;
 import com.google.gson.Gson;
@@ -34,7 +36,7 @@ public class Main {
 		final SimpleTask[] Sys = Main.genSystem();
 		Main.resetState(Sys[0]);
 		Sys[0].start();
-		//Main.startSim(Sys[0]);
+		// Main.startSim(Sys[0]);
 	}
 
 	public static void resetState(SimpleTask task) {
@@ -68,7 +70,8 @@ public class Main {
 		Client.setTier1Host(Main.tier1Host);
 		clientEntries.put("think", Client.class);
 		clientEntries_stimes.put("think", 1000l);
-		final SimpleTask client = new SimpleTask(clientEntries, clientEntries_stimes, Main.initPop, "Client", Main.jedisHost);
+		final SimpleTask client = new SimpleTask(clientEntries, clientEntries_stimes, Main.initPop, "Client",
+				Main.jedisHost);
 		return new SimpleTask[] { client };
 	}
 
