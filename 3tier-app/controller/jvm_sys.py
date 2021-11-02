@@ -239,7 +239,7 @@ class jvm_sys(system_interface):
     def setU(self,RL,cnt_name):
         found=False
         for cnt in self.sys:
-            if(cnt_name.lower() in cnt.name()+" ".join(proc.cmdline()).lower()):
+            if(cnt_name.lower() in cnt.name()+" ".join(cnt.cmdline()).lower()):
                 print("update control for group, %s",self.cgroups[cnt_name])
                 quota=np.round(RL * self.period)
                 found=True
@@ -273,6 +273,6 @@ if __name__ == "__main__":
     except Exception as e:
         pass
         print(e)
-        # jvm_sys.stopClient()
-        # jvm_sys.stopSystem()
+        jvm_sys.stopClient()
+        jvm_sys.stopSystem()
         
