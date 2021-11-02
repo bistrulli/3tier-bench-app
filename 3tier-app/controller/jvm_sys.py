@@ -159,6 +159,7 @@ class jvm_sys(system_interface):
             try:
                 r = req.get('http://localhost:3000?entry=e1&snd=test')
                 connected=True
+                break
             except:
                 time.sleep(0.2)
             finally:
@@ -180,6 +181,7 @@ class jvm_sys(system_interface):
             try:
                 r = req.get('http://localhost:3001?entry=e2&snd=test')
                 connected=True
+                break
             except:
                 time.sleep(0.2)
             finally:
