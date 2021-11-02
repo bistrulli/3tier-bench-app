@@ -151,7 +151,7 @@ class jvm_sys(system_interface):
     
     def waitTier1(self):
         connected=False
-        limit=10
+        limit=100
         atpt=0
         base_client = Client(("localhost", 11211))
         base_client.set("test_ex","1")
@@ -173,7 +173,7 @@ class jvm_sys(system_interface):
     
     def waitTier2(self):
         connected=False
-        limit=10
+        limit=100
         atpt=0
         base_client = Client(("localhost", 11211))
         base_client.set("test_ex","1")
