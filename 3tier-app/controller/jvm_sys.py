@@ -262,8 +262,8 @@ if __name__ == "__main__":
             for i in range(200):
                 state=jvm_sys.getstate(mnt)
                 print(state,np.sum(state))
-                jvm_sys.setU(5.,"tier1")
-                jvm_sys.setU(10.,"tier2")
+                jvm_sys.setU(10.,"tier1")
+                jvm_sys.setU(5.,"tier2")
                 time.sleep(0.2)
             mnt.close()
             
