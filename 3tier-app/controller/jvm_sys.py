@@ -226,12 +226,14 @@ class jvm_sys(system_interface):
     
     def initCgroups(self): 
         self.cgroups={"tier1":"t1","tier2":"t2"}
-        out = subprocess.check_output(["cgget", "-g", "cpu:t1"])
-        if(str(out).find("Cgroup does not exist") != -1):
+        p= subprocess.Popen(["cgget", "-g", "cpu:t1"],stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        out, err = p.communicate()
+        if(str(err).find("Cgroup does not exist") != -1):
             subprocess.check_output(["sudo", "cgcreate", "-g", "cpu:t1","-a","emilio:emilio","-t","emilio:emilio"])
         
-        out = subprocess.check_output(["cgget", "-g", "cpu:t2"])
-        if(str(out).find("Cgroup does not exist") != -1):
+        p= subprocess.Popen(["cgget", "-g", "cpu:t2"],stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        out, err = p.communicate()
+        if(str(err).find("Cgroup does not exist") != -1):
             subprocess.check_output(["sudo", "cgcreate", "-g", "cpu:t2","-a","emilio:emilio","-t","emilio:emilio"])
     
     def setU(self,RL,cnt_name):
