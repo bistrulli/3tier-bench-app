@@ -196,7 +196,7 @@ class jvm_sys(system_interface):
     
     def waitClient(self):
         connected=False
-        limit=10
+        limit=1000
         atpt=0
         base_client = Client(("localhost", 11211))
         while(atpt<limit and (base_client.get("started")==None or base_client.get("started").decode('UTF-8')=="0")):
@@ -240,7 +240,7 @@ class jvm_sys(system_interface):
         found=False
         for cnt in self.sys:
             if(cnt_name.lower() in cnt.name()+" ".join(cnt.cmdline()).lower()):
-                print("update control for group, %s"%self.cgroups[cnt_name])
+                #print("update control for group, %s"%self.cgroups[cnt_name])
                 quota=np.round(RL * self.period)
                 found=True
                 subprocess.Popen(["cgset","-r","cpu.cfs_quota_us=%d"%(max(int(quota),1000)),self.cgroups[cnt_name]])
@@ -259,11 +259,11 @@ if __name__ == "__main__":
             jvm_sys.startClient(100)
                 
             mnt = Client("localhost:11211")
-            for i in range(100):
+            for i in range(200):
                 state=jvm_sys.getstate(mnt)
                 print(state,np.sum(state))
-                jvm_sys.setU(2,"tier1")
-                jvm_sys.setU(3,"tier2")
+                jvm_sys.setU(5.,"tier1")
+                jvm_sys.setU(10.,"tier2")
                 time.sleep(0.2)
             mnt.close()
             
