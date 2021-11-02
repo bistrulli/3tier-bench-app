@@ -225,11 +225,11 @@ class jvm_sys(system_interface):
         time.sleep(0.5)
     
     def initCgroups(self): 
-        out = subprocess.check_output(["sudo", "cgget", "-g", "cpu:t1"])
+        out = subprocess.check_output(["cgget", "-g", "cpu:t1"])
         if(str(out).find("Cgroup does not exist") == -1):
             subprocess.check_output(["sudo", "cgcreate", "-g", "cpu:t1","-a","emilio:emilio","-t","emilio:emilio"])
         
-        out = subprocess.check_output(["sudo", "cgget", "-g", "cpu:t2"])
+        out = subprocess.check_output(["cgget", "-g", "cpu:t2"])
         if(str(out).find("Cgroup does not exist") == -1):
             subprocess.check_output(["sudo", "cgcreate", "-g", "cpu:t2","-a","emilio:emilio","-t","emilio:emilio"])
        
