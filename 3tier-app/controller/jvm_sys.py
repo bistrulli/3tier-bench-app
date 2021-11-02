@@ -152,7 +152,7 @@ class jvm_sys(system_interface):
     
     def waitTier1(self):
         connected=False
-        limit=100
+        limit=1000
         atpt=0
         base_client = Client(("localhost", 11211))
         base_client.set("test_ex","1")
@@ -174,7 +174,7 @@ class jvm_sys(system_interface):
     
     def waitTier2(self):
         connected=False
-        limit=100
+        limit=1000
         atpt=0
         base_client = Client(("localhost", 11211))
         base_client.set("test_ex","1")
@@ -207,7 +207,7 @@ class jvm_sys(system_interface):
     def waitMemCached(self):
         connected = False
         base_client = Client(("localhost", 11211))
-        for i in range(10):
+        for i in range(1000):
             try:
                 base_client.get('some_key')
                 connected = True
