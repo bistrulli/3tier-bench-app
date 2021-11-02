@@ -252,6 +252,6 @@ if __name__ == "__main__":
     except Exception as e:
         pass
         print(e)
-        jvm_sys.stopClient()
-        jvm_sys.stopSystem()
+        # jvm_sys.stopClient()
+        # jvm_sys.stopSystem()
         
