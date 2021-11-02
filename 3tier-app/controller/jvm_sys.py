@@ -183,7 +183,6 @@ class jvm_sys(system_interface):
                 connected=True
                 break
             except Exception as e:
-                print(e)
                 time.sleep(0.2)
             finally:
                 atpt+=1
@@ -243,7 +242,7 @@ if __name__ == "__main__":
             jvm_sys.startClient(100)
                 
             mnt = Client("localhost:11211")
-            for i in range(10):
+            for i in range(100):
                 state=jvm_sys.getstate(mnt)
                 print(state,np.sum(state))
                 time.sleep(0.2)
