@@ -21,6 +21,7 @@ class jvm_sys(system_interface):
     client = None
     croot = None
     cgroups = None
+    period = 100000
     keys = ["think", "e1_bl", "e1_ex", "t1_hw", "e2_bl", "e2_ex", "t2_hw"]
     
     def __init__(self, sysRootPath):
@@ -224,6 +225,7 @@ class jvm_sys(system_interface):
         time.sleep(0.5)
     
     def initCgroups(self): 
+        self.cgroups={"tier1":"t1","tier2":"t2"}
         out = subprocess.check_output(["cgget", "-g", "cpu:t1"])
         if(str(out).find("Cgroup does not exist") != -1):
             subprocess.check_output(["sudo", "cgcreate", "-g", "cpu:t1","-a","emilio:emilio","-t","emilio:emilio"])
@@ -231,13 +233,26 @@ class jvm_sys(system_interface):
         out = subprocess.check_output(["cgget", "-g", "cpu:t2"])
         if(str(out).find("Cgroup does not exist") != -1):
             subprocess.check_output(["sudo", "cgcreate", "-g", "cpu:t2","-a","emilio:emilio","-t","emilio:emilio"])
+    
+    def setU(self,RL,cnt_name):
+        found=False
+        for cnt in self.sys:
+            if(cnt_name.lower() in cnt.name()+" ".join(proc.cmdline()).lower()):
+                print("update control for group, %s",self.cgroups[cnt_name])
+                quota=np.round(RL * self.period)
+                found=True
+                subprocess.Popen(["cgset","-r","cpu.cfs_quota_us=%d"(max(int(quota),1000)),self.cgroups[cnt_name]])
+                break
+        
+        if(not found):
+            raise ValueError("container %s not found during cpulimit update"%(cnt_name))
        
             
 if __name__ == "__main__":
     try:
         jvm_sys = jvm_sys("../")
         
-        for i in range(2):
+        for i in range(1):
             jvm_sys.startSys(True)
             jvm_sys.startClient(100)
                 
@@ -245,6 +260,8 @@ if __name__ == "__main__":
             for i in range(100):
                 state=jvm_sys.getstate(mnt)
                 print(state,np.sum(state))
+                jvm_sys.setU(2,"tier1")
+                jvm_sys.setU(3,"tier2")
                 time.sleep(0.2)
             mnt.close()
             
