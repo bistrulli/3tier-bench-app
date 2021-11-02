@@ -182,7 +182,8 @@ class jvm_sys(system_interface):
                 r = req.get('http://localhost:3001?entry=e2&snd=test')
                 connected=True
                 break
-            except:
+            except Exception as e:
+                print(e)
                 time.sleep(0.2)
             finally:
                 atpt+=1
