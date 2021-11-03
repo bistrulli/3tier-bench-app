@@ -46,7 +46,7 @@ public class Tier2HTTPHandler extends TierHttpHandler {
 			this.doWorkSleep(executing);
 		}
 
-		this.measureEgress();
+		//this.measureEgress();
 
 		req.getResponseHeaders().set("Content-Type", "text/html; charset=UTF-8");
 		req.getResponseHeaders().set("Cache-Control", "no-store, no-cache, max-age=0, must-revalidate");

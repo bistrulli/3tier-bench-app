@@ -49,7 +49,7 @@ public class Tier1HTTPHandler extends TierHttpHandler {
 			e1.printStackTrace();
 		}
 
-		this.measureReturn();
+		this.measureReturn("e2_ex");
 
 		String renderedTemplate = jinjava.render(this.getWebPageTpl(), context);
 
@@ -69,7 +69,7 @@ public class Tier1HTTPHandler extends TierHttpHandler {
 			this.doWorkSleep(executing);
 		}
 
-		this.measureEgress();
+		//this.measureEgress();
 
 		req.getResponseHeaders().set("Content-Type", "text/html; charset=UTF-8");
 		req.getResponseHeaders().set("Cache-Control", "no-store, no-cache, max-age=0, must-revalidate");
