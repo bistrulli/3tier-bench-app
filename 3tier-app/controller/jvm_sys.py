@@ -52,10 +52,13 @@ class jvm_sys(system_interface):
             r.set("stop","1")
             r.close()
             
-            self.client.wait(timeout=2)
-            self.client.terminate()
-            self.client.kill()
-            self.client=None
+            try:
+                self.client.wait(timeout=2)
+            except psutil.TimeoutExpired as e:
+                print("terminate client forcibly")
+                self.client.terminate()
+                self.client.kill()
+                self.client=None
         
     
     def startSys(self, isCpu):
