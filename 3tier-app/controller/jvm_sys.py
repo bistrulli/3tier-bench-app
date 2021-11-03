@@ -198,12 +198,14 @@ class jvm_sys(system_interface):
     
     def waitClient(self):
         connected=False
-        limit=1000
+        limit=10000
         atpt=0
         base_client = Client(("localhost", 11211))
         while(atpt<limit and (base_client.get("started")==None or base_client.get("started").decode('UTF-8')=="0")):
            time.sleep(0.2)
            atpt+=1
+        
+        time.sleep(0.5)
             
         
     def waitMemCached(self):
