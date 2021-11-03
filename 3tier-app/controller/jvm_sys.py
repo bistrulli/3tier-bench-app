@@ -208,7 +208,7 @@ class jvm_sys(system_interface):
            time.sleep(0.2)
            atpt+=1
         
-        time.sleep(0.5)
+        time.sleep(2)
             
         
     def waitMemCached(self):
