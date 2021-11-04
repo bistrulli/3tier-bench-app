@@ -69,7 +69,7 @@ repcount=0;
 
 #per npoints intendo il numero di diverso di stati iniziali che considero
 isCpu=True
-rep=10
+rep=100
 H=5
 ssTime=(H+1)*30
 N=3
