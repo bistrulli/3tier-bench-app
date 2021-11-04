@@ -333,11 +333,13 @@ if __name__ == "__main__":
                 optU = optU_N * ctrl.stdu + ctrl.meanu
                 Sold = optU_N
                 
-                r.set("t1_hw",str(optU[1]))
-                r.set("t2_hw",str(optU[2]))
+                if(not isCpu):
+                    r.set("t1_hw",str(optU[1]))
+                    r.set("t2_hw",str(optU[2]))
                 #r.mset({"t1_hw":str(np.round(optU[1],4)),"t2_hw":str(np.round(optU[2],4))})
-                if(isCpu):
-                    setU(optU)
+                else:
+                    jvm_sys.setU(optU[1],"tier1")
+                    jvm_sys.setU(optU[2],"tier2")
                 # print(optU)
                 
                 print(XSSIM[:, step],tgt,np.sum(XSSIM[:, step]),step,optU[1:N])
