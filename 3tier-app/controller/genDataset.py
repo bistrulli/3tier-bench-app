@@ -40,7 +40,7 @@ def getServer(X,S,rand,estate=None):
         #devo definire il numero di server da assegnare
         optS=S
         
-        ex=[0,estate[2],estate[5]]
+        ex=[0,estate[1]+estate[2],estate[4]+estate[5]]
         #findBootleneck
         S[0,0]=1000
         U=np.divide(np.minimum(ex,S),S)
@@ -118,8 +118,8 @@ try:
                 r.close()
             r = Client("localhost:11211")
             
-            r.set("t1_hw","%.4f"%(optS[0,1]))
-            r.set("t2_hw","%.4f"%(optS[0,2]))
+            r.set("t1_hw","%.4f"%(120))
+            r.set("t2_hw","%.4f"%(120))
             if(isCpu):
                 dck_sys.setU(optS[0,1], "tier1")
                 dck_sys.setU(optS[0,2], "tier2")
@@ -153,8 +153,8 @@ try:
                 #optS=np.round(np.matrix([np.sum(X0),getTr()*14.8+0.2,getTr()*14.8+0.2]),4)
                 optS=getServer(np.mean(XS[tick-(H-1):tick+1],axis=0,keepdims=True),optS,False,state[1])
                 
-                r.set("t1_hw","%.4f"%(optS[0,1]))
-                r.set("t2_hw","%.4f"%(optS[0,2]))
+                r.set("t1_hw","%.4f"%(120))
+                r.set("t2_hw","%.4f"%(120))
                 if(isCpu):
                     dck_sys.setU(optS[0,1], "tier1")
                     dck_sys.setU(optS[0,2], "tier2")
