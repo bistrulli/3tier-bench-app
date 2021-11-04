@@ -340,8 +340,8 @@ if __name__ == "__main__":
                 else:
                     r.set("t1_hw","15")
                     r.set("t2_hw","15")
-                    jvm_sys.setU(np.round(optU[1],4),"tier1")
-                    jvm_sys.setU(np.round(optU[2],4),"tier1")
+                    jvm_sys.setU(optU[1],"tier1")
+                    jvm_sys.setU(optU[2],"tier2")
                 # print(optU)
                 
                 print(XSSIM[:, step],tgt,np.sum(XSSIM[:, step]),step,optU[1:N])
