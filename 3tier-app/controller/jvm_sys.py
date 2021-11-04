@@ -282,14 +282,14 @@ if __name__ == "__main__":
             g.set("t2_hw","15")
             g.close()
             X=[]
-            for i in range(100):
+            for i in range(200):
                 state=jvm_sys.getstate(mnt)
                 print(state[0])
                 X.append(state[0][0])
                 #print(state[1])
                 
-                jvm_sys.setU(1.,"tier1")
-                jvm_sys.setU(1.,"tier2")
+                jvm_sys.setU(0.1,"tier1")
+                jvm_sys.setU(0.1,"tier2")
                 time.sleep(0.3)
             mnt.close()
             
