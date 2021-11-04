@@ -280,7 +280,7 @@ if __name__ == "__main__":
                     XSSIM2[:, step] = XSSIM[:, step]
                     XSSIMPid[:, step] = XSSIM[:, step]
                     S[0] = np.sum(XSSIM[:, step])
-                    tgt = np.round(alfa[-1] * 0.82 * np.sum(XSSIM[:, step]), 5)
+                    tgt = np.round(alfa[-1] * 0.377 * np.sum(XSSIM[:, step]), 5)
                     sIdx.append({'alfa':alfa[-1], 'x0':XSSIM[:, step].tolist(), "tgt":tgt,"idx":step})
                     optSPid = [np.sum(XSSIM[:, step]), 1, 1]
                     cp += 1
@@ -338,8 +338,8 @@ if __name__ == "__main__":
                     r.set("t2_hw",str(optU[2]))
                 #r.mset({"t1_hw":str(np.round(optU[1],4)),"t2_hw":str(np.round(optU[2],4))})
                 else:
-                    r.set("t1_hw","15")
-                    r.set("t2_hw","15")
+                    r.set("t1_hw",str(optU[1]))
+                    r.set("t2_hw",str(optU[2]))
                     jvm_sys.setU(optU[1],"tier1")
                     jvm_sys.setU(optU[2],"tier2")
                 # print(optU)
