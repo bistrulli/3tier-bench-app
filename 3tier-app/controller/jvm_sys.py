@@ -256,11 +256,14 @@ class jvm_sys(system_interface):
     def setU(self,RL,cnt_name):
         
         if(self.cgroups[cnt_name]["cg"]== None):
-            print("set cgrop for %s"%(self.cgroups[cnt_name]))
+            print("set cgrop for %s"%(self.cgroups[cnt_name]["name"]))
             self.cgroups[cnt_name]["cg"] = trees.Tree().get_node_by_path('/cpu/%s'%(self.cgroups[cnt_name]["name"]))
+            
+        
+        quota=int(np.round(RL * period))
     
-        self.cgroups[cnt_name]["cg"].controller.cfs_period_us=period
-        self.cgroups[cnt_name]["cg"].controller.cfs_quota_us = int(quota)
+        self.cgroups[cnt_name]["cg"].controller.cfs_period_us=self.period
+        self.cgroups[cnt_name]["cg"].controller.cfs_quota_us = quota
         
        
             
