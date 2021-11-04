@@ -275,12 +275,10 @@ if __name__ == "__main__":
         
         for i in range(1):
             jvm_sys.startSys(isCpu)
-            jvm_sys.startClient(10)
+            jvm_sys.startClient(20)
                 
             mnt = Client("localhost:11211")
             g = Client("localhost:11211")
-            g.set("t1_hw","10")
-            g.set("t2_hw","10")
             g.close()
             X=[]
             for i in range(1000):
@@ -291,8 +289,8 @@ if __name__ == "__main__":
                 
                 # g.set("t1_hw","10")
                 # g.set("t2_hw","10")
-                jvm_sys.setU(10,"tier1")
-                jvm_sys.setU(10,"tier2")
+                jvm_sys.setU(20,"tier1")
+                jvm_sys.setU(20,"tier2")
                 time.sleep(0.3)
             mnt.close()
             
