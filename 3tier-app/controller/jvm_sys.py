@@ -269,7 +269,7 @@ class jvm_sys(system_interface):
             
 if __name__ == "__main__":
     try:
-        isCpu=False
+        isCpu=True
         jvm_sys = jvm_sys("../",isCpu)
         
         for i in range(1):
@@ -281,15 +281,19 @@ if __name__ == "__main__":
             g.set("t1_hw","15")
             g.set("t2_hw","15")
             g.close()
+            X=[]
             for i in range(100):
                 state=jvm_sys.getstate(mnt)
                 print(state[0])
-                print(state[1])
+                X.append(state[0][0])
+                #print(state[1])
                 
-                #jvm_sys.setU(15.,"tier1")
-                #jvm_sys.setU(15.,"tier2")
+                jvm_sys.setU(1.,"tier1")
+                jvm_sys.setU(1.,"tier2")
                 time.sleep(0.3)
             mnt.close()
+            
+            print(np.mean(X))
             
             jvm_sys.stopClient()
             jvm_sys.stopSystem()
