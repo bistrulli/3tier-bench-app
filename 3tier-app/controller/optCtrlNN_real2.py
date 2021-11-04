@@ -140,7 +140,7 @@ class optCtrlNN3:
         # Bias=Ypredicted_N[-1]
         # Gain=Ypredicted_N[1]
         
-        model = casadi.Opti()
+        model = casadi.Opti("conic")
         Uvar = model.variable(1, self.Xtrain.shape[1] + self.Xtrain.shape[1] * self.Xtrain.shape[1]);
         stateVar = model.variable(self.Xtrain.shape[1], H);
         absE_var = model.variable(1, H);
@@ -182,12 +182,12 @@ class optCtrlNN3:
             for ui in range(1, P.shape[0]):
                 ru += (uvar_dn[ui] - Sold[ui]) ** 2
         
-        model.minimize(obj + 0.1 * ru + 0.1*casadi.sumsqr(uvar_dn[1:3]))
+        model.minimize(obj + 0.15 * ru + 0.15*casadi.sumsqr(uvar_dn[1:3]))
         
         optionsIPOPT = {'print_time':False, 'ipopt':{'print_level':0}}
         optionsOSQP = {'print_time':False, 'osqp':{'verbose':False}}
-        model.solver('ipopt',optionsIPOPT)
-        #model.solver('osqp', optionsOSQP)
+        #model.solver('ipopt',optionsIPOPT)
+        model.solver('osqp', optionsOSQP)
         model.solve()
         return model.value(Uvar), model.value(stateVar[:, 1])
 
@@ -349,7 +349,7 @@ if __name__ == "__main__":
                 optSNN[:, step] = optU[0:N]
                 tgtStory += [tgt]
                 
-                time.sleep(0.3)
+                #time.sleep(0.3)
                 
                 # optSPID[:,step]=optSPid
                 # optSPid=mitigateBottleneck(optSPid, Xsim3, tgt)
