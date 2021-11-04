@@ -90,7 +90,7 @@ class jvm_sys(system_interface):
             self.waitTier1()
             self.sys.append(self.findProcessIdByName("tier1-0.0.1")[0])
         else:
-            subprocess.Popen(["sudo","cgexec", "-g", "cpu:t2", "--sticky", javaCmd, "-Xmx4G",
+            subprocess.Popen(["cgexec", "-g", "cpu:t2", "--sticky", javaCmd, "-Xmx4G",
                              "-Djava.compiler=NONE", "-jar",
                              '%stier2/target/tier2-0.0.1-SNAPSHOT-jar-with-dependencies.jar' % (self.sysRootPath),
                              '--cpuEmu', '%d' % (cpuEmu), '--jedisHost', 'localhost'])
@@ -98,7 +98,7 @@ class jvm_sys(system_interface):
             self.sys.append(self.findProcessIdByName("tier2-0.0.1")[0])
             
             
-            subprocess.Popen(["sudo","cgexec", "-g", "cpu:t1", "--sticky", javaCmd, "-Xmx4G",
+            subprocess.Popen(["cgexec", "-g", "cpu:t1", "--sticky", javaCmd, "-Xmx4G",
                              "-Djava.compiler=NONE", "-jar",
                              '%stier1/target/tier1-0.0.1-SNAPSHOT-jar-with-dependencies.jar' % (self.sysRootPath),
                              '--cpuEmu', "%d" % (cpuEmu), '--jedisHost', 'localhost',
@@ -125,7 +125,7 @@ class jvm_sys(system_interface):
                    listOfProcessObjects.append(proc)
            except (psutil.NoSuchProcess, psutil.AccessDenied , psutil.ZombieProcess):
                pass
-        if(len(listOfProcessObjects)==0):
+        if(len(listOfProcessObjects)!=1):
             print(len(listOfProcessObjects))
             raise ValueError("process %s not found!"%processName)
         return listOfProcessObjects;
@@ -288,6 +288,8 @@ if __name__ == "__main__":
                 X.append(state[0][0])
                 #print(state[1])
                 
+                g.set("t1_hw","0.1")
+                g.set("t2_hw","0.1")
                 jvm_sys.setU(0.1,"tier1")
                 jvm_sys.setU(0.1,"tier2")
                 time.sleep(0.3)
