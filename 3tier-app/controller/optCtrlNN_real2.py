@@ -54,7 +54,7 @@ def genAfa():
 
 
 
-class optCtrlNN2:
+class optCtrlNN3:
     model = None
     stateVar = None
     Uvar = None
@@ -76,10 +76,13 @@ class optCtrlNN2:
         
         # questo lo devo sostituire e rendere piu pulito
         DST = scipy.io.loadmat(train_data);
+        nzd_t=np.sum(np.sum(DST['DS_X'],1,keepdims=True)>0)
 
-        self.Xtrain = DST['DS_X']
-        self.Utrain = DST['DS_U']
-        self.Ytrain = DST['DS_Y']
+        self.Xtrain = DST['DS_X'][0:nzd_t,:]
+        self.Utrain = DST['DS_U'][0:nzd_t,:]
+        self.Ytrain = DST['DS_Y'][0:nzd_t,:]
+        
+        
         
         self.stdx = np.std(self.Xtrain, 0);
         self.stdy = np.std(self.Ytrain, 0);
@@ -179,7 +182,7 @@ class optCtrlNN2:
             for ui in range(1, P.shape[0]):
                 ru += (uvar_dn[ui] - Sold[ui]) ** 2
         
-        model.minimize(obj + 0.01 * ru + 0.01*casadi.sumsqr(uvar_dn[1:3]))
+        model.minimize(obj + 0.1 * ru + 0.1*casadi.sumsqr(uvar_dn[1:3]))
         
         optionsIPOPT = {'print_time':False, 'ipopt':{'print_level':0}}
         optionsOSQP = {'print_time':False, 'osqp':{'verbose':False}}
@@ -195,11 +198,11 @@ if __name__ == "__main__":
     
     
     curpath = os.path.realpath(__file__)
-    ctrl = optCtrlNN2("%s/../learnt_model/real_sim_jvm/model_3tier.tflite" % (os.path.dirname(curpath)),
+    ctrl = optCtrlNN3("%s/../learnt_model/real_sim_jvm/model_3tier.tflite" % (os.path.dirname(curpath)),
                      "%s/../learnt_model/real_sim_jvm/open_loop_3tier_H5.mat" % (os.path.dirname(curpath)))
     
     isAR = True
-    isCpu = False
+    isCpu = True
     dt = 10 ** (-1)
     H = 5
     N = 3
@@ -270,7 +273,7 @@ if __name__ == "__main__":
                     alfa.append(genAfa())
                     #alfa.append(1.0)
                     #XSSIM[:, step] = [np.random.randint(low=10, high=100), 0, 0]
-                    XSSIM[:, step] = jvm_sys.getstate(r)
+                    XSSIM[:, step] = jvm_sys.getstate(r)[0]
                     #XSSIM[:, step] = [100, 0, 0]
                     print(alfa[-1], XSSIM[:, step])
                     # print(XSSIM[:, step])
@@ -317,7 +320,7 @@ if __name__ == "__main__":
                     
                 #print(r.get("sim").decode('UTF-8'))
                 
-                XSSIM[:, step] = jvm_sys.getstate(r)
+                XSSIM[:, step] = jvm_sys.getstate(r)[0]
                 tgt = np.round(alfa[-1] * 0.82 * np.sum(XSSIM[:, step]), 5)
                 
                 if(step > 0):
@@ -330,8 +333,8 @@ if __name__ == "__main__":
                 optU = optU_N * ctrl.stdu + ctrl.meanu
                 Sold = optU_N
                 
-                r.set("t1_hw",str(np.round(optU[1],4)))
-                r.set("t2_hw",str(np.round(optU[2],4)))
+                r.set("t1_hw",str(optU[1]))
+                r.set("t2_hw",str(optU[2]))
                 #r.mset({"t1_hw":str(np.round(optU[1],4)),"t2_hw":str(np.round(optU[2],4))})
                 if(isCpu):
                     setU(optU)
