@@ -241,7 +241,7 @@ class jvm_sys(system_interface):
         time.sleep(0.5)
     
     def initCgroups(self): 
-        self.cgroups={"tier1":{"name":"t1",cg:None},"tier2":{"name":"t2",cg:None}}
+        self.cgroups={"tier1":{"name":"t1","cg":None},"tier2":{"name":"t2","cg":None}}
         
         p= subprocess.Popen(["cgget", "-g", "cpu:t1"],stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out, err = p.communicate()
