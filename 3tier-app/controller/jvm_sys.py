@@ -136,8 +136,11 @@ class jvm_sys(system_interface):
                 proc=self.sys[i-1]
                 print("killing %s"%(proc.name()+" "+"".join(proc.cmdline())))
                 proc.terminate()
-                proc.kill()
-                proc.wait(timeout=2)
+                try:
+                    proc.wait(timeout=2)
+                except psutil.TimeoutExpired as e:
+                    proc.kill()
+                
                 
         self.sys=None
     
