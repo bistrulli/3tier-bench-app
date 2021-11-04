@@ -24,9 +24,10 @@ class jvm_sys(system_interface):
     period = 100000
     keys = ["think", "e1_bl", "e1_ex", "t1_hw", "e2_bl", "e2_ex", "t2_hw"]
     
-    def __init__(self, sysRootPath):
+    def __init__(self, sysRootPath,isCpu=True):
         self.sysRootPath = sysRootPath
-        self.initCgroups()
+        if(isCpu):
+            self.initCgroups()
     
     def startClient(self, pop):
         r=Client("localhost:11211")
@@ -106,6 +107,8 @@ class jvm_sys(system_interface):
             self.sys.append(self.findProcessIdByName("tier1-0.0.1")[0])
     
     def findProcessIdByName(self,processName):
+        
+        
         '''
         Get a list of all the PIDs of a all the running process whose name contains
         the given string processName
@@ -113,6 +116,8 @@ class jvm_sys(system_interface):
         listOfProcessObjects = []
         # Iterate over the all the running process
         for proc in psutil.process_iter():
+           if(proc.status()=="zombie"):
+               continue
            try:
                pinfo = proc.as_dict(attrs=['pid', 'name', 'create_time'])
                # Check if process name contains the given name string.
@@ -140,6 +145,7 @@ class jvm_sys(system_interface):
 
         N = int((len(self.keys) - 1) / 2)
         str_state = [monitor.get(self.keys[i]) for i in range(len(self.keys))]
+        estate = [float(str_state[i]) for i in range(len(self.keys))]
         try:
             astate = [float(str_state[0].decode('UTF-8'))]
             gidx = 1;
@@ -153,7 +159,7 @@ class jvm_sys(system_interface):
             for i in range(len(self.keys)):
                 print(str_state[i], self.keys[i])
         
-        return astate
+        return [astate,estate]
     
     def waitTier1(self):
         connected=False
@@ -262,7 +268,7 @@ if __name__ == "__main__":
         jvm_sys = jvm_sys("../")
         
         for i in range(1):
-            jvm_sys.startSys(True)
+            jvm_sys.startSys(False)
             jvm_sys.startClient(100)
                 
             mnt = Client("localhost:11211")

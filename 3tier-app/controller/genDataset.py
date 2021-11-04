@@ -32,8 +32,7 @@ def getTr():
     r=np.random.choice([.1,.2,.3,.4,.5,.6,.7,.8,.9,1],p=prob)
     return np.random.rand()*0.1+(r-0.1)
 
-def getServer(X,S,rand):
-    #print("queue=",X,"server",S)
+def getServer(X,S,rand,estate=None):
     optS=None
     if(rand):
         optS=np.round(np.matrix([np.sum(X),getTr()*14.8+0.2,getTr()*14.8+0.2]),4)
@@ -41,21 +40,24 @@ def getServer(X,S,rand):
         #devo definire il numero di server da assegnare
         optS=S
         
+        ex=[0.0,estate[2],estate[5]]
         #findBootleneck
-        eps=np.ones(S.shape)*10**(-5)
-        U=np.divide(np.minimum(X,S),S)
-        #print("utiliation=",U)
+        U=np.divide(np.minimum(ex,S),S)
         b=np.argmax(np.mean(U,axis=0))
         
-        #print("bottelneck",b)
+        print("queue=",ex)
+        print("server",S)
+        print("utiliation=",U)
+        print("bottelneck",b)
          
-        optS[0,b]=np.maximum(np.minimum(optS[0,b]*15*np.random.rand(),100),0.1)
+        #optS[0,b]=np.maximum(np.minimum(optS[0,b]*15*np.random.rand(),100),0.1)
+        optS[0,b]=ex[b]
         if(b==1):
-             optS[0,2]=max(np.random.rand()*optS[0,2]/10.0,0.1)
+             optS[0,2]=max(np.random.rand()*optS[0,2]/3.0,0.1)
         else:
-             optS[0,1]=max(np.random.rand()*optS[0,1]/10.0,0.1)
+             optS[0,1]=max(np.random.rand()*optS[0,1]/3.0,0.1)
     
-    #print("New=",optS)
+    print("New=",optS)
     
     return optS;
         
@@ -65,7 +67,8 @@ signal.signal(signal.SIGINT, handler)
 repcount=0;
 
 #per npoints intendo il numero di diverso di stati iniziali che considero
-rep=100
+isCpu=True
+rep=10
 H=5
 ssTime=(H+1)*30
 N=3
@@ -87,7 +90,7 @@ myuuid = uuid.uuid4()
 fname="open_loop_3tier_H5"
 
 #dck_sys=dockersys()
-dck_sys=jvm_sys("../")
+dck_sys=jvm_sys("../",isCpu)
 
 try:
     for tick in tqdm(range(npoints),ascii=True):
@@ -107,10 +110,8 @@ try:
             dck_sys.stopClient()
             dck_sys.stopSystem()
             
-            dck_sys.startSys(True)
+            dck_sys.startSys(isCpu)
             dck_sys.startClient(np.sum(XS[tick,:]))
-            
-            time.sleep(2)
             
             if(r is not None):
                 r.close()
@@ -118,8 +119,9 @@ try:
             
             r.set("t1_hw","%.4f"%(optS[0,1]))
             r.set("t2_hw","%.4f"%(optS[0,2]))
-            dck_sys.setU(optS[0,1], "tier1")
-            dck_sys.setU(optS[0,2], "tier2")
+            if(isCpu):
+                dck_sys.setU(optS[0,1], "tier1")
+                dck_sys.setU(optS[0,2], "tier2")
             
             
             
@@ -127,11 +129,13 @@ try:
             P=np.random.rand(N,N);
             P=P/np.sum(P,1,keepdims=True);
             
-            XS[tick,:]=dck_sys.getstate(r)
+            state=dck_sys.getstate(r)
+            XS[tick,:]=state[0]
             #X0=XS[[tick],:]
             
         else:
-            XS[tick,:]=dck_sys.getstate(r)
+            state=dck_sys.getstate(r)
+            XS[tick,:]=state[0]
             
             if(np.mod(tick+1,H+1)==0 and tick>=H):
                 DS_X[point,:]=XS[tick+1-(H+1)]
@@ -146,12 +150,13 @@ try:
                 
                 #gen rnd S
                 #optS=np.round(np.matrix([np.sum(X0),getTr()*14.8+0.2,getTr()*14.8+0.2]),4)
-                optS=getServer(np.mean(XS[tick-(H-1):tick+1],axis=0,keepdims=True),optS,False)
+                optS=getServer(np.mean(XS[tick-(H-1):tick+1],axis=0,keepdims=True),optS,False,state[1])
                 
                 r.set("t1_hw","%.4f"%(optS[0,1]))
                 r.set("t2_hw","%.4f"%(optS[0,2]))
-                dck_sys.setU(optS[0,1], "tier1")
-                dck_sys.setU(optS[0,2], "tier2")
+                if(isCpu):
+                    dck_sys.setU(optS[0,1], "tier1")
+                    dck_sys.setU(optS[0,2], "tier2")
         time.sleep(0.5)
         
     #salvo risultati intermedi
