@@ -134,7 +134,7 @@ class optCtrlNN3:
         # print(self.tfmodel.get_tensor(output_details[1]['index']).shape)
         # print(self.tfmodel.get_tensor(output_details[2]['index']).shape)
         
-        Bias = self.tfmodel.get_tensor(output_details[0]['index'])
+        Bias = self.tfmodel.get_tensor(output_details[1]['index'])
         Gain = self.tfmodel.get_tensor(output_details[2]['index'])
 
         # Bias=Ypredicted_N[-1]
@@ -182,7 +182,7 @@ class optCtrlNN3:
             for ui in range(1, P.shape[0]):
                 ru += (uvar_dn[ui] - Sold[ui]) ** 2
         
-        model.minimize(obj + 0.15 * ru + 0.15*casadi.sumsqr(uvar_dn[1:3]))
+        model.minimize(obj + 0.1 * ru + 0.1*casadi.sumsqr(uvar_dn[1:3]))
         
         optionsIPOPT = {'print_time':False, 'ipopt':{'print_level':0}}
         optionsOSQP = {'print_time':False, 'osqp':{'verbose':False}}
@@ -349,7 +349,7 @@ if __name__ == "__main__":
                 optSNN[:, step] = optU[0:N]
                 tgtStory += [tgt]
                 
-                time.sleep(0.2)
+                time.sleep(0.3)
                 
                 # optSPID[:,step]=optSPid
                 # optSPid=mitigateBottleneck(optSPid, Xsim3, tgt)
