@@ -260,7 +260,7 @@ class jvm_sys(system_interface):
                 quota=np.round(RL * self.period)
                 found=True
                 print("".join(["cgset","-r","cpu.cfs_quota_us=%d"%(int(quota)),self.cgroups[cnt_name]]))
-                subprocess.call(["cgset","-r","cpu.cfs_quota_us=%d"%((int(quota)),self.cgroups[cnt_name]])
+                subprocess.call(["cgset","-r","cpu.cfs_quota_us=%d"%(int(quota)),self.cgroups[cnt_name]])
                 break
         
         if(not found):
