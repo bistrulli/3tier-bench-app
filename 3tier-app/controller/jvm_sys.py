@@ -66,7 +66,7 @@ class jvm_sys(system_interface):
         cpuEmu = 0 if(isCpu) else 1
         
         self.sys = []
-        subprocess.Popen(["memcached"])
+        subprocess.Popen(["memcached","-c","2048","-t","20"])
         self.waitMemCached()
         self.sys.append(self.findProcessIdByName("memcached")[0])
         
@@ -282,7 +282,7 @@ if __name__ == "__main__":
             g.set("t2_hw","15")
             g.close()
             X=[]
-            for i in range(500):
+            for i in range(1000):
                 state=jvm_sys.getstate(mnt)
                 print(state[0])
                 X.append(state[0][0])
