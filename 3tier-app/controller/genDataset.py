@@ -40,7 +40,7 @@ def getServer(X,S,rand,estate=None):
         #devo definire il numero di server da assegnare
         optS=S
         
-        ex=[0,estate[1]+estate[2],estate[4]+estate[5]]
+        ex=[0,estate[2],estate[5]]
         #findBootleneck
         S[0,0]=1000
         U=np.divide(np.minimum(ex,S),S)
