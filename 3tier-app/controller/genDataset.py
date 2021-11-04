@@ -118,8 +118,8 @@ try:
                 r.close()
             r = Client("localhost:11211")
             
-            r.set("t1_hw","%.4f"%(str(optS[0,1])))
-            r.set("t2_hw","%.4f"%(str(optS[0,2])))
+            r.set("t1_hw","%.4f"%(optS[0,1]))
+            r.set("t2_hw","%.4f"%(optS[0,2]))
             if(isCpu):
                 dck_sys.setU(optS[0,1], "tier1")
                 dck_sys.setU(optS[0,2], "tier2")
@@ -153,8 +153,8 @@ try:
                 #optS=np.round(np.matrix([np.sum(X0),getTr()*14.8+0.2,getTr()*14.8+0.2]),4)
                 optS=getServer(np.mean(XS[tick-(H-1):tick+1],axis=0,keepdims=True),optS,False,state[1])
                 
-                r.set("t1_hw","%.4f"%(str(optS[0,1])))
-                r.set("t2_hw","%.4f"%(str(optS[0,2])))
+                r.set("t1_hw","%.4f"%(optS[0,1]))
+                r.set("t2_hw","%.4f"%(optS[0,2]))
                 if(isCpu):
                     dck_sys.setU(optS[0,1], "tier1")
                     dck_sys.setU(optS[0,2], "tier2")
