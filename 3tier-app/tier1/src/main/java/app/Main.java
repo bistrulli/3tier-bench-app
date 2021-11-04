@@ -55,8 +55,8 @@ public class Main {
 		Tier1HTTPHandler.setTier2Host(Main.tier2Host);
 		t1Entries.put("e1", Tier1HTTPHandler.class);
 		t1Entries_stimes.put("e1", 100l);
-		final SimpleTask t1 = new SimpleTask("localhost", 3000, t1Entries, t1Entries_stimes, 120, Main.isEmu, "t1",
-				Main.jedisHost,-1);
+		final SimpleTask t1 = new SimpleTask("localhost", 3000, t1Entries, t1Entries_stimes, 1, Main.isEmu, "t1",
+				Main.jedisHost,100l);
 		t1.setHwCore(1f);
 		return new SimpleTask[] { t1 };
 	}

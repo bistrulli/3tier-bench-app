@@ -271,21 +271,21 @@ if __name__ == "__main__":
         jvm_sys = jvm_sys("../")
         
         for i in range(1):
-            jvm_sys.startSys(False)
-            jvm_sys.startClient(100)
+            jvm_sys.startSys(True)
+            jvm_sys.startClient(50)
                 
             mnt = Client("localhost:11211")
             g = Client("localhost:11211")
-            g.set("t1_hw","10")
-            g.set("t2_hw","5")
+            g.set("t1_hw","15")
+            g.set("t2_hw","15")
             g.close()
-            for i in range(200):
+            for i in range(100):
                 state=jvm_sys.getstate(mnt)
                 print(state,np.sum(state))
                 
-                jvm_sys.setU(10.,"tier1")
-                jvm_sys.setU(5.,"tier2")
-                time.sleep(0.2)
+                jvm_sys.setU(15.,"tier1")
+                jvm_sys.setU(15.,"tier2")
+                time.sleep(0.3)
             mnt.close()
             
             jvm_sys.stopClient()
