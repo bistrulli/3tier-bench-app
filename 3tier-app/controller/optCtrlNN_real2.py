@@ -182,7 +182,7 @@ class optCtrlNN3:
             for ui in range(1, P.shape[0]):
                 ru += (uvar_dn[ui] - Sold[ui]) ** 2
         
-        model.minimize(obj + 0.0 * ru + 0.0*casadi.sumsqr(uvar_dn[1:3]))
+        model.minimize(obj + 0.05 * ru + 0.05*casadi.sumsqr(uvar_dn[1:3]))
         
         optionsIPOPT = {'print_time':False, 'ipopt':{'print_level':0}}
         optionsOSQP = {'print_time':False, 'osqp':{'verbose':False}}
@@ -338,8 +338,8 @@ if __name__ == "__main__":
                 #     r.set("t2_hw",str(optU[2]))
                 # #r.mset({"t1_hw":str(np.round(optU[1],4)),"t2_hw":str(np.round(optU[2],4))})
                 # else:
-                r.set("t1_hw",str(optU[1]))
-                r.set("t2_hw",str(optU[2]))
+                r.set("t1_hw",str(100))
+                r.set("t2_hw",str(100))
                 jvm_sys.setU(optU[1],"tier1")
                 jvm_sys.setU(optU[2],"tier2")
                 # print(optU)
