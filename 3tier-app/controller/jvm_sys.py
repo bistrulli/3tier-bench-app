@@ -240,6 +240,7 @@ class jvm_sys(system_interface):
         
         time.sleep(0.5)
     
+    
     def initCgroups(self): 
         self.cgroups={"tier1":{"name":"t1","cg":None},"tier2":{"name":"t2","cg":None}}
         
@@ -274,12 +275,12 @@ if __name__ == "__main__":
         
         for i in range(1):
             jvm_sys.startSys(isCpu)
-            jvm_sys.startClient(50)
+            jvm_sys.startClient(1)
                 
             mnt = Client("localhost:11211")
             g = Client("localhost:11211")
-            g.set("t1_hw","2")
-            g.set("t2_hw","2")
+            g.set("t1_hw","1")
+            g.set("t2_hw","1")
             g.close()
             X=[]
             for i in range(1000):
@@ -290,8 +291,8 @@ if __name__ == "__main__":
                 
                 # g.set("t1_hw","10")
                 # g.set("t2_hw","10")
-                jvm_sys.setU(1,"tier1")
-                jvm_sys.setU(1,"tier2")
+                jvm_sys.setU(10,"tier1")
+                jvm_sys.setU(10,"tier2")
                 time.sleep(0.3)
             mnt.close()
             
