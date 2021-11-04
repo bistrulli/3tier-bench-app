@@ -282,7 +282,7 @@ if __name__ == "__main__":
             g.set("t2_hw","15")
             g.close()
             X=[]
-            for i in range(200):
+            for i in range(500):
                 state=jvm_sys.getstate(mnt)
                 print(state[0])
                 X.append(state[0][0])
