@@ -241,7 +241,8 @@ class jvm_sys(system_interface):
         time.sleep(0.5)
     
     def initCgroups(self): 
-        self.cgroups={"tier1":"t1","tier2":"t2"}
+        self.cgroups={"tier1":{"name":"t1",cg:None},"tier2":{"name":"t2",cg:None}}
+        
         p= subprocess.Popen(["cgget", "-g", "cpu:t1"],stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out, err = p.communicate()
         if(str(err).find("Cgroup does not exist") != -1):
@@ -253,22 +254,14 @@ class jvm_sys(system_interface):
             subprocess.check_output(["sudo", "cgcreate", "-g", "cpu:t2","-a","emilio:emilio","-t","emilio:emilio"])
     
     def setU(self,RL,cnt_name):
-        found=False
-        for cnt in self.sys:
-            if(cnt_name.lower() in cnt.name()+" ".join(cnt.cmdline()).lower()):
-                #print("update control for group, %s"%self.cgroups[cnt_name])
-                quota=np.round(RL * self.period)
-                found=True
-                print("".join(["cgset","-r","cpu.cfs_quota_us=%d"%(int(quota)),
-                               "-r","cpu.cfs_period_us=%d"%(self.period),
-                               self.cgroups[cnt_name]]))
-                subprocess.check_call(["cgset","-r","cpu.cfs_quota_us=%d"%(int(quota)),
-                                "-r","cpu.cfs_period_us=%d"%(self.period),
-                                 self.cgroups[cnt_name]])
-                break
         
-        if(not found):
-            raise ValueError("container %s not found during cpulimit update"%(cnt_name))
+        if(self.cgroups[cnt_name]["cg"]== None):
+            print("set cgrop for %s"%(self.cgroups[cnt_name]))
+            self.cgroups[cnt_name]["cg"] = trees.Tree().get_node_by_path('/cpu/%s'%(self.cgroups[cnt_name]["name"]))
+    
+        self.cgroups[cnt_name]["cg"].controller.cfs_period_us=period
+        self.cgroups[cnt_name]["cg"].controller.cfs_quota_us = int(quota)
+        
        
             
 if __name__ == "__main__":
