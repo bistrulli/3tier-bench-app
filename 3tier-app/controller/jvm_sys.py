@@ -278,8 +278,8 @@ if __name__ == "__main__":
                 
             mnt = Client("localhost:11211")
             g = Client("localhost:11211")
-            g.set("t1_hw","1")
-            g.set("t2_hw","1")
+            g.set("t1_hw","2")
+            g.set("t2_hw","2")
             g.close()
             X=[]
             for i in range(1000):
