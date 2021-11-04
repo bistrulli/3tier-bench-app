@@ -278,8 +278,8 @@ if __name__ == "__main__":
                 
             mnt = Client("localhost:11211")
             g = Client("localhost:11211")
-            g.set("t1_hw","15")
-            g.set("t2_hw","15")
+            g.set("t1_hw","1")
+            g.set("t2_hw","1")
             g.close()
             X=[]
             for i in range(1000):
@@ -288,10 +288,10 @@ if __name__ == "__main__":
                 X.append(state[0][0])
                 #print(state[1])
                 
-                g.set("t1_hw","10")
-                g.set("t2_hw","10")
-                jvm_sys.setU(0.1,"tier1")
-                jvm_sys.setU(0.1,"tier2")
+                # g.set("t1_hw","10")
+                # g.set("t2_hw","10")
+                jvm_sys.setU(1,"tier1")
+                jvm_sys.setU(1,"tier2")
                 time.sleep(0.3)
             mnt.close()
             
