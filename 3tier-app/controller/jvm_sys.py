@@ -281,7 +281,8 @@ if __name__ == "__main__":
             g.close()
             for i in range(100):
                 state=jvm_sys.getstate(mnt)
-                print(state,np.sum(state))
+                print(state[0])
+                print(state[1])
                 
                 jvm_sys.setU(15.,"tier1")
                 jvm_sys.setU(15.,"tier2")
