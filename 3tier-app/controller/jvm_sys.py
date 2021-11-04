@@ -259,8 +259,12 @@ class jvm_sys(system_interface):
                 #print("update control for group, %s"%self.cgroups[cnt_name])
                 quota=np.round(RL * self.period)
                 found=True
-                print("".join(["cgset","-r","cpu.cfs_quota_us=%d"%(int(quota)),self.cgroups[cnt_name]]))
-                subprocess.call(["cgset","-r","cpu.cfs_quota_us=%d"%(int(quota)),self.cgroups[cnt_name]])
+                print("".join(["cgset","-r","cpu.cfs_quota_us=%d"%(int(quota)),
+                               "-r","cpu.cfs_period_us=%d"%(self.period),
+                               self.cgroups[cnt_name]]))
+                subprocess.check_call(["cgset","-r","cpu.cfs_quota_us=%d"%(int(quota)),
+                                "-r","cpu.cfs_period_us=%d"%(self.period),
+                                 self.cgroups[cnt_name]])
                 break
         
         if(not found):
