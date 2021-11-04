@@ -151,7 +151,8 @@ try:
                 
                 #gen rnd S
                 #optS=np.round(np.matrix([np.sum(X0),getTr()*14.8+0.2,getTr()*14.8+0.2]),4)
-                optS=getServer(np.mean(XS[tick-(H-1):tick+1],axis=0,keepdims=True),optS,False,state[1])
+                #optS=getServer(np.mean(XS[tick-(H-1):tick+1],axis=0,keepdims=True),optS,False,state[1])
+                optS=getServer(X0,None,True)
                 
                 r.set("t1_hw","%.4f"%(optS[0,1]))
                 r.set("t2_hw","%.4f"%(optS[0,2]))
