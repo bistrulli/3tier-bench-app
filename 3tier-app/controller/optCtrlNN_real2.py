@@ -206,7 +206,7 @@ if __name__ == "__main__":
     dt = 10 ** (-1)
     H = 5
     N = 3
-    rep = 5
+    rep = 15
     drep = 0
     sTime = 1000
     TF = sTime * rep * dt;
