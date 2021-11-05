@@ -275,7 +275,7 @@ if __name__ == "__main__":
         
         for i in range(1):
             jvm_sys.startSys(isCpu)
-            jvm_sys.startClient(100)
+            jvm_sys.startClient(200)
                 
             mnt = Client("localhost:11211")
             g = Client("localhost:11211")
