@@ -91,7 +91,7 @@ class jvm_sys(system_interface):
             self.sys.append(self.findProcessIdByName("tier1-0.0.1")[0])
         else:
             subprocess.Popen(["cgexec", "-g", "cpu:t2", "--sticky", javaCmd, "-Xmx4G",
-                             "-Djava.compiler=NONE", "-jar",
+                             "-Djava.compiler=NONE", "-jar","-Xint",
                              '%stier2/target/tier2-0.0.1-SNAPSHOT-jar-with-dependencies.jar' % (self.sysRootPath),
                              '--cpuEmu', '%d' % (cpuEmu), '--jedisHost', 'localhost'])
             self.waitTier2()
@@ -99,7 +99,7 @@ class jvm_sys(system_interface):
             
             
             subprocess.Popen(["cgexec", "-g", "cpu:t1", "--sticky", javaCmd, "-Xmx4G",
-                             "-Djava.compiler=NONE", "-jar",
+                             "-Djava.compiler=NONE", "-jar","-Xint",
                              '%stier1/target/tier1-0.0.1-SNAPSHOT-jar-with-dependencies.jar' % (self.sysRootPath),
                              '--cpuEmu', "%d" % (cpuEmu), '--jedisHost', 'localhost',
                              "--tier2Host", "localhost"])
