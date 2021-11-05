@@ -182,7 +182,7 @@ class optCtrlNN3:
             for ui in range(1, P.shape[0]):
                 ru += (uvar_dn[ui] - Sold[ui]) ** 2
         
-        model.minimize(obj + 0.3 * ru + 0.6*casadi.sumsqr(uvar_dn[1:3]))
+        model.minimize(obj + 0.5 * ru + 0.1*casadi.sumsqr(uvar_dn[1:3]))
         
         optionsIPOPT = {'print_time':False, 'ipopt':{'print_level':0}}
         optionsOSQP = {'print_time':False, 'osqp':{'verbose':False}}
@@ -275,8 +275,8 @@ if __name__ == "__main__":
                     drep+=1
                     
                     Sold = None       
-                    #alfa.append(genAfa())
-                    alfa.append(1)
+                    alfa.append(genAfa())
+                    #alfa.append(1)
                     #XSSIM[:, step] = [np.random.randint(low=10, high=100), 0, 0]
                     XSSIM[:, step] = jvm_sys.getstate(r)[0]
                     #XSSIM[:, step] = [100, 0, 0]
