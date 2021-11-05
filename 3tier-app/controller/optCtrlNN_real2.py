@@ -208,7 +208,7 @@ if __name__ == "__main__":
     N = 3
     rep = 5
     drep = 0
-    sTime = 500
+    sTime = 1000
     TF = sTime * rep * dt;
     Time = np.linspace(0, TF, int(np.ceil(TF / dt)) + 1)
     XSNN = np.zeros([N, len(Time)])
@@ -354,7 +354,7 @@ if __name__ == "__main__":
                 optSNN[:, step] = optU[0:N]
                 tgtStory += [tgt]
                 
-                time.sleep(0.3)
+                time.sleep(0.1)
                 
                 # optSPID[:,step]=optSPid
                 # optSPid=mitigateBottleneck(optSPid, Xsim3, tgt)
