@@ -247,7 +247,8 @@ if __name__ == "__main__":
     try:
             #for step in tqdm(range(XSSIM.shape[1] - 1)):
             while drep<=rep and step<(XSNN.shape[1]-1):
-                if step%sTime == 0 or r.get("sim").decode('UTF-8')=="step":
+                #if step%sTime == 0 or r.get("sim").decode('UTF-8')=="step":
+                if step%sTime == 0:
                     print("drep=",drep)
                     if(step==0):
                         jvm_sys.startSys(isCpu)
