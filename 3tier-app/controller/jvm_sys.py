@@ -287,10 +287,10 @@ if __name__ == "__main__":
                 X.append(state[0][0])
                 #print(state[1])
                 
-                g.set("t1_hw","1")
-                g.set("t2_hw","1")
-                jvm_sys.setU(1,"tier1")
-                jvm_sys.setU(1,"tier2")
+                g.set("t1_hw","2")
+                g.set("t2_hw","2")
+                jvm_sys.setU(2,"tier1")
+                jvm_sys.setU(2,"tier2")
                 time.sleep(0.3)
             mnt.close()
             
