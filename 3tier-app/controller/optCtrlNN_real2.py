@@ -206,9 +206,9 @@ if __name__ == "__main__":
     dt = 10 ** (-1)
     H = 5
     N = 3
-    rep = 1
+    rep = 2
     drep = 0
-    sTime = 1000
+    sTime = 500
     TF = sTime * rep * dt;
     Time = np.linspace(0, TF, int(np.ceil(TF / dt)) + 1)
     XSNN = np.zeros([N, len(Time)])
@@ -247,25 +247,29 @@ if __name__ == "__main__":
     try:
             #for step in tqdm(range(XSSIM.shape[1] - 1)):
             while drep<=rep and step<(XSNN.shape[1]-1):
-                if step == 0 or r.get("sim").decode('UTF-8')=="step":
+                if step%sTime == 0 or r.get("sim").decode('UTF-8')=="step":
                     print("drep=",drep)
                     if(step==0):
                         jvm_sys.startSys(isCpu)
                         jvm_sys.startClient(np.random.randint(low=10, high=100))
-                        time.sleep(3)
+                        #time.sleep(3)
                         
                         #memcached client
                         r=Client("localhost:11211")
                         r.set("sim","-1")
                     else:
+                        jvm_sys.stopClient()
+                        jvm_sys.stopSystem()
+                        jvm_sys.startSys(isCpu)
+                        jvm_sys.startClient(np.random.randint(low=10, high=100))
                         #memcached client
                         if(r is not None):
-                            r.close()
+                             r.close()
                         r=Client("localhost:11211")
-                        r.set("sim","-1")
-                        print(r.get("sim").decode('UTF-8'))
-                        if(r.get("sim").decode('UTF-8')=="step"):
-                            r.set("sim","-1")
+                        # r.set("sim","-1")
+                        # print(r.get("sim").decode('UTF-8'))
+                        # if(r.get("sim").decode('UTF-8')=="step"):
+                        #     r.set("sim","-1")
                             
                     drep+=1
                     
