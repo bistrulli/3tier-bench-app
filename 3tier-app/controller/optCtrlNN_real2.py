@@ -206,7 +206,7 @@ if __name__ == "__main__":
     dt = 10 ** (-1)
     H = 5
     N = 3
-    rep = 15
+    rep = 1
     drep = 0
     sTime = 1000
     TF = sTime * rep * dt;
@@ -326,7 +326,7 @@ if __name__ == "__main__":
                 #print(r.get("sim").decode('UTF-8'))
                 
                 XSSIM[:, step] = jvm_sys.getstate(r)[0]
-                tgt = np.round(alfa[-1] * 0.884 * np.sum(XSSIM[:, step]), 5)
+                #tgt = np.round(alfa[-1] * 0.884 * np.sum(XSSIM[:, step]), 5)
                 
                 if(step > 0):
                     Ie += (tgt - XSSIM[0, step])
