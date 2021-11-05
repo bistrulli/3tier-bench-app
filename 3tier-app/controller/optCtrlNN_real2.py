@@ -134,7 +134,7 @@ class optCtrlNN3:
         # print(self.tfmodel.get_tensor(output_details[1]['index']).shape)
         # print(self.tfmodel.get_tensor(output_details[2]['index']).shape)
         
-        Bias = self.tfmodel.get_tensor(output_details[1]['index'])
+        Bias = self.tfmodel.get_tensor(output_details[2]['index'])
         Gain = self.tfmodel.get_tensor(output_details[0]['index'])
 
         # Bias=Ypredicted_N[-1]
@@ -182,7 +182,7 @@ class optCtrlNN3:
             for ui in range(1, P.shape[0]):
                 ru += (uvar_dn[ui] - Sold[ui]) ** 2
         
-        model.minimize(obj + 0.05 * ru + 0.05*casadi.sumsqr(uvar_dn[1:3]))
+        model.minimize(obj + 0.1 * ru + 0.1*casadi.sumsqr(uvar_dn[1:3]))
         
         optionsIPOPT = {'print_time':False, 'ipopt':{'print_level':0}}
         optionsOSQP = {'print_time':False, 'osqp':{'verbose':False}}
@@ -327,7 +327,7 @@ if __name__ == "__main__":
                     Ie += (tgt - XSSIM[0, step])
                 
                 stime = time.time()
-                optU_N, XNN = ctrl.buildOpt(XSSIM[:, [step]].T, tgt + 0.00 * Ie, MU, S, P, Sold, H, isAR)
+                optU_N, XNN = ctrl.buildOpt(XSSIM[:, [step]].T, tgt + 0.01 * Ie, MU, S, P, Sold, H, isAR)
                 ftime = time.time() - stime
                 
                 optU = optU_N * ctrl.stdu + ctrl.meanu
