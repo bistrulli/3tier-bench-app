@@ -289,8 +289,8 @@ if __name__ == "__main__":
                 
                 g.set("t1_hw","2")
                 g.set("t2_hw","2")
-                jvm_sys.setU(2,"tier1")
-                jvm_sys.setU(2,"tier2")
+                jvm_sys.setU(1,"tier1")
+                jvm_sys.setU(1,"tier2")
                 time.sleep(0.3)
             mnt.close()
             
