@@ -182,7 +182,7 @@ class optCtrlNN3:
             for ui in range(1, P.shape[0]):
                 ru += (uvar_dn[ui] - Sold[ui]) ** 2
         
-        model.minimize(obj + 0.2*ru + 0.2*casadi.sumsqr(uvar_dn[1:3]))
+        model.minimize(obj + 0.1*ru + 0.1*casadi.sumsqr(uvar_dn[1:3]))
         
         optionsIPOPT = {'print_time':False, 'ipopt':{'print_level':0}}
         optionsOSQP = {'print_time':False, 'osqp':{'verbose':False}}
@@ -208,7 +208,7 @@ if __name__ == "__main__":
     N = 3
     rep = 5
     drep = 0
-    sTime = 1000
+    sTime = 500
     TF = sTime * rep * dt;
     Time = np.linspace(0, TF, int(np.ceil(TF / dt)) + 1)
     XSNN = np.zeros([N, len(Time)])
@@ -354,7 +354,7 @@ if __name__ == "__main__":
                 optSNN[:, step] = optU[0:N]
                 tgtStory += [tgt]
                 
-                time.sleep(0.1)
+                time.sleep(0.3)
                 
                 # optSPID[:,step]=optSPid
                 # optSPid=mitigateBottleneck(optSPid, Xsim3, tgt)
