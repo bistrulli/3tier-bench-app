@@ -206,7 +206,7 @@ if __name__ == "__main__":
     dt = 10 ** (-1)
     H = 5
     N = 3
-    rep = 1
+    rep = 3
     drep = 0
     sTime = 1200
     TF = sTime * rep * dt;
@@ -252,8 +252,7 @@ if __name__ == "__main__":
                     print("drep=",drep)
                     if(step==0):
                         jvm_sys.startSys(isCpu)
-                        #jvm_sys.startClient(np.random.randint(low=10, high=100))
-                        jvm_sys.startClient(80)
+                        jvm_sys.startClient(np.random.randint(low=10, high=100))
                         #time.sleep(3)
                         
                         #memcached client
@@ -344,7 +343,7 @@ if __name__ == "__main__":
                 #     r.set("t2_hw",str(optU[2]))
                 # #r.mset({"t1_hw":str(np.round(optU[1],4)),"t2_hw":str(np.round(optU[2],4))})
                 # else:
-                optU=[0,9.57555318,7.32977541]
+                #optU=[0,9.57555318,7.32977541]
                 r.set("t1_hw",str(optU[1]))
                 r.set("t2_hw",str(optU[2]))
                 jvm_sys.setU(optU[1],"tier1")
