@@ -344,7 +344,7 @@ if __name__ == "__main__":
                 #     r.set("t2_hw",str(optU[2]))
                 # #r.mset({"t1_hw":str(np.round(optU[1],4)),"t2_hw":str(np.round(optU[2],4))})
                 # else:
-                #optU=[0,7.29697116,7.29697116]
+                optU=[0,9.57555318,7.32977541]
                 r.set("t1_hw",str(optU[1]))
                 r.set("t2_hw",str(optU[2]))
                 jvm_sys.setU(optU[1],"tier1")
