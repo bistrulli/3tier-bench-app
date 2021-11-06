@@ -182,7 +182,7 @@ class optCtrlNN3:
             for ui in range(1, P.shape[0]):
                 ru += (uvar_dn[ui] - Sold[ui]) ** 2
         
-        model.minimize(obj + 0.3*ru + 0.8*casadi.sumsqr(uvar_dn[1:3]))
+        model.minimize(obj + 0.55*ru + 0.7*casadi.sumsqr(uvar_dn[1:3]))
         
         optionsIPOPT = {'print_time':False, 'ipopt':{'print_level':0}}
         optionsOSQP = {'print_time':False, 'osqp':{'verbose':False}}
@@ -252,7 +252,8 @@ if __name__ == "__main__":
                     print("drep=",drep)
                     if(step==0):
                         jvm_sys.startSys(isCpu)
-                        jvm_sys.startClient(np.random.randint(low=10, high=100))
+                        #jvm_sys.startClient(np.random.randint(low=10, high=100))
+                        jvm_sys.startClient(80)
                         #time.sleep(3)
                         
                         #memcached client
