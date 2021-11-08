@@ -14,4 +14,6 @@ kubectl apply -f ../services/tier2.yaml
 kubectl apply -f ../services/monitor-ext.yaml
 kubectl apply -f ../services/ctrl-ext.yaml
 
-  
+sleep 2
+
+kubectl apply -f ../client/deploy.yaml

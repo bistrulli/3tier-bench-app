@@ -19,3 +19,4 @@ spec:
       - name: "monitor-pod"
         image: "memcached:1.6.12"
         imagePullPolicy: "Always"
+        command: ["memcached","-c","2048","-t","40"]

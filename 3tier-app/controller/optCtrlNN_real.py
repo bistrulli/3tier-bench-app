@@ -420,7 +420,7 @@ if __name__ == "__main__":
     dt = 10 ** (-1)
     H = 5
     N = 3
-    rep = 10
+    rep = 1
     drep = 0
     sTime = 300
     TF = sTime * rep * dt;
@@ -563,7 +563,7 @@ if __name__ == "__main__":
                 optSGKE[:,step] = [0,get_vpaout("tier1-vpa")/1000.0,get_vpaout("tier2-vpa")/1000.0]
                 tgtStory += [tgt]
                 
-                #time.sleep(0.3)
+                time.sleep(0.1)
                 
                 # optSPID[:,step]=optSPid
                 # optSPid=mitigateBottleneck(optSPid, Xsim3, tgt)
