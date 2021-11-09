@@ -21,7 +21,7 @@ class dockersys(system_interface):
         r=Client("localhost:11211")
         r.set("stop","0")
         
-        self.client_cnt=self.dck_client.containers.run(image="bistrulli/client:0.12",
+        self.client_cnt=self.dck_client.containers.run(image="bistrulli/client:gke_0.1",
                               command="java -Xmx4G -jar client-0.0.1-SNAPSHOT-jar-with-dependencies.jar --initPop %d --queues \
                                       '[\"think\", \"e1_bl\", \"e1_ex\", \"t1_hw\", \"e2_bl\", \"e2_ex\", \"t2_hw\"]' \
                                        --jedisHost monitor.app --tier1Host tier1.app"%(initPop),
@@ -155,7 +155,7 @@ if __name__ == "__main__":
     
     try:
         dck_sys=dockersys()
-        dck_sys.startSys(False)
+        dck_sys.startSys(True)
         dck_sys.startClient(30)
         
         mnt=Client("localhost:11211")

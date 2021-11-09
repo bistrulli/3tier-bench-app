@@ -249,8 +249,8 @@ if __name__ == "__main__":
     try:
             #for step in tqdm(range(XSSIM.shape[1] - 1)):
             while drep<=rep and step<(XSNN.shape[1]-1):
-                #if step%sTime == 0 or r.get("sim").decode('UTF-8')=="step":
-                if step%sTime == 0:
+                if step%sTime == 0 or r.get("sim").decode('UTF-8')=="step":
+                #if step%sTime == 0:
                     print("drep=",drep)
                     if(step==0):
                         pant.startSys(isCpu)
@@ -261,10 +261,10 @@ if __name__ == "__main__":
                         r=Client("localhost:11211")
                         r.set("sim","-1")
                     else:
-                        pant.stopClient()
-                        pant.stopSystem()
-                        pant.startSys(isCpu)
-                        pant.startClient(np.random.randint(low=10, high=100))
+                        # pant.stopClient()
+                        # pant.stopSystem()
+                        # pant.startSys(isCpu)
+                        # pant.startClient(np.random.randint(low=10, high=100))
                         #memcached client
                         if(r is not None):
                              r.close()
@@ -277,8 +277,8 @@ if __name__ == "__main__":
                     drep+=1
                     
                     Sold = None       
-                    #alfa.append(genAfa())
-                    alfa.append(1)
+                    alfa.append(genAfa())
+                    #alfa.append(1)
                     #XSSIM[:, step] = [np.random.randint(low=10, high=100), 0, 0]
                     XSSIM[:, step] = pant.getstate(r)[0]
                     #XSSIM[:, step] = [100, 0, 0]
