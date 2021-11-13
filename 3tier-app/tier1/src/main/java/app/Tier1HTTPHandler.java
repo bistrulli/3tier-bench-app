@@ -44,7 +44,7 @@ public class Tier1HTTPHandler extends TierHttpHandler {
 			e1.printStackTrace();
 		}
 
-		this.measureReturn();
+		this.measureReturn("e2");
 
 		String renderedTemplate = jinjava.render(this.getWebPageTpl(), context);
 

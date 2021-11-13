@@ -12,8 +12,6 @@ import Server.SimpleTask;
 import gnu.getopt.Getopt;
 import gnu.getopt.LongOpt;
 import net.spy.memcached.MemcachedClient;
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.Transaction;
 
 public class Main {
 
@@ -54,10 +52,10 @@ public class Main {
 		// instatiate tier2 class
 		HashMap<String, Class> t2Entries = new HashMap<String, Class>();
 		HashMap<String, Long> t2Entries_stimes = new HashMap<String, Long>();
-		t2Entries.put("e2", Tier2HTTPHandler.class);
+		t2Entries.put("e2", Tier2HTTPHandler.class); 
 		t2Entries_stimes.put("e2", 100l);
 		final SimpleTask t2 = new SimpleTask("localhost", 3001, t2Entries, t2Entries_stimes, 1, Main.isEmu, "t2",
-				Main.jedisHost);
+				Main.jedisHost,100l);
 		t2.setHwCore(1f);
 		return new SimpleTask[] { t2 };
 	}

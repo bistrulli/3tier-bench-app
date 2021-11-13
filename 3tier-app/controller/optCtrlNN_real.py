@@ -253,7 +253,11 @@ def resetU():
 def getstate(r, keys, N):
     str_state=[r.get(keys[i]) for i in range(len(keys))]
     try:
-        astate = [float(str_state[0])]
+        if(str_state[0]==None):
+            astate = [0]
+        else:
+            astate = [float(str_state[0])]
+            
         gidx = 1;
         for i in range(1, N):
             astate.append(float(str_state[gidx]) + float(str_state[gidx + 1]))

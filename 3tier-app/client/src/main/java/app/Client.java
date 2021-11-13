@@ -15,6 +15,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.commons.math3.distribution.AbstractRealDistribution;
 import org.apache.commons.math3.distribution.ExponentialDistribution;
 
+import Server.MCAtomicUpdater;
 import Server.SimpleTask;
 import net.spy.memcached.MemcachedClient;
 
@@ -26,7 +27,7 @@ public class Client implements Runnable {
 	private UUID clietId = null;
 	public static AtomicInteger time = new AtomicInteger(0);
 	private MemcachedClient memcachedClient = null;
-	private static Integer toKill = 0;
+	private static AtomicInteger toKill = new AtomicInteger(0);
 	private Boolean dying=false;
 
 	public Client(SimpleTask task, Long ttime) {
@@ -49,32 +50,32 @@ public class Client implements Runnable {
 					.uri(URI.create("http://tier1:3000/?id=" + this.clietId.toString() + "&entry=e1" + "&snd=think"))
 					.build();
 			
-//			request = HttpRequest.newBuilder()
-//					.uri(URI.create("https://www.random.org/integers/?num=1&min=1&max=100&col=1&base=10&format=html&rnd=new"))
-//					.build();
+			this.memcachedClient.set("started", 3600, String.valueOf(1)).get();
+			MCAtomicUpdater.AtomicIncr(this.memcachedClient, 1, "think", 100);
 
 			while ((this.memcachedClient.get("stop") == null
 					|| !String.valueOf(this.memcachedClient.get("stop")).equals("1")) && !this.dying) {
-				
-				long thinking = this.memcachedClient.incr("think", 1);
-				
+
+				String thinking = String.valueOf(this.memcachedClient.get("think"));
+
 				SimpleTask.getLogger().debug(String.format("stop=%s", String.valueOf(memcachedClient.get("stop"))));
 				TimeUnit.MILLISECONDS.sleep(Double.valueOf(this.dist.sample()).longValue());
 
 				SimpleTask.getLogger().debug(String.format("%s sending", this.task.getName()));
 				HttpResponse<String> resp = client.send(request, BodyHandlers.ofString());
 
-				SimpleTask.getLogger().debug(String.format("%d thinking", thinking));
+				// long thinking = this.memcachedClient.incr("think", 1);
+				MCAtomicUpdater.AtomicIncr(this.memcachedClient, -1, "e1_ex", 100);
+				MCAtomicUpdater.AtomicIncr(this.memcachedClient, 1, "think", 100);
+
+				SimpleTask.getLogger().debug(String.format("%s thinking", thinking));
 				
-				if(Client.getToKill()>0) {
-					synchronized (Client.getToKill()) {
-						if(Client.getToKill()>0) {
-							Client.setToKill(Client.toKill-1);
-							this.dying=true;
-						}
-					}
+				if (Client.getToKill().get() > 0) {
+					Client.toKill.decrementAndGet();
+					this.dying = true;
 				}
 			}
+			MCAtomicUpdater.AtomicIncr(this.memcachedClient, -1, "think", 100);
 			SimpleTask.getLogger().debug(String.format(" user %s stopped", this.clietId));
 		} catch (IOException e1) {
 			e1.printStackTrace();
@@ -100,12 +101,12 @@ public class Client implements Runnable {
 		this.dist = new ExponentialDistribution(thinkTime);
 	}
 
-	public static Integer getToKill() {
+	public static AtomicInteger getToKill() {
 		return toKill;
 	}
 
 	public static void setToKill(Integer toKill) {
-		Client.toKill = toKill;
+		Client.toKill.set(toKill);
 	}
 
 }
