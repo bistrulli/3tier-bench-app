@@ -10,7 +10,6 @@ import com.sun.net.httpserver.HttpExchange;
 
 import Server.SimpleTask;
 import Server.TierHttpHandler;
-import redis.clients.jedis.Jedis;
 
 @SuppressWarnings("restriction")
 public class Tier2HTTPHandler extends TierHttpHandler {
