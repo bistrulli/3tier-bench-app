@@ -23,10 +23,12 @@ class jvm_sys(system_interface):
     cgroups = None
     period = 100000
     keys = ["think", "e1_bl", "e1_ex", "t1_hw", "e2_bl", "e2_ex", "t2_hw"]
+    isCpu=None
     
-    def __init__(self, sysRootPath,isCpu=True):
+    def __init__(self, sysRootPath,isCpu=False):
         self.sysRootPath = sysRootPath
-        if(isCpu):
+        self.isCpu = isCpu
+        if(self.isCpu):
             self.initCgroups()
     
     def startClient(self, pop):
@@ -62,8 +64,8 @@ class jvm_sys(system_interface):
                 self.client=None
         
     
-    def startSys(self, isCpu):
-        cpuEmu = 0 if(isCpu) else 1
+    def startSys(self):
+        cpuEmu = 0 if(self.isCpu) else 1
         
         self.sys = []
         subprocess.Popen(["memcached","-c","2048","-t","20"])
@@ -143,26 +145,6 @@ class jvm_sys(system_interface):
                 
                 
         self.sys=None
-    
-    def getstate(self, monitor):
-
-        N = int((len(self.keys) - 1) / 2)
-        str_state = [monitor.get(self.keys[i]) for i in range(len(self.keys))]
-        estate = [float(str_state[i]) for i in range(len(self.keys))]
-        try:
-            astate = [float(str_state[0].decode('UTF-8'))]
-            gidx = 1;
-            for i in range(1, N):
-                astate.append(float(str_state[gidx].decode('UTF-8')) + float(str_state[gidx + 1].decode('UTF-8')))
-                # if(float(str_state[gidx]) < 0 or float(str_state[gidx + 1]) < 0):
-                #     raise ValueError("Error! state < 0")
-                gidx += 3
-        except:
-            print(time.asctime())
-            for i in range(len(self.keys)):
-                print(str_state[i], self.keys[i])
-        
-        return [astate,estate]
     
     def waitTier1(self):
         connected=False
@@ -270,7 +252,7 @@ class jvm_sys(system_interface):
             
 if __name__ == "__main__":
     try:
-        isCpu=True
+        isCpu=False
         jvm_sys = jvm_sys("../",isCpu)
         
         for i in range(1):
@@ -287,9 +269,9 @@ if __name__ == "__main__":
                 print(state[0],i)
                 X.append(state[0][0])
                 
-                
-                jvm_sys.setU(10,"tier1")
-                jvm_sys.setU(10,"tier2")
+                if(isCpu):
+                    jvm_sys.setU(10,"tier1")
+                    jvm_sys.setU(10,"tier2")
                 time.sleep(0.3)
             mnt.close()
             

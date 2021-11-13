@@ -12,10 +12,12 @@ class dockersys(system_interface):
     cnt_names = ["tier1-cnt","tier2-cnt","monitor-cnt"]
     keys = ["think", "e1_bl", "e1_ex", "t1_hw", "e2_bl", "e2_ex", "t2_hw"]
     period = 100000
+    isCpu=None
     
-    def __init__(self):
+    def __init__(self,isCpu=False):
         self.dck_client = docker.from_env()
         self.sys=[]
+        self.isCpu=isCpu
     
     def startClient(self,initPop):
         r=Client("localhost:11211")
@@ -61,8 +63,8 @@ class dockersys(system_interface):
             self.client_cnt=None
             print("client stopping complete")
     
-    def startSys(self,isCpu):
-        cpuEmu=0 if(isCpu) else 1
+    def startSys(self):
+        cpuEmu=0 if(self.isCpu) else 1
         
         self.getNetworkCne()
         
@@ -114,24 +116,6 @@ class dockersys(system_interface):
                 pass
         self.sys=[]
     
-    def getstate(self,monitor):
-        N=int((len(self.keys)-1)/2)
-        str_state=[monitor.get(self.keys[i]) for i in range(len(self.keys))]
-        try:
-            astate = [float(str_state[0].decode('UTF-8'))]
-            gidx = 1;
-            for i in range(1, N):
-                astate.append(float(str_state[gidx].decode('UTF-8')) + float(str_state[gidx + 1].decode('UTF-8')))
-                if(float(str_state[gidx])<0 or float(str_state[gidx + 1])<0):
-                    raise ValueError("Error! state < 0")
-                gidx += 3
-        except:
-            print(time.asctime())
-            for i in range(len(self.keys)):
-                print(str_state[i],self.keys[i])
-        
-        return astate
-    
     def waitRunning(self,cnt):
         while(cnt.status!="running"):
             time.sleep(0.2)
@@ -139,13 +123,14 @@ class dockersys(system_interface):
         print("Cnt %s is running"%(cnt.name))
         
     def setU(self,RL,cnt_name):
-        found=False
-        for cnt in self.sys:
-            if(cnt.name==cnt_name):
-                quota=np.round(RL * self.period)
-                found=True
-                cnt.update(cpu_period=self.period,cpu_quota=max(int(quota),1000))
-                break
+        if(self.isCpu):
+            found=False
+            for cnt in self.sys:
+                if(cnt.name==cnt_name):
+                    quota=np.round(RL * self.period)
+                    found=True
+                    cnt.update(cpu_period=self.period,cpu_quota=max(int(quota),1000))
+                    break
         
         if(not found):
             raise ValueError("container %s not found during cpulimit update"%(cnt_name))
@@ -154,8 +139,8 @@ class dockersys(system_interface):
 if __name__ == "__main__":
     
     try:
-        dck_sys=dockersys()
-        dck_sys.startSys(True)
+        dck_sys=dockersys(isCpu=False)
+        dck_sys.startSys()
         dck_sys.startClient(30)
         
         mnt=Client("localhost:11211")
