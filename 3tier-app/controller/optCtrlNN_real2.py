@@ -135,7 +135,7 @@ class optCtrlNN3:
         # print(self.tfmodel.get_tensor(output_details[1]['index']).shape)
         # print(self.tfmodel.get_tensor(output_details[2]['index']).shape)
         
-        Bias = self.tfmodel.get_tensor(output_details[1]['index'])
+        Bias = self.tfmodel.get_tensor(output_details[2]['index'])
         Gain = self.tfmodel.get_tensor(output_details[0]['index'])
 
         # Bias=Ypredicted_N[-1]
@@ -256,7 +256,7 @@ if __name__ == "__main__":
                         plant.startSys()
                         #plant.startClient(np.random.randint(low=10, high=100))
                         plant.startClient(60)
-                        #time.sleep(3)
+                        #time.sleep(2)
                         
                         #memcached client
                         r=Client("localhost:11211")
