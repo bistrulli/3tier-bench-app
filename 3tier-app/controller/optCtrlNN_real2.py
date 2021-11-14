@@ -207,7 +207,7 @@ if __name__ == "__main__":
     dt = 10 ** (-1)
     H = 5
     N = 3
-    rep = 1
+    rep = 2
     drep = 0
     sTime = 600
     TF = sTime * rep * dt;
@@ -249,7 +249,7 @@ if __name__ == "__main__":
     try:
             #for step in tqdm(range(XSSIM.shape[1] - 1)):
             while drep<=rep and step<(XSNN.shape[1]-1):
-                if step%sTime == 0 or r.get("sim").decode('UTF-8')=="step":
+                if r.get("sim").decode('UTF-8')=="step":
                 #if step%sTime == 0:
                     print("drep=",drep)
                     if(step==0):
@@ -334,9 +334,9 @@ if __name__ == "__main__":
                 if(step > 0):
                     Ie += (tgt - XSSIM[0, step])
                 
-                stime = time.time()
+                #stime = time.time()
                 optU_N, XNN = ctrl.buildOpt(XSSIM[:, [step]].T, tgt + 0.05 * Ie, MU, S, P, Sold, H, isAR)
-                ftime = time.time() - stime
+                #ftime = time.time() - stime
                 
                 optU = optU_N * ctrl.stdu + ctrl.meanu
                 Sold = optU_N
