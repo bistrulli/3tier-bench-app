@@ -19,7 +19,6 @@ from pathlib import Path
 from pymemcache.client.base import Client
 from jvm_sys import jvm_sys
 from docker_sys import dockersys
-from metakernel.magics import time_magic
 
 curpath = os.path.realpath(__file__)
 plant=None
