@@ -259,7 +259,7 @@ if __name__ == "__main__":
                 time.sleep(0.2)
                 
             while drep<=rep and step<(XSNN.shape[1]-1):
-                if r.get("sim").decode('UTF-8').contains("step"):
+                if "step" in r.get("sim").decode('UTF-8'):
                     pop=float(r.get("sim").decode('UTF-8').split("_")[1]);
                     print("drep=",drep,"pop",pop)
                     r.set("sim","-1")
