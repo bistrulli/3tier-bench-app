@@ -256,7 +256,7 @@ if __name__ == "__main__":
                         plant.startSys()
                         #plant.startClient(np.random.randint(low=10, high=100))
                         plant.startClient(60)
-                        #time.sleep(2)
+                        time.sleep(3)
                         
                         #memcached client
                         r=Client("localhost:11211")
