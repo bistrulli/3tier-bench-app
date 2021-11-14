@@ -207,7 +207,7 @@ if __name__ == "__main__":
     dt = 10 ** (-1)
     H = 5
     N = 3
-    rep = 2
+    rep = 1
     drep = 0
     sTime = 2000
     TF = sTime * rep * dt;
@@ -362,7 +362,8 @@ if __name__ == "__main__":
             xsim_cavg = []
             xsim_cavg2 = []
             xsim_cavg3 = []
-            optS_avg = []
+            optS_avg1 = []
+            optS_avg2 = []
             e = []
             e2 = []
             e3 = []
@@ -382,7 +383,8 @@ if __name__ == "__main__":
                 stepTime=fIdx-iIdx
                     
                 xsim_cavg += np.divide(np.cumsum(XSSIM[:, iIdx:fIdx], axis=1), np.arange(1, stepTime + 1)).T[:, 0].tolist()
-                optS_avg += np.divide(np.cumsum(optSNN[1:, iIdx:fIdx], axis=1), np.arange(1, stepTime + 1)).T[:, 0].tolist()
+                optS_avg1 += np.divide(np.cumsum(optSNN[1, iIdx:fIdx], axis=1), np.arange(1, stepTime + 1)).T[:, 0].tolist()
+                optS_avg2 += np.divide(np.cumsum(optSNN[2, iIdx:fIdx], axis=1), np.arange(1, stepTime + 1)).T[:, 0].tolist()
                 # xsim_cavg2 += np.divide(np.cumsum(XSSIM2[:, i * sTime:(i + 1) * sTime], axis=1), np.arange(1, sTime + 1)).T[:, 0].tolist()
                 # xsim_cavg3 += np.divide(np.cumsum(XSSIMPid[:, i * sTime:(i + 1) * sTime], axis=1), np.arange(1, sTime + 1)).T[:, 0].tolist()
                 print(len(tgtStory),fIdx)
@@ -457,7 +459,8 @@ if __name__ == "__main__":
             
             plt.figure()
             plt.title("Control Signals NN AVG")
-            plt.plot(optS_avg)
+            plt.plot(optS_avg1)
+            plt.plot(optS_avg2)
             plt.savefig("./figure/control_avg.png")
             
             # plt.figure()
