@@ -10,7 +10,7 @@ RUN apt-get install pip -y
 RUN apt-get install sudo -y
 RUN apt-get install openssh-server -y
 
-RUN pip install numpy scipy matplotlib casadi redis tqdm cgroupspy kubernetes docker pymemcache
+RUN pip install numpy scipy matplotlib casadi redis tqdm cgroupspy kubernetes docker pymemcache cpulimit
 RUN pip install --index-url https://google-coral.github.io/py-repo/ tflite_runtime
 
 RUN update-rc.d ssh defaults

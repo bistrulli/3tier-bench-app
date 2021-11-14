@@ -243,8 +243,8 @@ if __name__ == "__main__":
     tgt=None
     step=0
     
-    jvm_sys = jvm_sys("../",isCpu)
-    #pant=dockersys()
+    plant = jvm_sys("../",isCpu)
+    #plant=dockersys()
     
     try:
             #for step in tqdm(range(XSSIM.shape[1] - 1)):
@@ -253,8 +253,8 @@ if __name__ == "__main__":
                 #if step%sTime == 0:
                     print("drep=",drep)
                     if(step==0):
-                        pant.startSys(isCpu)
-                        pant.startClient(np.random.randint(low=10, high=100))
+                        plant.startSys(isCpu)
+                        plant.startClient(np.random.randint(low=10, high=100))
                         time.sleep(3)
                         
                         #memcached client
@@ -280,7 +280,7 @@ if __name__ == "__main__":
                     alfa.append(genAfa())
                     #alfa.append(1)
                     #XSSIM[:, step] = [np.random.randint(low=10, high=100), 0, 0]
-                    XSSIM[:, step] = pant.getstate(r)[0]
+                    XSSIM[:, step] = plant.getstate(r)[0]
                     #XSSIM[:, step] = [100, 0, 0]
                     print(alfa[-1], XSSIM[:, step])
                     # print(XSSIM[:, step])
@@ -327,7 +327,7 @@ if __name__ == "__main__":
                     
                 #print(r.get("sim").decode('UTF-8'))
                 
-                XSSIM[:, step] = pant.getstate(r)[0]
+                XSSIM[:, step] = plant.getstate(r)[0]
                 #tgt = np.round(alfa[-1] * 0.884 * np.sum(XSSIM[:, step]), 5)
                 
                 if(step > 0):
@@ -348,8 +348,8 @@ if __name__ == "__main__":
                 #optU=[0,9.57555318,7.32977541]
                 r.set("t1_hw",str(optU[1]))
                 r.set("t2_hw",str(optU[2]))
-                pant.setU(optU[1],"tier1-cnt")
-                pant.setU(optU[2],"tier2-cnt")
+                plant.setU(optU[1],"tier1-cnt")
+                plant.setU(optU[2],"tier2-cnt")
                 # print(optU)
                 
                 print(XSSIM[:, step],tgt,np.sum(XSSIM[:, step]),step,optU[1:N])
@@ -476,8 +476,8 @@ if __name__ == "__main__":
             plt.show()
     
     finally:
-        pant.stopClient()
-        pant.stopSystem()
+        plant.stopClient()
+        plant.stopSystem()
         #pass
         # killClient()
         # time.sleep(5)
