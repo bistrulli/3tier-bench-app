@@ -254,7 +254,8 @@ if __name__ == "__main__":
                     print("drep=",drep)
                     if(step==0):
                         plant.startSys()
-                        plant.startClient(np.random.randint(low=10, high=100))
+                        #plant.startClient(np.random.randint(low=10, high=100))
+                        plant.startClient(60)
                         #time.sleep(3)
                         
                         #memcached client
