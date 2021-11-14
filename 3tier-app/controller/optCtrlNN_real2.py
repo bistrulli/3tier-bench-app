@@ -209,7 +209,7 @@ if __name__ == "__main__":
     N = 3
     rep = 1
     drep = 0
-    sTime = 1200
+    sTime = 600
     TF = sTime * rep * dt;
     Time = np.linspace(0, TF, int(np.ceil(TF / dt)) + 1)
     XSNN = np.zeros([N, len(Time)])
@@ -255,7 +255,7 @@ if __name__ == "__main__":
                     if(step==0):
                         plant.startSys()
                         plant.startClient(np.random.randint(low=10, high=100))
-                        time.sleep(3)
+                        #time.sleep(3)
                         
                         #memcached client
                         r=Client("localhost:11211")
@@ -348,8 +348,8 @@ if __name__ == "__main__":
                 #optU=[0,9.57555318,7.32977541]
                 r.set("t1_hw",str(optU[1]))
                 r.set("t2_hw",str(optU[2]))
-                plant.setU(optU[1],"tier1-cnt")
-                plant.setU(optU[2],"tier2-cnt")
+                plant.setU(optU[1],"tier1")
+                plant.setU(optU[2],"tier2")
                 # print(optU)
                 
                 print(XSSIM[:, step],tgt,np.sum(XSSIM[:, step]),step,optU[1:N])
@@ -357,7 +357,7 @@ if __name__ == "__main__":
                 optSNN[:, step] = optU[0:N]
                 tgtStory += [tgt]
                 
-                time.sleep(0.2)
+                time.sleep(0.1)
                 
                 # optSPID[:,step]=optSPid
                 # optSPid=mitigateBottleneck(optSPid, Xsim3, tgt)
