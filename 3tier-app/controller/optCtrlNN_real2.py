@@ -207,7 +207,7 @@ if __name__ == "__main__":
     dt = 10 ** (-1)
     H = 5
     N = 3
-    rep = 2
+    rep = 1
     drep = 0
     sTime = 600
     TF = sTime * rep * dt;
@@ -259,8 +259,9 @@ if __name__ == "__main__":
                 time.sleep(0.2)
                 
             while drep<=rep and step<(XSNN.shape[1]-1):
-                if r.get("sim").decode('UTF-8')=="step":
-                    print("drep=",drep)
+                if r.get("sim").decode('UTF-8').contains("step"):
+                    pop=float(r.get("sim").decode('UTF-8').split("_")[1]);
+                    print("drep=",drep,"pop",pop)
                     r.set("sim","-1")
                     time.sleep(3)                            
                     drep+=1
@@ -276,7 +277,7 @@ if __name__ == "__main__":
                     XSSIM2[:, step] = XSSIM[:, step]
                     XSSIMPid[:, step] = XSSIM[:, step]
                     S[0] = np.sum(XSSIM[:, step])
-                    tgt = np.round(alfa[-1] * 0.884 * np.sum(XSSIM[:, step]), 5)
+                    tgt = np.round(alfa[-1] * 0.884 * pop, 5)
                     sIdx.append({'alfa':alfa[-1], 'x0':XSSIM[:, step].tolist(), "tgt":tgt,"idx":step})
                     optSPid = [np.sum(XSSIM[:, step]), 1, 1]
                     cp += 1
@@ -317,7 +318,7 @@ if __name__ == "__main__":
                 #print(r.get("sim").decode('UTF-8'))
                 
                 XSSIM[:, step] = plant.getstate(r)[0]
-                tgt = np.round(alfa[-1] * 0.884 * np.sum(XSSIM[:, step]), 5)
+                #tgt = np.round(alfa[-1] * 0.884 * np.sum(XSSIM[:, step]), 5)
                 
                 if(step > 0):
                     Ie += (tgt - XSSIM[0, step])
