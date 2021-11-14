@@ -248,7 +248,6 @@ if __name__ == "__main__":
     plant.startSys()
     #plant.startClient(np.random.randint(low=10, high=100))
     plant.startClient(60)
-    time.sleep(3)
     
     #memcached client
     r=Client("localhost:11211")
@@ -261,7 +260,8 @@ if __name__ == "__main__":
             while drep<=rep and step<(XSNN.shape[1]-1):
                 if r.get("sim").decode('UTF-8')=="step":
                     print("drep=",drep)
-                    r.set("sim","-1")                            
+                    r.set("sim","-1")
+                    time.sleep(3)                            
                     drep+=1
                     
                     Sold = None       
