@@ -267,8 +267,8 @@ if __name__ == "__main__":
                     drep+=1
                     
                     Sold = None       
-                    alfa.append(genAfa())
-                    #alfa.append(1)
+                    #alfa.append(genAfa())
+                    alfa.append(1)
                     #XSSIM[:, step] = [np.random.randint(low=10, high=100), 0, 0]
                     XSSIM[:, step] = plant.getstate(r)[0]
                     #XSSIM[:, step] = [100, 0, 0]
