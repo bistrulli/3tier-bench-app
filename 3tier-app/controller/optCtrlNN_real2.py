@@ -207,9 +207,9 @@ if __name__ == "__main__":
     dt = 10 ** (-1)
     H = 5
     N = 3
-    rep = 1
+    rep = 7
     drep = 0
-    sTime = 2000
+    sTime = 10000
     TF = sTime * rep * dt;
     Time = np.linspace(0, TF, int(np.ceil(TF / dt)) + 1)
     XSNN = np.zeros([N, len(Time)])
