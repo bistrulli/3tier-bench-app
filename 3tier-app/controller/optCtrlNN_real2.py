@@ -245,6 +245,13 @@ if __name__ == "__main__":
     
     plant = jvm_sys("../",isCpu)
     #plant=dockersys()
+    plant.startSys()
+    #plant.startClient(np.random.randint(low=10, high=100))
+    plant.startClient(60)
+    time.sleep(3)
+    
+    #memcached client
+    r=Client("localhost:11211")
     
     try:
         
@@ -253,31 +260,8 @@ if __name__ == "__main__":
                 
             while drep<=rep and step<(XSNN.shape[1]-1):
                 if r.get("sim").decode('UTF-8')=="step":
-                #if step%sTime == 0:
                     print("drep=",drep)
-                    if(step==0):
-                        plant.startSys()
-                        #plant.startClient(np.random.randint(low=10, high=100))
-                        plant.startClient(60)
-                        time.sleep(3)
-                        
-                        #memcached client
-                        r=Client("localhost:11211")
-                        r.set("sim","-1")
-                    else:
-                        # pant.stopClient()
-                        # pant.stopSystem()
-                        # pant.startSys(isCpu)
-                        # pant.startClient(np.random.randint(low=10, high=100))
-                        #memcached client
-                        if(r is not None):
-                             r.close()
-                        r=Client("localhost:11211")
-                        # r.set("sim","-1")
-                        # print(r.get("sim").decode('UTF-8'))
-                        # if(r.get("sim").decode('UTF-8')=="step"):
-                        #     r.set("sim","-1")
-                            
+                    r.set("sim","-1")                            
                     drep+=1
                     
                     Sold = None       
