@@ -17,6 +17,7 @@ public class Main {
 
 	private static Boolean isEmu = false;
 	private static String jedisHost = null;
+	private static String tier2Host;
 
 	public static void main(String[] args) {
 		System.setProperty("net.spy.log.LoggerImpl", "net.spy.memcached.compat.log.SLF4JLogger");
@@ -67,9 +68,10 @@ public class Main {
 	public static void getCliOptions(String[] args) {
 
 		int c;
-		LongOpt[] longopts = new LongOpt[2];
+		LongOpt[] longopts = new LongOpt[3];
 		longopts[0] = new LongOpt("cpuEmu", LongOpt.REQUIRED_ARGUMENT, null, 0);
 		longopts[1] = new LongOpt("jedisHost", LongOpt.REQUIRED_ARGUMENT, null, 1);
+		longopts[2] = new LongOpt("tier2Host", LongOpt.REQUIRED_ARGUMENT, null, 2);
 
 		Getopt g = new Getopt("ddctrl", args, "", longopts);
 		g.setOpterr(true);
@@ -88,6 +90,13 @@ public class Main {
 						throw new Exception(String.format("%s is not a valid jedis HOST", g.getOptarg()));
 					}
 					Main.jedisHost = String.valueOf(g.getOptarg());
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				break;
+			case 2:
+				try {
+					Main.tier2Host = String.valueOf(g.getOptarg()); 
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
