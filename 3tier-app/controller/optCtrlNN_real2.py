@@ -383,8 +383,8 @@ if __name__ == "__main__":
                 stepTime=fIdx-iIdx
                     
                 xsim_cavg += np.divide(np.cumsum(XSSIM[:, iIdx:fIdx], axis=1), np.arange(1, stepTime + 1)).T[:, 0].tolist()
-                optS_avg1 += np.divide(np.cumsum(optSNN[1, iIdx:fIdx], axis=1), np.arange(1, stepTime + 1)).T[:, 0].tolist()
-                optS_avg2 += np.divide(np.cumsum(optSNN[2, iIdx:fIdx], axis=1), np.arange(1, stepTime + 1)).T[:, 0].tolist()
+                optS_avg1 += np.divide(np.cumsum(optSNN[[1], iIdx:fIdx], axis=1), np.arange(1, stepTime + 1)).T[:, 0].tolist()
+                optS_avg2 += np.divide(np.cumsum(optSNN[[2], iIdx:fIdx], axis=1), np.arange(1, stepTime + 1)).T[:, 0].tolist()
                 # xsim_cavg2 += np.divide(np.cumsum(XSSIM2[:, i * sTime:(i + 1) * sTime], axis=1), np.arange(1, sTime + 1)).T[:, 0].tolist()
                 # xsim_cavg3 += np.divide(np.cumsum(XSSIMPid[:, i * sTime:(i + 1) * sTime], axis=1), np.arange(1, sTime + 1)).T[:, 0].tolist()
                 print(len(tgtStory),fIdx)
