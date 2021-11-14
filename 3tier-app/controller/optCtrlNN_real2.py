@@ -21,15 +21,15 @@ from jvm_sys import jvm_sys
 from docker_sys import dockersys
 
 curpath = os.path.realpath(__file__)
+plant=None
 
 # tf.compat.v1.disable_eager_execution()
 
 def handler(signum, frame):
+    global plant
     print('Signal handler called with signal', signum)
-    
-    ls_cnt = subprocess.Popen(["docker","container","ls","-q"], stdout=subprocess.PIPE)
-    killp = subprocess.check_output(["docker","kill"],stdin=ls_cnt.stdout)
-    ls_cnt.wait()
+    plant.stopClient()
+    plant.stopSystem()
 
 def mitigateBottleneck(S, X, tgt):
     # devo definire il numero di server da assegnare
