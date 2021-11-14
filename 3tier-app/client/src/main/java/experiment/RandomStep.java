@@ -22,7 +22,7 @@ public class RandomStep implements Runnable {
 		this.tick = 0;
 		this.workGenerator = workGenerator;
 		this.rnd=new Random();
-		this.rnd.setSeed(1);
+		this.rnd.setSeed(100);
 		try {
 			this.memClient = new MemcachedClient(new InetSocketAddress(this.workGenerator.getJedisHost(), 11211));
 		} catch (IOException e) {
@@ -63,7 +63,7 @@ public class RandomStep implements Runnable {
 
 	private void tick() {
 		int nc=0;
-		if (this.tick % 150 == 0) {
+		if (this.tick % 60 == 0) {
 			if(this.rnd.nextBoolean()) {
 				nc=this.rnd.nextInt(100-this.workGenerator.getThreadpool().getCorePoolSize());
 				System.out.println(String.format("delta clients %d-%d", nc,this.workGenerator.getThreadpool().getCorePoolSize()));
