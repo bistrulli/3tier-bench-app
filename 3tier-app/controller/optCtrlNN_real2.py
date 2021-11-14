@@ -141,7 +141,7 @@ class optCtrlNN3:
         # Bias=Ypredicted_N[-1]
         # Gain=Ypredicted_N[1]
         
-        model = casadi.Opti("conic")
+        model = casadi.Opti()
         Uvar = model.variable(1, self.Xtrain.shape[1] + self.Xtrain.shape[1] * self.Xtrain.shape[1]);
         stateVar = model.variable(self.Xtrain.shape[1], H);
         absE_var = model.variable(1, H);
@@ -183,12 +183,12 @@ class optCtrlNN3:
             for ui in range(1, P.shape[0]):
                 ru += (uvar_dn[ui] - Sold[ui]) ** 2
         
-        model.minimize(1.2*obj + 0.15*ru + 0.6*casadi.sumsqr(uvar_dn[1:3]))
+        model.minimize(obj + 0.2*ru + 0.2*casadi.sumsqr(uvar_dn[1:3]))
         
         optionsIPOPT = {'print_time':False, 'ipopt':{'print_level':0}}
         optionsOSQP = {'print_time':False, 'osqp':{'verbose':False}}
-        #model.solver('ipopt',optionsIPOPT)
-        model.solver('osqp', optionsOSQP)
+        model.solver('ipopt',optionsIPOPT)
+        #model.solver('osqp', optionsOSQP)
         model.solve()
         return model.value(Uvar), model.value(stateVar[:, 1])
 
@@ -207,7 +207,7 @@ if __name__ == "__main__":
     dt = 10 ** (-1)
     H = 5
     N = 3
-    rep = 4
+    rep = 1
     drep = 0
     sTime = 2000
     TF = sTime * rep * dt;
@@ -247,7 +247,7 @@ if __name__ == "__main__":
     #plant=dockersys()
     plant.startSys()
     #plant.startClient(np.random.randint(low=10, high=100))
-    plant.startClient(10)
+    plant.startClient(40)
     
     #memcached client
     r=Client("localhost:11211")
@@ -263,7 +263,7 @@ if __name__ == "__main__":
                     pop=float(r.get("sim").decode('UTF-8').split("_")[1]);
                     print("drep=",drep,"pop",pop)
                     r.set("sim","-1")
-                    time.sleep(3)                            
+                    #time.sleep(3)                            
                     drep+=1
                     
                     Sold = None       
