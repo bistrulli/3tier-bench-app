@@ -274,7 +274,7 @@ def getstate(r, keys, N):
 
 
 
-class optCtrlNN2:
+class optCtrlNN3:
     model = None
     stateVar = None
     Uvar = None
@@ -296,10 +296,13 @@ class optCtrlNN2:
         
         # questo lo devo sostituire e rendere piu pulito
         DST = scipy.io.loadmat(train_data);
+        nzd_t=np.sum(np.sum(DST['DS_X'],1,keepdims=True)>0)
 
-        self.Xtrain = DST['DS_X']
-        self.Utrain = DST['DS_U']
-        self.Ytrain = DST['DS_Y']
+        self.Xtrain = DST['DS_X'][0:nzd_t,:]
+        self.Utrain = DST['DS_U'][0:nzd_t,:]
+        self.Ytrain = DST['DS_Y'][0:nzd_t,:]
+        
+        
         
         self.stdx = np.std(self.Xtrain, 0);
         self.stdy = np.std(self.Ytrain, 0);
@@ -320,7 +323,7 @@ class optCtrlNN2:
         ub = [np.sum(X0) + 1]
         for i in range(1, P.shape[0]):
             lb.append(1*10 ** (-1))
-            ub.append(np.sum(X0))
+            ub.append(100)
         
         for i in range(P.shape[0] * P.shape[1]):
             lb.append(0)
@@ -351,8 +354,8 @@ class optCtrlNN2:
         # print(self.tfmodel.get_tensor(output_details[1]['index']).shape)
         # print(self.tfmodel.get_tensor(output_details[2]['index']).shape)
         
-        Bias = self.tfmodel.get_tensor(output_details[0]['index'])
-        Gain = self.tfmodel.get_tensor(output_details[2]['index'])
+        Bias = self.tfmodel.get_tensor(output_details[2]['index'])
+        Gain = self.tfmodel.get_tensor(output_details[0]['index'])
 
         # Bias=Ypredicted_N[-1]
         # Gain=Ypredicted_N[1]
@@ -399,7 +402,7 @@ class optCtrlNN2:
             for ui in range(1, P.shape[0]):
                 ru += (uvar_dn[ui] - Sold[ui]) ** 2
         
-        model.minimize(obj + 0.1 * ru + 0.1 * casadi.sumsqr(uvar_dn[1:]))
+        model.minimize(obj + 0.15*ru + 0.25*casadi.sumsqr(uvar_dn[1:3]))
         
         optionsIPOPT = {'print_time':False, 'ipopt':{'print_level':0}}
         optionsOSQP = {'print_time':False, 'osqp':{'verbose':False}}
@@ -416,8 +419,8 @@ if __name__ == "__main__":
     #startDockerCmp()
     
     curpath = os.path.realpath(__file__)
-    ctrl = optCtrlNN2("%s/../learnt_model/model_3tier.tflite" % (os.path.dirname(curpath)),
-                     "%s/../learnt_model/open_loop_3tier_H5.mat" % (os.path.dirname(curpath)))
+    ctrl = optCtrlNN3("%s/../learnt_model/real_sim_jvm/model_3tier.tflite" % (os.path.dirname(curpath)),
+                     "%s/../learnt_model/real_sim_jvm/open_loop_3tier_H5.mat" % (os.path.dirname(curpath)))
     
     isAR = True
     isCpu = True
@@ -426,7 +429,7 @@ if __name__ == "__main__":
     N = 3
     rep = 1
     drep = 0
-    sTime = 300
+    sTime = 10000
     TF = sTime * rep * dt;
     Time = np.linspace(0, TF, int(np.ceil(TF / dt)) + 1)
     XSNN = np.zeros([N, len(Time)])
@@ -462,36 +465,27 @@ if __name__ == "__main__":
     step=0
     
     s=None
+    #memcached client
+    r=Client("monitor:11211")
     
     try:
-            #for step in tqdm(range(XSSIM.shape[1] - 1)):
+            while(r.get("sim")==None):
+                print("waiting sim to start")
+                time.sleep(0.2)
+                
             while drep<=rep and step<(XSNN.shape[1]-1):
                 # compute ODE
-                if step == 0 or r.get("sim").decode('UTF-8')=="step":
+                if "step" in r.get("sim").decode('UTF-8'):
                     print("drep=",drep)
-                    if(step==0):
-                        #startSysDocker(isCpu)
-                        #startClient(np.random.randint(low=10, high=100))
-                        #time.sleep(3)
-                        
-                        #memcached client
-                        r=Client("monitor:11211")
-                        r.set("sim","-1")
-                    else:
-                        #memcached client
-                        if(r is not None):
-                            r.close()
-                        r=Client("monitor:11211")
-                        r.set("sim","-1")
-                        print(r.get("sim").decode('UTF-8'))
-                        if(r.get("sim").decode('UTF-8')=="step"):
-                            r.set("sim","-1")
-                            
+                    pop=float(r.get("sim").decode('UTF-8').split("_")[1]);
+                    print("drep=",drep,"pop",pop)
+                    r.set("sim","-1")
+                    #time.sleep(3)                            
                     drep+=1
                     
                     Sold = None       
                     #alfa.append(genAfa())
-                    alfa.append(1.0)
+                    alfa.append(1)
                     #XSSIM[:, step] = [np.random.randint(low=10, high=100), 0, 0]
                     XSSIM[:, step] = getstate(r, keys, N)
                     #XSSIM[:, step] = [100, 0, 0]
@@ -500,40 +494,13 @@ if __name__ == "__main__":
                     XSSIM2[:, step] = XSSIM[:, step]
                     XSSIMPid[:, step] = XSSIM[:, step]
                     S[0] = np.sum(XSSIM[:, step])
-                    tgt = np.round(alfa[-1] * 0.82 * np.sum(XSSIM[:, step]), 5)
+                    tgt = np.round(alfa[-1] * 0.884 * pop, 5)
                     sIdx.append({'alfa':alfa[-1], 'x0':XSSIM[:, step].tolist(), "tgt":tgt,"idx":step})
                     optSPid = [np.sum(XSSIM[:, step]), 1, 1]
                     cp += 1
                     ek = 0
                     Ie = 0
-                       
-                    # if(r is not None):
-                    #     killClient()
-                    #     time.sleep(10)
-                    #
-                    #     killSys()
-                    #     #time.sleep(10)
-                    #
-                    #     pruneContainer()
                     
-                    
-                    # redis_cnt=client.containers.get("monitor-cnt")
-                    # tier1=client.containers.get("tier1-cnt")
-                    # tier2=client.containers.get("tier2-cnt")
-                    
-                    # redis_cnt=sys[0]
-                    # tier2=sys[1]
-                    # tier1=sys[2]
-                    
-                    # redis_cnt.update(cpuset_cpus="0-4")
-                    # tier1.update(cpuset_cpus="5-31")
-                    # tier2.update(cpuset_cpus="5-31")
-                    
-                    # if(isCpu):
-                    #     resetU()
-                    #r.mset({"t1_hw":np.sum(XSSIM[:, step]),"t2_hw":np.sum(XSSIM[:, step])})
-                    # startClient(np.sum(XSSIM[:, step]))
-                    #time.sleep(3)
                     if(step==0):
                         r.set("t1_hw","120")
                         r.set("t2_hw","120")

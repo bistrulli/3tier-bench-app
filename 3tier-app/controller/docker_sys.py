@@ -3,6 +3,7 @@ import docker
 import time
 from pymemcache.client.base import Client
 import numpy as np
+import traceback
 
 class dockersys(system_interface):
     
@@ -23,7 +24,7 @@ class dockersys(system_interface):
         r=Client("localhost:11211")
         r.set("stop","0")
         
-        self.client_cnt=self.dck_client.containers.run(image="bistrulli/client:gke_0.1",
+        self.client_cnt=self.dck_client.containers.run(image="bistrulli/client:gke_0.2",
                               command="java -Xmx4G -jar client-0.0.1-SNAPSHOT-jar-with-dependencies.jar --initPop %d --queues \
                                       '[\"think\", \"e1_bl\", \"e1_ex\", \"t1_hw\", \"e2_bl\", \"e2_ex\", \"t2_hw\"]' \
                                        --jedisHost monitor.app --tier1Host tier1.app"%(initPop),
@@ -80,7 +81,7 @@ class dockersys(system_interface):
         
         self.waitRunning(self.sys[-1])
         
-        self.sys.append(self.dck_client.containers.run(image="bistrulli/tier2:gke_0.1",
+        self.sys.append(self.dck_client.containers.run(image="bistrulli/tier2:gke_0.2",
                               command=["java","-Xmx4G","-jar","tier2-0.0.1-SNAPSHOT-jar-with-dependencies.jar",
                                        "--cpuEmu","%d"%cpuEmu,"--jedisHost","monitor.app"],
                               auto_remove=True,
@@ -92,7 +93,7 @@ class dockersys(system_interface):
         
         self.waitRunning(self.sys[-1])
         
-        self.sys.append(self.dck_client.containers.run(image="bistrulli/tier1:gke_0.1",
+        self.sys.append(self.dck_client.containers.run(image="bistrulli/tier1:gke_0.2",
                               command=["java","-Xmx4G","-jar","tier1-0.0.1-SNAPSHOT-jar-with-dependencies.jar",
                                        "--cpuEmu","%d"%cpuEmu,"--jedisHost","monitor.app","--tier2Host","tier2.app"],
                               auto_remove=True,
@@ -134,6 +135,25 @@ class dockersys(system_interface):
         
         if(not found):
             raise ValueError("container %s not found during cpulimit update"%(cnt_name))
+        
+    def getstate(self,monitor):
+        N=2
+        str_state=[monitor.get(self.keys[i]) for i in range(len(self.keys))]
+        try:
+            estate = [float(str_state[i]) for i in range(len(str_state))]
+            astate = [float(str_state[0].decode('UTF-8'))]
+            
+            gidx = 1;
+            for i in range(0, N):
+                astate.append(float(str_state[gidx].decode('UTF-8')) + float(str_state[gidx + 1].decode('UTF-8')))
+                if(float(str_state[gidx])<0 or float(str_state[gidx + 1])<0):
+                    raise ValueError("Error! state < 0")
+                gidx += 3
+        except:
+            for i in range(len(self.keys)):
+                print(str_state[i],self.keys[i])
+        
+        return [astate,estate]
 
 
 if __name__ == "__main__":
@@ -144,6 +164,7 @@ if __name__ == "__main__":
         dck_sys.startClient(30)
         
         mnt=Client("localhost:11211")
+        
         for i in range(100):
             print(dck_sys.getstate(mnt))
             time.sleep(0.2)
@@ -154,7 +175,7 @@ if __name__ == "__main__":
         dck_sys.stopClient()
         dck_sys.stopSystem()
     except Exception as e:
-        print(e)
+        traceback.print_exception(type(ex), ex, ex.__traceback__)
         dck_sys.stopClient()
         dck_sys.stopSystem()
     

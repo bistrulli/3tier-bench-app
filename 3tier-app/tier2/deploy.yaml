@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: "tier2-pod"
-        image: "bistrulli/tier2:gke_0.1"
+        image: "bistrulli/tier2:gke_0.2"
         imagePullPolicy: "Always"
         command: ["java","-Xmx4G","-jar","tier2-0.0.1-SNAPSHOT-jar-with-dependencies.jar","--cpuEmu","0","--jedisHost","monitor"]
         #resources:

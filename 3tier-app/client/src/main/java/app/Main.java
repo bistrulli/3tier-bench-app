@@ -27,14 +27,14 @@ public class Main {
 	private static String tier1Host = null;
 
 	public static void main(String[] args) {
-
+ 
 		System.setProperty("net.spy.log.LoggerImpl", "net.spy.memcached.compat.log.SLF4JLogger");
 
 		Main.getCliOptions(args);
 		final SimpleTask[] Sys = Main.genSystem();
 		Main.resetState(Sys[0]);
 		Sys[0].start();
-		Main.startSim(Sys[0]);
+		//Main.startSim(Sys[0]);
 	}
 
 	public static void resetState(SimpleTask task) {

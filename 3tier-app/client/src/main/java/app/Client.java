@@ -35,7 +35,7 @@ public class Client implements Runnable {
 		this.setThinkTime(ttime);
 		this.task = task;
 		this.clietId = UUID.randomUUID();
-		try {
+		try { 
 			this.memcachedClient = new MemcachedClient(new InetSocketAddress(this.task.getJedisHost(), 11211));
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -51,7 +51,6 @@ public class Client implements Runnable {
 					.uri(URI.create("http://"+Client.getTier1Host()+":3000/?id=" + this.clietId.toString() + "&entry=e1" + "&snd=think"))
 					.build();
 			
-			this.memcachedClient.set("started", 3600, String.valueOf(1)).get();
 			MCAtomicUpdater.AtomicIncr(this.memcachedClient, 1, "think", 100);
 
 			while ((this.memcachedClient.get("stop") == null
