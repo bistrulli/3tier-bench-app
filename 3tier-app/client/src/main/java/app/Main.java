@@ -24,6 +24,7 @@ public class Main {
 	private static String jedisHost = null;
 	private static String[] systemQueues = null;
 	private static File expFile = null;
+	private static String tier1Host = null;
 
 	public static void main(String[] args) {
 
@@ -66,7 +67,8 @@ public class Main {
 		HashMap<String, Long> clientEntries_stimes = new HashMap<String, Long>();
 		clientEntries.put("think", Client.class);
 		clientEntries_stimes.put("think", 1000l);
-		final SimpleTask client = new SimpleTask(clientEntries, clientEntries_stimes, Main.initPop, "Client", Main.jedisHost);
+		final SimpleTask client = new SimpleTask(clientEntries, clientEntries_stimes, Main.initPop, "Client",
+				Main.jedisHost);
 		return new SimpleTask[] { client };
 	}
 
@@ -82,10 +84,11 @@ public class Main {
 
 	public static void getCliOptions(String[] args) {
 		int c;
-		LongOpt[] longopts = new LongOpt[3];
+		LongOpt[] longopts = new LongOpt[4];
 		longopts[0] = new LongOpt("initPop", LongOpt.REQUIRED_ARGUMENT, null, 0);
 		longopts[1] = new LongOpt("jedisHost", LongOpt.REQUIRED_ARGUMENT, null, 1);
 		longopts[2] = new LongOpt("queues", LongOpt.REQUIRED_ARGUMENT, null, 2);
+		longopts[3] = new LongOpt("tier1Host", LongOpt.REQUIRED_ARGUMENT, null, 3);
 
 		Getopt g = new Getopt("ddctrl", args, "", longopts);
 		g.setOpterr(true);
@@ -112,6 +115,13 @@ public class Main {
 				try {
 					Gson gson = new Gson();
 					Main.systemQueues = gson.fromJson(String.valueOf(g.getOptarg()), String[].class);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				break;
+			case 3:
+				try {
+					Main.tier1Host = String.valueOf(g.getOptarg());
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
