@@ -7,6 +7,7 @@ from pymemcache.client.base import Client
 import os
 import psutil
 import requests as req
+import traceback
 
 try:
     javaCmd = os.environ['JAVA_HOME'] + "/bin/java"
@@ -247,6 +248,25 @@ class jvm_sys(system_interface):
     
         self.cgroups[cnt_name]["cg"].controller.cfs_period_us=self.period
         self.cgroups[cnt_name]["cg"].controller.cfs_quota_us = quota
+    
+    def getstate(self,monitor):
+        N=2
+        str_state=[monitor.get(self.keys[i]) for i in range(len(self.keys))]
+        try:
+            estate = [float(str_state[i]) for i in range(len(str_state))]
+            astate = [float(str_state[0].decode('UTF-8'))]
+            
+            gidx = 1;
+            for i in range(0, N):
+                astate.append(float(str_state[gidx].decode('UTF-8')) + float(str_state[gidx + 1].decode('UTF-8')))
+                if(float(str_state[gidx])<0 or float(str_state[gidx + 1])<0):
+                    raise ValueError("Error! state < 0")
+                gidx += 3
+        except:
+            for i in range(len(self.keys)):
+                print(str_state[i],self.keys[i])
+        
+        return [astate,estate]
         
        
             
@@ -269,7 +289,7 @@ if __name__ == "__main__":
             for i in range(1000):
                 state=jvm_sys.getstate(mnt)
                 print(state[0],i)
-                X.append(state[0][0])
+                #X.append(state[0][0])
                 
                 if(isCpu):
                     jvm_sys.setU(10,"tier1")
@@ -282,9 +302,8 @@ if __name__ == "__main__":
             jvm_sys.stopClient()
             jvm_sys.stopSystem()
         
-    except Exception as e:
-        pass
-        print(e)
+    except Exception as ex:
+        traceback.print_exception(type(ex), ex, ex.__traceback__)
         jvm_sys.stopClient()
         jvm_sys.stopSystem()
     finally:
