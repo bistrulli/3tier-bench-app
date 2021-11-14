@@ -253,7 +253,7 @@ if __name__ == "__main__":
                 #if step%sTime == 0:
                     print("drep=",drep)
                     if(step==0):
-                        plant.startSys(isCpu)
+                        plant.startSys()
                         plant.startClient(np.random.randint(low=10, high=100))
                         time.sleep(3)
                         
