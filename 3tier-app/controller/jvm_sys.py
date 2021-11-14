@@ -73,7 +73,7 @@ class jvm_sys(system_interface):
         self.waitMemCached()
         self.sys.append(self.findProcessIdByName("memcached")[0])
         
-        if(not isCpu):
+        if(not self.isCpu):
             subprocess.Popen([javaCmd, "-Xmx4G",
                              "-Djava.compiler=NONE", "-jar",
                              '%stier2/target/tier2-0.0.1-SNAPSHOT-jar-with-dependencies.jar' % (self.sysRootPath),
