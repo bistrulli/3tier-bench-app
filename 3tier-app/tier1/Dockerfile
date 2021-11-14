@@ -8,8 +8,8 @@ RUN apt-get install git -y
 
 
 #download code
-RUN git clone https://github.com/bistrulli/AdaptiveHttpServer.git
-RUN git clone https://github.com/bistrulli/3tier-bench-app.git
+RUN git clone --branch gke https://github.com/bistrulli/AdaptiveHttpServer.git
+RUN git clone --branch gke https://github.com/bistrulli/3tier-bench-app.git
 
 WORKDIR /AdaptiveHttpServer
 
@@ -24,8 +24,8 @@ WORKDIR /3tier-bench-app/3tier-app/tier1/target
 
 EXPOSE 3000
 
-CMD ["java","-Xmx4G","-jar","tier1-0.0.1-SNAPSHOT-jar-with-dependencies.jar",\
-	"--cpuEmu","0","--jedisHost","monitor"]
+#CMD ["java","-Xmx4G","-jar","tier1-0.0.1-SNAPSHOT-jar-with-dependencies.jar",\
+#	"--cpuEmu","0","--jedisHost","monitor"]
 
 
 

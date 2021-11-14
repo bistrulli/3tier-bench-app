@@ -9,7 +9,7 @@ RUN apt-get install maven -y
 RUN apt-get install git -y
 
 #download code
-RUN git clone https://github.com/bistrulli/AdaptiveHttpServer.git
+RUN git clone --branch gke https://github.com/bistrulli/AdaptiveHttpServer.git
 RUN git clone --branch gke https://github.com/bistrulli/3tier-bench-app.git
 
 WORKDIR /AdaptiveHttpServer
