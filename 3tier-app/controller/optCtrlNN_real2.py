@@ -19,6 +19,7 @@ from pathlib import Path
 from pymemcache.client.base import Client
 from jvm_sys import jvm_sys
 from docker_sys import dockersys
+from metakernel.magics import time_magic
 
 curpath = os.path.realpath(__file__)
 plant=None
@@ -247,7 +248,10 @@ if __name__ == "__main__":
     #plant=dockersys()
     
     try:
-            #for step in tqdm(range(XSSIM.shape[1] - 1)):
+        
+            while(r.get("sim")==None):
+                time.sleep(0.2)
+                
             while drep<=rep and step<(XSNN.shape[1]-1):
                 if r.get("sim").decode('UTF-8')=="step":
                 #if step%sTime == 0:
