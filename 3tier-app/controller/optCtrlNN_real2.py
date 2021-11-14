@@ -255,13 +255,14 @@ if __name__ == "__main__":
     try:
         
             while(r.get("sim")==None):
+                print("waiting sim to start")
                 time.sleep(0.2)
                 
             while drep<=rep and step<(XSNN.shape[1]-1):
                 if r.get("sim").decode('UTF-8')=="step":
                     print("drep=",drep)
                     r.set("sim","-1")
-                    #time.sleep(3)                            
+                    time.sleep(3)                            
                     drep+=1
                     
                     Sold = None       
