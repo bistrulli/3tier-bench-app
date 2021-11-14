@@ -124,7 +124,7 @@ public class Main {
 				break;
 			case 3:
 				try {
-					Main.tier1Host = String.valueOf(g.getOptarg()); 
+					Main.tier1Host = String.valueOf(g.getOptarg());
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
