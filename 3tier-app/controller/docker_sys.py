@@ -24,7 +24,7 @@ class dockersys(system_interface):
         r=Client("localhost:11211")
         r.set("stop","0")
         
-        self.client_cnt=self.dck_client.containers.run(image="bistrulli/client:gke_0.2",
+        self.client_cnt=self.dck_client.containers.run(image="bistrulli/client:gke_0.3",
                               command="java -Xmx4G -jar client-0.0.1-SNAPSHOT-jar-with-dependencies.jar --initPop %d --queues \
                                       '[\"think\", \"e1_bl\", \"e1_ex\", \"t1_hw\", \"e2_bl\", \"e2_ex\", \"t2_hw\"]' \
                                        --jedisHost monitor.app --tier1Host tier1.app"%(initPop),
@@ -81,7 +81,7 @@ class dockersys(system_interface):
         
         self.waitRunning(self.sys[-1])
         
-        self.sys.append(self.dck_client.containers.run(image="bistrulli/tier2:gke_0.2",
+        self.sys.append(self.dck_client.containers.run(image="bistrulli/tier2:gke_0.3",
                               command=["java","-Xmx4G","-jar","tier2-0.0.1-SNAPSHOT-jar-with-dependencies.jar",
                                        "--cpuEmu","%d"%cpuEmu,"--jedisHost","monitor.app"],
                               auto_remove=True,
@@ -93,7 +93,7 @@ class dockersys(system_interface):
         
         self.waitRunning(self.sys[-1])
         
-        self.sys.append(self.dck_client.containers.run(image="bistrulli/tier1:gke_0.2",
+        self.sys.append(self.dck_client.containers.run(image="bistrulli/tier1:gke_0.3",
                               command=["java","-Xmx4G","-jar","tier1-0.0.1-SNAPSHOT-jar-with-dependencies.jar",
                                        "--cpuEmu","%d"%cpuEmu,"--jedisHost","monitor.app","--tier2Host","tier2.app"],
                               auto_remove=True,

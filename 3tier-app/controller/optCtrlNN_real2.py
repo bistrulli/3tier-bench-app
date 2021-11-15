@@ -238,7 +238,8 @@ if __name__ == "__main__":
     # init_cstr=["X%d_0" % (i) for i in range(P.shape[0])];
     cp = -1
     
-    Ie = None
+    Ie = 0
+    Sold = None
     r=None
     tgt=None
     step=0
@@ -266,7 +267,7 @@ if __name__ == "__main__":
                     #time.sleep(3)                            
                     drep+=1
                     
-                    Sold = None       
+                    #Sold = None       
                     #alfa.append(genAfa())
                     alfa.append(1)
                     #XSSIM[:, step] = [np.random.randint(low=10, high=100), 0, 0]
@@ -281,8 +282,8 @@ if __name__ == "__main__":
                     sIdx.append({'alfa':alfa[-1], 'x0':XSSIM[:, step].tolist(), "tgt":tgt,"idx":step})
                     optSPid = [np.sum(XSSIM[:, step]), 1, 1]
                     cp += 1
-                    ek = 0
-                    Ie = 0
+                    #ek = 0
+                    #Ie = 0
                        
                     # if(r is not None):
                     #     killClient()
