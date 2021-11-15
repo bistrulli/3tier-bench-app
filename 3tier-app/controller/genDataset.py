@@ -35,7 +35,7 @@ def getTr():
 def getServer(X,S,rand,estate=None):
     optS=None
     if(rand):
-        optS=np.round(np.matrix([np.sum(X),getTr()*14.8+0.2,getTr()*14.8+0.2]),4)
+        optS=np.round(np.matrix([np.sum(X),getTr()*19.8+0.2,getTr()*19.8+0.2]),4)
     else:
         #devo definire il numero di server da assegnare
         optS=S
@@ -52,11 +52,11 @@ def getServer(X,S,rand,estate=None):
         print("bottelneck",b)
          
         #optS[0,b]=np.maximum(np.minimum(optS[0,b]*15*np.random.rand(),100),0.1)
-        optS[0,b]=min(ex[b],15)
+        optS[0,b]=min(ex[b],30)
         if(b==1):
-             optS[0,2]=min(max(np.random.rand()*optS[0,2]/3.0,0.1),20)
+             optS[0,2]=min(max(np.random.rand()*optS[0,2]/3.0,0.1),30)
         else:
-             optS[0,1]=min(max(np.random.rand()*optS[0,1]/3.0,0.1),20)
+             optS[0,1]=min(max(np.random.rand()*optS[0,1]/3.0,0.1),30)
     
     print("New=",optS)
     
@@ -69,9 +69,9 @@ repcount=0;
 
 #per npoints intendo il numero di diverso di stati iniziali che considero
 isCpu=True
-rep=10
+rep=200
 H=5
-ssTime=(H+1)*30
+ssTime=(H+1)*60
 N=3
 npoints=ssTime*(rep)
 DS_X=np.zeros([npoints//(H+1),N])
