@@ -19,7 +19,6 @@ public class Tier2HTTPHandler extends TierHttpHandler {
 	}
 
 	public void handleResponse(HttpExchange req, String requestParamValue) throws InterruptedException, IOException {
-		// this.getLqntask().getLogger().debug("tier2 acquierd");
 		this.measureIngress();
 
 		Jinjava jinjava = new Jinjava();
@@ -32,20 +31,15 @@ public class Tier2HTTPHandler extends TierHttpHandler {
 		if (!this.getLqntask().isEmulated()) {
 			this.doWorkCPU();
 		} else {
-			// get all entry currentyly executing on this task
 			Float executing = 0f;
 			String[] entries = this.getLqntask().getEntries().keySet().toArray(new String[0]);
 			for (String e : entries) {
-				//String n = this.getJedis().get(e + "_ex");
-				String n = String.valueOf(this.getMemcachedClient().get(e + "_ex"));
-				if (n != null) {
-					executing += Float.valueOf(n);
-				}
+				executing += this.getLqntask().getState().get(e + "_ex").get();
 			}
 			this.doWorkSleep(executing);
 		}
 
-		//this.measureEgress();
+		this.measureEgress();
 
 		req.getResponseHeaders().set("Content-Type", "text/html; charset=UTF-8");
 		req.getResponseHeaders().set("Cache-Control", "no-store, no-cache, max-age=0, must-revalidate");

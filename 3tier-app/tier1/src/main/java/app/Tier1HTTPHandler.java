@@ -19,11 +19,13 @@ import Server.TierHttpHandler;
 
 @SuppressWarnings("restriction")
 public class Tier1HTTPHandler extends TierHttpHandler {
-	
+
 	private static String tier2Host = null;
+	HttpClient client = null;
 
 	public Tier1HTTPHandler(SimpleTask lqntask, HttpExchange req, long stime) {
 		super(lqntask, req, stime);
+		this.client = HttpClient.newBuilder().version(Version.HTTP_1_1).build();
 	}
 
 	public void handleResponse(HttpExchange req, String requestParamValue) throws InterruptedException, IOException {
@@ -34,39 +36,31 @@ public class Tier1HTTPHandler extends TierHttpHandler {
 		context.put("task", "Tier1");
 		context.put("entry", "e1");
 
-		HttpClient client = null;
-		HttpRequest request = null;
-		client = HttpClient.newBuilder().version(Version.HTTP_1_1).build();
-		request = HttpRequest.newBuilder().uri(URI.create("http://"+Tier1HTTPHandler.getTier2Host()+":3001/?&entry=e2" + "&snd=" + this.getName())).build();
+		HttpRequest request = HttpRequest.newBuilder().uri(URI.create("http://"+Tier1HTTPHandler.getTier2Host()+":3001/?&entry=e2" + "&snd=" + this.getName())).build();
 		try {
-			client.send(request, BodyHandlers.ofString());
+			this.measureEgress();
+			this.client.send(request, BodyHandlers.ofString());
+			this.measureReturn();
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
 		}
 
-		this.measureReturn("e2_ex");
-
 		String renderedTemplate = jinjava.render(this.getWebPageTpl(), context);
 
 		if (!this.getLqntask().isEmulated()) {
 			this.doWorkCPU();
 		} else {
-			// get all entry currentyly executing on this task
 			Float executing = 0f;
 			String[] entries = this.getLqntask().getEntries().keySet().toArray(new String[0]);
 			for (String e : entries) {
-				//String n = this.getJedis().get(e + "_ex");
-				String n = String.valueOf(this.getMemcachedClient().get(e + "_ex"));
-				if (n != null) {
-					executing += Float.valueOf(n);
-				}
+					executing += this.getLqntask().getState().get(e + "_ex").get();
 			}
 			this.doWorkSleep(executing);
 		}
 
-		//this.measureEgress();
+		this.measureEgress();
 
 		req.getResponseHeaders().set("Content-Type", "text/html; charset=UTF-8");
 		req.getResponseHeaders().set("Cache-Control", "no-store, no-cache, max-age=0, must-revalidate");

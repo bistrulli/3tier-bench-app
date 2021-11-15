@@ -8,6 +8,7 @@ import os
 import psutil
 import requests as req
 import traceback
+import matplotlib.pyplot as plt
 
 try:
     javaCmd = os.environ['JAVA_HOME'] + "/bin/java"
@@ -200,7 +201,6 @@ class jvm_sys(system_interface):
            time.sleep(0.2)
            atpt+=1
         
-        time.sleep(2)
             
         
     def waitMemCached(self):
@@ -279,17 +279,21 @@ if __name__ == "__main__":
         
         for i in range(1):
             jvm_sys.startSys()
-            jvm_sys.startClient(1)
+            jvm_sys.startClient(100)
                 
             mnt = Client("localhost:11211")
             g = Client("localhost:11211")
-            g.set("t1_hw","10")
-            g.set("t2_hw","10")
+            g.set("t1_hw","3")
+            g.set("t2_hw","1")
             X=[]
-            for i in range(100):
+            for i in range(600):
                 state=jvm_sys.getstate(mnt)
-                print(state[0],i)
-                #X.append(state[0][0])
+                print(state[1],i)
+                X.append(state[0][0])
+                if(i==200):
+                    g.set("t1_hw","1")
+                if(i==400):
+                    g.set("t1_hw","5")
                 
                 if(isCpu):
                     jvm_sys.setU(10,"tier1")
@@ -301,6 +305,11 @@ if __name__ == "__main__":
             
             jvm_sys.stopClient()
             jvm_sys.stopSystem()
+            
+            plt.figure()
+            plt.plot(X)
+            plt.axhline(y=10,color='r',linestyle='--')
+            plt.savefig("queue_test.png")
         
     except Exception as ex:
         traceback.print_exception(type(ex), ex, ex.__traceback__)
