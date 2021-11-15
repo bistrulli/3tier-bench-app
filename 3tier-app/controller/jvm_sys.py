@@ -286,7 +286,7 @@ if __name__ == "__main__":
             g.set("t1_hw","10")
             g.set("t2_hw","10")
             X=[]
-            for i in range(1000):
+            for i in range(100):
                 state=jvm_sys.getstate(mnt)
                 print(state[0],i)
                 #X.append(state[0][0])

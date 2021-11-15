@@ -34,7 +34,7 @@ public class Client implements Runnable {
 	public Client(SimpleTask task, Long ttime) {
 		this.setThinkTime(ttime);
 		this.task = task;
-		this.clietId = UUID.randomUUID();
+		this.clietId = UUID.randomUUID(); 
 		try { 
 			this.memcachedClient = new MemcachedClient(new InetSocketAddress(this.task.getJedisHost(), 11211));
 		} catch (IOException e) {
@@ -51,7 +51,9 @@ public class Client implements Runnable {
 					.uri(URI.create("http://"+Client.getTier1Host()+":3000/?id=" + this.clietId.toString() + "&entry=e1" + "&snd=think"))
 					.build();
 			
-			MCAtomicUpdater.AtomicIncr(this.memcachedClient, 1, "think", 100);
+			//MCAtomicUpdater.AtomicIncr(this.memcachedClient, 1, "think", 100);
+			this.memcachedClient.set("started", 3600, "1").get();
+			this.memcachedClient.incr("think", 1);
 
 			while ((this.memcachedClient.get("stop") == null
 					|| !String.valueOf(this.memcachedClient.get("stop")).equals("1")) && !this.dying) {
@@ -75,7 +77,8 @@ public class Client implements Runnable {
 					this.dying = true;
 				}
 			}
-			MCAtomicUpdater.AtomicIncr(this.memcachedClient, -1, "think", 100);
+			//MCAtomicUpdater.AtomicIncr(this.memcachedClient, -1, "think", 100);
+			this.memcachedClient.decr("think", 1);
 			SimpleTask.getLogger().debug(String.format(" user %s stopped", this.clietId));
 		} catch (IOException e1) {
 			e1.printStackTrace();
