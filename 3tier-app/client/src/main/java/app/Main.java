@@ -34,7 +34,7 @@ public class Main {
 		final SimpleTask[] Sys = Main.genSystem();
 		Main.resetState(Sys[0]);
 		Sys[0].start();
-		Main.startSim(Sys[0]);
+		//Main.startSim(Sys[0]);
 		MemcachedClient memcachedClient = null;
 		while (true) {
 			if (Client.isStarted.get()) {
