@@ -131,11 +131,11 @@ class optCtrlNN3:
         # Ypredicted_N=self.tfmodel({'inputx':input_N,'inputu':Sin})
         # Ypredicted_N=[0,np.zeros([1,2,38]),np.zeros([1,10])]
         
-        print(self.tfmodel.get_tensor(output_details[0]['index']).shape)
-        print(self.tfmodel.get_tensor(output_details[1]['index']).shape)
-        print(self.tfmodel.get_tensor(output_details[2]['index']).shape)
+        # print(self.tfmodel.get_tensor(output_details[0]['index']).shape)
+        # print(self.tfmodel.get_tensor(output_details[1]['index']).shape)
+        # print(self.tfmodel.get_tensor(output_details[2]['index']).shape)
         
-        Bias = self.tfmodel.get_tensor(output_details[0]['index'])
+        Bias = self.tfmodel.get_tensor(output_details[2]['index'])
         Gain = self.tfmodel.get_tensor(output_details[1]['index'])
 
         # Bias=Ypredicted_N[-1]
@@ -348,7 +348,7 @@ if __name__ == "__main__":
                 optSNN[:, step] = optU[0:N]
                 tgtStory += [tgt]
                 
-                time.sleep(0.5)
+                time.sleep(0.1)
                 
                 # optSPID[:,step]=optSPid
                 # optSPid=mitigateBottleneck(optSPid, Xsim3, tgt)
