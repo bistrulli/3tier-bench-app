@@ -131,9 +131,9 @@ class optCtrlNN3:
         # Ypredicted_N=self.tfmodel({'inputx':input_N,'inputu':Sin})
         # Ypredicted_N=[0,np.zeros([1,2,38]),np.zeros([1,10])]
         
-        # print(self.tfmodel.get_tensor(output_details[0]['index']).shape)
-        # print(self.tfmodel.get_tensor(output_details[1]['index']).shape)
-        # print(self.tfmodel.get_tensor(output_details[2]['index']).shape)
+        print(self.tfmodel.get_tensor(output_details[0]['index']).shape)
+        print(self.tfmodel.get_tensor(output_details[1]['index']).shape)
+        print(self.tfmodel.get_tensor(output_details[2]['index']).shape)
         
         Bias = self.tfmodel.get_tensor(output_details[2]['index'])
         Gain = self.tfmodel.get_tensor(output_details[0]['index'])
@@ -199,8 +199,8 @@ if __name__ == "__main__":
     
     
     curpath = os.path.realpath(__file__)
-    ctrl = optCtrlNN3("%s/../learnt_model/real_sim_jvm/model_3tier.tflite" % (os.path.dirname(curpath)),
-                     "%s/../learnt_model/real_sim_jvm/open_loop_3tier_H5.mat" % (os.path.dirname(curpath)))
+    ctrl = optCtrlNN3("%s/../learnt_model/gcp_model/model_3tier.tflite" % (os.path.dirname(curpath)),
+                     "%s/../learnt_model/gcp_model/open_loop_3tier_H5.mat" % (os.path.dirname(curpath)))
     
     isAR = True
     isCpu = True
