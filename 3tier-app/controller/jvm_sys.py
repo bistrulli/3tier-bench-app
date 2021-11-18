@@ -284,6 +284,8 @@ class jvm_sys(system_interface):
             
             self.tier_socket["%d"%(tier)].sendall("getState".encode())
             msgFromServer = self.tier_socket["%d"%(tier)].recv(1024)
+            
+            print(msgFromServer)
                 
             states=msgFromServer[0].decode("UTF-8").split("$")
             for state in states:
