@@ -347,7 +347,7 @@ if __name__ == "__main__":
             g.set("t2_hw","10")
             time.sleep(2)
             X=[]
-            for i in range(400):
+            for i in range(600):
                 state=jvm_sys.getStateUdp()
                 print(state)
                 print(np.sum([state["think"],state["e1_bl"],state["e1_ex"],state["e2_bl"],state["e2_ex"]]),i)
@@ -356,7 +356,7 @@ if __name__ == "__main__":
                 if(isCpu):
                     jvm_sys.setU(10,"tier1")
                     jvm_sys.setU(10,"tier2")
-                time.sleep(0.1)
+                time.sleep(0.2)
         
             print(np.mean(X))
         
