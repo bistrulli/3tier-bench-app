@@ -282,7 +282,7 @@ class jvm_sys(system_interface):
                 self.tier_socket["%d"%(tier)]=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 self.tier_socket["%d"%(tier)].connect(('localhost', tier))
             
-            self.tier_socket["%d"%(tier)].sendall("getState")
+            self.tier_socket["%d"%(tier)].sendall('getState')
             msgFromServer = self.tier_socket["%d"%(tier)].recv(1024)
                 
             states=msgFromServer[0].decode("UTF-8").split("$")
