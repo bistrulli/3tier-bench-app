@@ -27,12 +27,14 @@ class jvm_sys(system_interface):
     period = 100000
     keys = ["think", "e1_bl", "e1_ex", "t1_hw", "e2_bl", "e2_ex", "t2_hw"]
     isCpu=None
+    tier_socket=None
     
     def __init__(self, sysRootPath,isCpu=False):
         self.sysRootPath = sysRootPath
         self.isCpu = isCpu
         if(self.isCpu):
             self.initCgroups()
+        self.tier_socket={}
     
     def startClient(self, pop):
         r=Client("localhost:11211")
@@ -269,18 +271,20 @@ class jvm_sys(system_interface):
         
         return [astate,estate]
     
-    def getStateUdp(self):
+    def getStateTcp(self):
         tiers=[3333,13000,13001]
         sys_state={}
-            
-        # Create a UDP socket at client side
-        UDPClientSocket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
         
         for tier in tiers:   
             # Send to server using created UDP socket            
-            UDPClientSocket.sendto(str.encode("getState"), ("127.0.0.1", tier))
-
-            msgFromServer = UDPClientSocket.recvfrom(1024)
+            if("%d"%(tier) not in self.tier_socket):
+                # Create a TCP socket at client side
+                self.tier_socket["%d"%(tier)]=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                self.tier_socket["%d"%(tier)].connect(('localhost', tier))
+            
+            self.tier_socket["%d"%(tier)].sendall("getState")
+            msgFromServer = self.tier_socket["%d"%(tier)].recv(1024)
+                
             states=msgFromServer[0].decode("UTF-8").split("$")
             for state in states:
                 if(state!=None and state!=''):
