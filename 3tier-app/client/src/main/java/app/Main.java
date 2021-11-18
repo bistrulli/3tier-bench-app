@@ -34,7 +34,7 @@ public class Main {
 		final SimpleTask[] Sys = Main.genSystem();
 		Main.resetState(Sys[0]);
 		Sys[0].start();
-		Main.startSim(Sys[0]);
+		//Main.startSim(Sys[0]);
 		MemcachedClient memcachedClient = null;
 		while (true) {
 			if (Client.isStarted.get()) {
@@ -69,7 +69,7 @@ public class Main {
 					memcachedClient.set("think", 3600, String.valueOf(0)).get();
 				} else {
 					if (e.endsWith("_sw") || e.endsWith("_hw")) {
-						memcachedClient.set(e, 3600, "110").get();
+						memcachedClient.set(e, 3600, "1").get();
 					} else {
 						memcachedClient.set(e, 3600, "0").get();
 					}

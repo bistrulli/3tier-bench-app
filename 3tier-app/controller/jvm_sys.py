@@ -9,6 +9,7 @@ import psutil
 import requests as req
 import traceback
 import matplotlib.pyplot as plt
+import socket
 
 try:
     javaCmd = os.environ['JAVA_HOME'] + "/bin/java"
@@ -40,7 +41,7 @@ class jvm_sys(system_interface):
         r.close()
         
         
-        subprocess.Popen([javaCmd, "-Xmx4G",
+        subprocess.Popen([javaCmd, "-Xmx6G",
                          "-Djava.compiler=NONE", "-jar",
                          '%sclient/target/client-0.0.1-SNAPSHOT-jar-with-dependencies.jar' % (self.sysRootPath),
                          '--initPop', '%d' % (pop), '--jedisHost','localhost', '--tier1Host','localhost',
@@ -75,7 +76,7 @@ class jvm_sys(system_interface):
         self.sys.append(self.findProcessIdByName("memcached")[0])
         
         if(not self.isCpu):
-            subprocess.Popen([javaCmd, "-Xmx4G",
+            subprocess.Popen([javaCmd, "-Xmx6G",
                              "-Djava.compiler=NONE", "-jar",
                              '%stier2/target/tier2-0.0.1-SNAPSHOT-jar-with-dependencies.jar' % (self.sysRootPath),
                              '--cpuEmu', '%d' % (cpuEmu), '--jedisHost', 'localhost'])
@@ -85,7 +86,7 @@ class jvm_sys(system_interface):
             self.sys.append(self.findProcessIdByName("tier2-0.0.1")[0])
             
             
-            subprocess.Popen([javaCmd, "-Xmx4G",
+            subprocess.Popen([javaCmd, "-Xmx6G",
                              "-Djava.compiler=NONE", "-jar",
                              '%stier1/target/tier1-0.0.1-SNAPSHOT-jar-with-dependencies.jar' % (self.sysRootPath),
                              '--cpuEmu', "%d" % (cpuEmu), '--jedisHost', 'localhost',
@@ -267,45 +268,103 @@ class jvm_sys(system_interface):
                 print(str_state[i],self.keys[i])
         
         return [astate,estate]
+    
+    def getStateUdp(self):
+        tiers=[3333,13000,13001]
+        sys_state={}
+            
+        # Create a UDP socket at client side
+        UDPClientSocket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
+        
+        for tier in tiers:   
+            # Send to server using created UDP socket            
+            UDPClientSocket.sendto(str.encode("getState"), ("127.0.0.1", tier))
+
+            msgFromServer = UDPClientSocket.recvfrom(1024)
+            states=msgFromServer[0].decode("UTF-8").split("$")
+            for state in states:
+                if(state!=None and state!=''):
+                    key,val=state.split(":")
+                    sys_state[key]=int(val)
+        
+        return sys_state
+    
+    def testSystem(self):
+        self.startSys()
+        r=Client("localhost:11211")
+        try:
+            for k in self.keys:
+                if(k=="think" or k=="t1_hw" or k=="t2_hw"):
+                    continue
+                if(r.get(k) is None):
+                    raise ValueError("test not passed, key %s should be 0 instead is None"%(k))
+                if(r.get(k).decode('UTF-8')!="0"):
+                    raise ValueError("test not passed, key %s should be 0 instead is %s"%(k,r.get(k).decode('UTF-8')))
+            
+            http_req = req.get('http://localhost:3001?entry=e2&snd=test&id=%d'%(np.random.randint(low=0,high=10000000)))
+            
+            for k in self.keys:
+                if(k=="think" or k=="t1_hw" or k=="t2_hw"):
+                    continue
+                if(r.get(k) is None):
+                    raise ValueError("test not passed, key %s should be 0 instead is None"%(k))
+                if(r.get(k).decode('UTF-8')!="0"):
+                    raise ValueError("test not passed, key %s should be 0 instead is %s"%(k,r.get(k).decode('UTF-8')))
+                
+            http_req = req.get('http://localhost:3000?entry=e1&snd=test&id=%d'%(np.random.randint(low=0,high=10000000)))
+            
+            for k in self.keys:
+                if(k=="think" or k=="t1_hw" or k=="t2_hw"):
+                    continue
+                if(r.get(k) is None):
+                    raise ValueError("test not passed, key %s should be 0 instead is None"%(k))
+                if(r.get(k).decode('UTF-8')!="0"):
+                    raise ValueError("test not passed, key %s should be 0 instead is %s"%(k,r.get(k).decode('UTF-8')))
+        except Exception as ex:
+            traceback.print_exception(type(ex), ex, ex.__traceback__)
+            for k in self.keys:
+                if(k=="think" or k=="t1_hw" or k=="t2_hw"):
+                    continue
+                print(k,r.get(k))
+        finally:
+            self.stopSystem()
+            r.close()
         
        
             
 if __name__ == "__main__":
     try:
         isCpu=False
-        jvm_sys = jvm_sys("../",isCpu)
-        
         g=None
+        jvm_sys = jvm_sys("../",isCpu)
         
         for i in range(1):
             jvm_sys.startSys()
-            jvm_sys.startClient(100)
-                
-            mnt = Client("localhost:11211")
+            jvm_sys.startClient(200)
+        
             g = Client("localhost:11211")
-            g.set("t1_hw","3")
-            g.set("t2_hw","1")
+            g.set("t1_hw","20")
+            g.set("t2_hw","10")
+            time.sleep(2)
             X=[]
-            for i in range(600):
-                state=jvm_sys.getstate(mnt)
-                print(state[1],i)
-                X.append(state[0][0])
+            for i in range(400):
+                state=jvm_sys.getStateUdp()
+                print(state)
+                print(np.sum([state["think"],state["e1_bl"],state["e1_ex"],state["e2_bl"],state["e2_ex"]]),i)
+                X.append(state["think"])
                 if(i==200):
-                    g.set("t1_hw","1")
-                if(i==400):
-                    g.set("t1_hw","5")
-                
+                    g.set("t1_hw","20")
+        
                 if(isCpu):
                     jvm_sys.setU(10,"tier1")
                     jvm_sys.setU(10,"tier2")
-                time.sleep(0.3)
-            mnt.close()
-            
+                time.sleep(0.1)
+        
             print(np.mean(X))
-            
+        
             jvm_sys.stopClient()
             jvm_sys.stopSystem()
-            
+        
             plt.figure()
             plt.plot(X)
             plt.axhline(y=10,color='r',linestyle='--')

@@ -261,8 +261,8 @@ def getstate(r, keys, N):
         gidx = 1;
         for i in range(1, N):
             astate.append(float(str_state[gidx]) + float(str_state[gidx + 1]))
-            if(float(str_state[gidx])<0 or float(str_state[gidx + 1])<0):
-                raise ValueError("Error! state < 0")
+            # if(float(str_state[gidx])<0 or float(str_state[gidx + 1])<0):
+            #     raise ValueError("Error! state < 0")
             gidx += 3
     except:
         print(time.asctime())
@@ -355,7 +355,7 @@ class optCtrlNN3:
         # print(self.tfmodel.get_tensor(output_details[2]['index']).shape)
         
         Bias = self.tfmodel.get_tensor(output_details[2]['index'])
-        Gain = self.tfmodel.get_tensor(output_details[0]['index'])
+        Gain = self.tfmodel.get_tensor(output_details[1]['index'])
 
         # Bias=Ypredicted_N[-1]
         # Gain=Ypredicted_N[1]
@@ -402,7 +402,7 @@ class optCtrlNN3:
             for ui in range(1, P.shape[0]):
                 ru += (uvar_dn[ui] - Sold[ui]) ** 2
         
-        model.minimize(obj + 0.15*ru + 0.25*casadi.sumsqr(uvar_dn[1:3]))
+        model.minimize(obj + 0.5*ru + 0.3*casadi.sumsqr(uvar_dn[1:3]))
         
         optionsIPOPT = {'print_time':False, 'ipopt':{'print_level':0}}
         optionsOSQP = {'print_time':False, 'osqp':{'verbose':False}}
@@ -419,8 +419,8 @@ if __name__ == "__main__":
     #startDockerCmp()
     
     curpath = os.path.realpath(__file__)
-    ctrl = optCtrlNN3("%s/../learnt_model/real_sim_jvm/model_3tier.tflite" % (os.path.dirname(curpath)),
-                     "%s/../learnt_model/real_sim_jvm/open_loop_3tier_H5.mat" % (os.path.dirname(curpath)))
+    ctrl = optCtrlNN3("%s/../learnt_model/gcp_model/model_3tier.tflite" % (os.path.dirname(curpath)),
+                     "%s/../learnt_model/gcp_model/open_loop_3tier_H5.mat" % (os.path.dirname(curpath)))
     
     isAR = True
     isCpu = True
