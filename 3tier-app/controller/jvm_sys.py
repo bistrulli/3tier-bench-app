@@ -352,8 +352,6 @@ if __name__ == "__main__":
                 print(state)
                 print(np.sum([state["think"],state["e1_bl"],state["e1_ex"],state["e2_bl"],state["e2_ex"]]),i)
                 X.append(state["think"])
-                if(i==200):
-                    g.set("t1_hw","20")
         
                 if(isCpu):
                     jvm_sys.setU(10,"tier1")
