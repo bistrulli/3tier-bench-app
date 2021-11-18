@@ -352,7 +352,7 @@ if __name__ == "__main__":
             time.sleep(2)
             X=[]
             for i in range(600):
-                state=jvm_sys.getStateUdp()
+                state=jvm_sys.getStateTcp()
                 print(state)
                 print(np.sum([state["think"],state["e1_bl"],state["e1_ex"],state["e2_bl"],state["e2_ex"]]),i)
                 X.append(state["think"])
