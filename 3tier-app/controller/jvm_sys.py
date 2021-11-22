@@ -32,8 +32,8 @@ class jvm_sys(system_interface):
     def __init__(self, sysRootPath, isCpu=False):
         self.sysRootPath = sysRootPath
         self.isCpu = isCpu
-        # if(self.isCpu):
-        #     self.initCgroups()
+        if(self.isCpu):
+            self.initCgroups()
         self.tier_socket = {}
     
     def startClient(self, pop):
@@ -74,7 +74,7 @@ class jvm_sys(system_interface):
         self.waitMemCached()
         self.sys.append(self.findProcessIdByName("memcached")[0])
         
-        if(True):
+        if(self.isCpu):
             subprocess.Popen([javaCmd, "-Xmx6G",
                              "-Djava.compiler=NONE", "-jar",
                              '%stier2/target/tier2-0.0.1-SNAPSHOT-jar-with-dependencies.jar' % (self.sysRootPath),
