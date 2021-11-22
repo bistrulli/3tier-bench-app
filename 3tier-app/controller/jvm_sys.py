@@ -348,7 +348,7 @@ class jvm_sys(system_interface):
             
 if __name__ == "__main__":
     try:
-        isCpu = False
+        isCpu = True
         g = None
         jvm_sys = jvm_sys("../", isCpu)
         
