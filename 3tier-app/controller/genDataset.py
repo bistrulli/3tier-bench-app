@@ -124,7 +124,7 @@ try:
                 dck_sys.setU(optS[0,1], "tier1")
                 dck_sys.setU(optS[0,2], "tier2")
             
-            
+            time.sleep(3)
             
             #get fake P
             P=np.random.rand(N,N);
