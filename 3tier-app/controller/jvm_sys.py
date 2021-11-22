@@ -366,16 +366,16 @@ if __name__ == "__main__":
                 print(state,i,np.sum(state))
                 X.append(state[0])
             
-                # if(np.mod(i+1,6)==0 and i>=6):
-                #     s1=np.random.rand()*10
-                #     s2=np.random.rand()*10
-                #     print(s1,s2)
-                #     g.set("t1_hw","%f"%(s1))
-                #     g.set("t2_hw","%f"%(s2))
-                #
-                #     if(isCpu):
-                #         jvm_sys.setU(s1,"tier1")
-                #         jvm_sys.setU(s2,"tier2")
+                if(np.mod(i+1,6)==0 and i>=6):
+                    s1=np.random.rand()*10
+                    s2=np.random.rand()*10
+                    print(s1,s2)
+                    g.set("t1_hw","%f"%(s1))
+                    g.set("t2_hw","%f"%(s2))
+                
+                    if(isCpu):
+                        jvm_sys.setU(s1,"tier1")
+                        jvm_sys.setU(s2,"tier2")
                 time.sleep(0.5)
             
             print(np.mean(X))
