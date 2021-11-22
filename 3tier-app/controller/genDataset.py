@@ -159,7 +159,7 @@ try:
                 if(isCpu):
                     dck_sys.setU(optS[0,1], "tier1")
                     dck_sys.setU(optS[0,2], "tier2")
-        time.sleep(0.5)
+        time.sleep(3)
         
     #salvo risultati intermedi
     Path(str(script_dir)+"/../data/%s/"%(str(myuuid)) ).mkdir( parents=True, exist_ok=True )
