@@ -56,6 +56,7 @@ class jvm_sys(system_interface):
         if(self.client != None):
             r = Client("localhost:11211")
             r.set("stop", "1")
+            r.set("started", "0")
             r.close()
             
             try:
