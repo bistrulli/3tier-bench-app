@@ -347,7 +347,7 @@ if __name__ == "__main__":
         
         for i in range(1):
             jvm_sys.startSys()
-            jvm_sys.startClient(300)
+            jvm_sys.startClient(100)
             
             g = Client("localhost:11211")
             s1=np.random.rand()*10
@@ -358,7 +358,7 @@ if __name__ == "__main__":
             X=[]
             for i in range(360):
                 state=jvm_sys.getstate()[0]
-                print(state,i)
+                print(state,i,np.sum(state))
                 X.append(state[0])
         
                 if(isCpu):
