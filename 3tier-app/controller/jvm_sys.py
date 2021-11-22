@@ -265,7 +265,7 @@ class jvm_sys(system_interface):
                 [state["think"],state["e1_bl"],state["e1_ex"],state["e2_bl"],state["e2_ex"]]]
         
     def getStateNetStat(self,tier):
-        cmd = "netstat -anp | grep :%d | grep ESTABLISHED | wc -l"%(tier)
+        cmd = "netstat -anp 2>/dev/null | grep :%d | grep ESTABLISHED | wc -l"%(tier)
         ps = subprocess.Popen(cmd,shell=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
         start=time.time()
         output = ps.communicate()[0]
