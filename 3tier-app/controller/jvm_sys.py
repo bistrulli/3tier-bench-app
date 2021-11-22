@@ -336,7 +336,7 @@ class jvm_sys(system_interface):
             
 if __name__ == "__main__":
     try:
-        isCpu = False
+        isCpu = True
         g = None
         jvm_sys = jvm_sys("../", isCpu)
         
@@ -356,8 +356,8 @@ if __name__ == "__main__":
                 X.append(state["think"])
         
                 if(isCpu):
-                    jvm_sys.setU(10,"tier1")
-                    jvm_sys.setU(10,"tier2")
+                    jvm_sys.setU(1,"tier1")
+                    jvm_sys.setU(1,"tier2")
                 time.sleep(0.2)
         
             print(np.mean(X))
