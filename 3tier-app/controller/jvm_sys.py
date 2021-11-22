@@ -70,7 +70,7 @@ class jvm_sys(system_interface):
         cpuEmu = 0 if(self.isCpu) else 1
         
         self.sys = []
-        subprocess.Popen(["memcached", "-c", "2048", "-t", "20"])
+        subprocess.Popen(["memcached", "-c", "2048", "-t", "20","-u","root"])
         self.waitMemCached()
         self.sys.append(self.findProcessIdByName("memcached")[0])
         
