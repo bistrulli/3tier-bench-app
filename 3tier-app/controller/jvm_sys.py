@@ -347,21 +347,23 @@ if __name__ == "__main__":
         
         for i in range(1):
             jvm_sys.startSys()
-            jvm_sys.startClient(100)
+            jvm_sys.startClient(300)
             
             g = Client("localhost:11211")
-            g.set("t1_hw","1")
-            g.set("t2_hw","1")
+            s1=np.random.rand()*10
+            s2=np.random.rand()*10
+            g.set("t1_hw","%f"%(s1))
+            g.set("t2_hw","%f"%(s2))
             
             X=[]
-            for i in range(100):
+            for i in range(360):
                 state=jvm_sys.getstate()[0]
-                print(np.sum(state),i)
+                print(state,i)
                 X.append(state[0])
         
                 if(isCpu):
-                    jvm_sys.setU(1,"tier1")
-                    jvm_sys.setU(1,"tier2")
+                    jvm_sys.setU(s1,"tier1")
+                    jvm_sys.setU(s2,"tier2")
                 time.sleep(0.2)
         
             print(np.mean(X))
