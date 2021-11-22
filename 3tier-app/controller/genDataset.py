@@ -69,9 +69,9 @@ repcount=0;
 
 #per npoints intendo il numero di diverso di stati iniziali che considero
 isCpu=True
-rep=100
+rep=3
 H=5
-ssTime=(H+1)*30
+ssTime=(H+1)*2
 N=3
 npoints=ssTime*(rep)
 DS_X=np.zeros([npoints//(H+1),N])
