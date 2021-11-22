@@ -1,12 +1,9 @@
 package app;
 
-import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpClient.Version;
 import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.net.http.HttpResponse.BodyHandlers;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -48,17 +45,17 @@ public class Client implements Runnable {
 					.build();
 			
 			Client.isStarted.set(true);
+			int thinking = this.task.getState().get("think").incrementAndGet();
 			
 			while (!this.dying) {
 				
-				int thinking = this.task.getState().get("think").incrementAndGet();
 				SimpleTask.getLogger().debug(String.format("%s thinking", thinking));
 
 				TimeUnit.MILLISECONDS.sleep(Double.valueOf(this.dist.sample()).longValue());
 
 				SimpleTask.getLogger().debug(String.format("%s sending", this.task.getName()));
 				this.task.getState().get("think").decrementAndGet();
-				HttpResponse<String> resp = client.send(request, BodyHandlers.ofString());
+				thinking = this.task.getState().get("think").incrementAndGet();
 				
 				if (Client.getToKill().get() > 0) {
 					Client.toKill.decrementAndGet();
@@ -66,8 +63,6 @@ public class Client implements Runnable {
 				}
 			}
 			SimpleTask.getLogger().debug(String.format(" user %s stopped", this.clietId));
-		} catch (IOException e1) {
-			e1.printStackTrace();
 		} catch (InterruptedException e2) {
 			e2.printStackTrace();
 		} catch (Exception e) {
