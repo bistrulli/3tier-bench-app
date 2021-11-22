@@ -16,6 +16,7 @@ import com.sun.net.httpserver.HttpExchange;
 
 import Server.SimpleTask;
 import Server.TierHttpHandler;
+import jni.GetThreadID;
 
 @SuppressWarnings("restriction")
 public class Tier1HTTPHandler extends TierHttpHandler {
@@ -29,6 +30,8 @@ public class Tier1HTTPHandler extends TierHttpHandler {
 	}
 
 	public void handleResponse(HttpExchange req, String requestParamValue) throws InterruptedException, IOException {
+		if(!this.getLqntask().isEmulated())
+			this.addToCGV2Group(this.getName());
 		this.measureIngress();
 
 		Jinjava jinjava = new Jinjava();
