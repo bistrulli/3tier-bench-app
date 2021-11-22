@@ -264,8 +264,8 @@ class jvm_sys(system_interface):
         return [[state["think"],state["e1_bl"]+state["e1_ex"],state["e2_bl"]+state["e2_ex"]],
                 [state["think"],state["e1_bl"],state["e1_ex"],state["e2_bl"],state["e2_ex"]]]
         
-    def getStateNetStat(self,tier):
-        cmd = "netstat -anp 2>/dev/null | grep :%d | grep ESTABLISHED | wc -l"%(tier)
+    def getStateNetStat(self):
+        cmd = "netstat -anp | grep :80 | grep ESTABLISHED | wc -l"
         ps = subprocess.Popen(cmd,shell=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
         start=time.time()
         output = ps.communicate()[0]
@@ -348,7 +348,7 @@ class jvm_sys(system_interface):
             
 if __name__ == "__main__":
     try:
-        isCpu = False
+        isCpu = True
         g = None
         jvm_sys = jvm_sys("../", isCpu)
         
@@ -360,22 +360,21 @@ if __name__ == "__main__":
             
             X=[]
             for i in range(360):
-                jvm_sys.getStateNetStat(3000)
-                # state=jvm_sys.getstate()[0]
-                # print(state,i,np.sum(state))
-                # X.append(state[0])
+                state=jvm_sys.getstate()[0]
+                print(state,i,np.sum(state))
+                X.append(state[0])
                 
-                # if(np.mod(i+1,6)==0 and i>=6):
-                #     s1=np.random.rand()*10
-                #     s2=np.random.rand()*10
-                #     print(s1,s2)
-                #     g.set("t1_hw","%f"%(s1))
-                #     g.set("t2_hw","%f"%(s2))
-                #
-                #     if(isCpu):
-                #         jvm_sys.setU(s1,"tier1")
-                #         jvm_sys.setU(s2,"tier2")
-                time.sleep(0.2)
+                if(np.mod(i+1,6)==0 and i>=6):
+                    s1=np.random.rand()*10
+                    s2=np.random.rand()*10
+                    print(s1,s2)
+                    g.set("t1_hw","%f"%(s1))
+                    g.set("t2_hw","%f"%(s2))
+            
+                    if(isCpu):
+                        jvm_sys.setU(s1,"tier1")
+                        jvm_sys.setU(s2,"tier2")
+                time.sleep(0.5)
         
             print(np.mean(X))
         

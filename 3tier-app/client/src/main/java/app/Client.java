@@ -40,6 +40,12 @@ public class Client implements Runnable {
 
 	public void run() {
 		try {
+			HttpClient client = null;
+			HttpRequest request = null;
+			client = HttpClient.newBuilder().version(Version.HTTP_1_1).build();
+			request = HttpRequest.newBuilder()
+					.uri(URI.create("http://"+Client.getTier1Host()+":3000/?id=" + this.clietId.toString() + "&entry=e1" + "&snd=think"))
+					.build();
 			
 			Client.isStarted.set(true);
 			int thinking = this.task.getState().get("think").incrementAndGet();
@@ -51,15 +57,7 @@ public class Client implements Runnable {
 
 				SimpleTask.getLogger().debug(String.format("%s sending", this.task.getName()));
 				this.task.getState().get("think").decrementAndGet();
-				
-				HttpClient client = null;
-				HttpRequest request = null;
-				client = HttpClient.newBuilder().version(Version.HTTP_1_1).build();
-				request = HttpRequest.newBuilder()
-						.uri(URI.create("http://"+Client.getTier1Host()+":3000/?id=" + this.clietId.toString() + "&entry=e1" + "&snd=think"))
-						.build();
 				HttpResponse<String> resp = client.send(request, BodyHandlers.ofString());
-				
 				
 				thinking = this.task.getState().get("think").incrementAndGet();
 				

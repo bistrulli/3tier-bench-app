@@ -11,6 +11,7 @@ import com.google.common.net.InternetDomainName;
 import Server.SimpleTask;
 import gnu.getopt.Getopt;
 import gnu.getopt.LongOpt;
+import jni.GetThreadID;
 import net.spy.memcached.MemcachedClient;
 
 public class Main {
@@ -20,6 +21,7 @@ public class Main {
 	private static String tier2Host;
 
 	public static void main(String[] args) {
+		System.out.println(GetThreadID.get_tid());
 		System.setProperty("net.spy.log.LoggerImpl", "net.spy.memcached.compat.log.SLF4JLogger");
 		Main.getCliOptions(args);
 		SimpleTask[] Sys = Main.genSystem();
