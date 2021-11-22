@@ -240,24 +240,29 @@ class jvm_sys(system_interface):
         self.cgroups[cnt_name]["cg"].controller.cfs_period_us = self.period
         self.cgroups[cnt_name]["cg"].controller.cfs_quota_us = quota
     
-    def getstate(self, monitor):
-        N = 2
-        str_state = [monitor.get(self.keys[i]) for i in range(len(self.keys))]
-        try:
-            estate = [float(str_state[i]) for i in range(len(str_state))]
-            astate = [float(str_state[0].decode('UTF-8'))]
-            
-            gidx = 1;
-            for i in range(0, N):
-                astate.append(float(str_state[gidx].decode('UTF-8')) + float(str_state[gidx + 1].decode('UTF-8')))
-                if(float(str_state[gidx]) < 0 or float(str_state[gidx + 1]) < 0):
-                    raise ValueError("Error! state < 0")
-                gidx += 3
-        except:
-            for i in range(len(self.keys)):
-                print(str_state[i], self.keys[i])
-        
-        return [astate, estate]
+    # def getstate(self, monitor):
+    #     N = 2
+    #     str_state = [monitor.get(self.keys[i]) for i in range(len(self.keys))]
+    #     try:
+    #         estate = [float(str_state[i]) for i in range(len(str_state))]
+    #         astate = [float(str_state[0].decode('UTF-8'))]
+    #
+    #         gidx = 1;
+    #         for i in range(0, N):
+    #             astate.append(float(str_state[gidx].decode('UTF-8')) + float(str_state[gidx + 1].decode('UTF-8')))
+    #             if(float(str_state[gidx]) < 0 or float(str_state[gidx + 1]) < 0):
+    #                 raise ValueError("Error! state < 0")
+    #             gidx += 3
+    #     except:
+    #         for i in range(len(self.keys)):
+    #             print(str_state[i], self.keys[i])
+    #
+    #     return [astate, estate]
+    
+    def getstate(self, monitor=None):
+        state=self.getStateTcp()
+        return [[state["think"],state["e1_bl"]+state["e1_ex"],state["e2_bl"]+state["e2_ex"]],
+                [state["think"],state["e1_bl"],state["e1_ex"],state["e2_bl"],state["e2_ex"]]]
     
     def getStateTcp(self):
         tiers = [3333, 13000, 13001]
@@ -350,10 +355,9 @@ if __name__ == "__main__":
             
             X=[]
             for i in range(100):
-                state=jvm_sys.getStateTcp()
-                #print(state)
-                print(np.sum([state["think"],state["e1_bl"],state["e1_ex"],state["e2_bl"],state["e2_ex"]]),i)
-                X.append(state["think"])
+                state=jvm_sys.getstate()[0]
+                print(np.sum(state),i)
+                X.append(state[0])
         
                 if(isCpu):
                     jvm_sys.setU(1,"tier1")

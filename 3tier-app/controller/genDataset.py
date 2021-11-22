@@ -71,7 +71,7 @@ repcount=0;
 isCpu=True
 rep=1
 H=5
-ssTime=(H+1)*30
+ssTime=(H+1)*60
 N=3
 npoints=ssTime*(rep)
 DS_X=np.zeros([npoints//(H+1),N])
@@ -88,7 +88,7 @@ P=None
 X0=None
 myuuid = uuid.uuid4()
 
-fname="open_loop_3tier_H5"
+fname="open_loop_3tier_H5_test"
 
 #dck_sys=dockersys()
 dck_sys=jvm_sys("../",isCpu)
