@@ -387,8 +387,8 @@ if __name__ == "__main__":
                 X.append(state[0])
             
                 if(np.mod(i + 1, 6) == 0 and i >= 6):
-                    s1 = np.random.rand() * 10
-                    s2 = np.random.rand() * 10
+                    s1 = np.maximum(np.random.rand() * 10,0.5)
+                    s2 = np.maximum(np.random.rand() * 10,0.5)
                     print(s1, s2)
                     g.set("t1_hw", "%f" % (s1))
                     g.set("t2_hw", "%f" % (s2))
