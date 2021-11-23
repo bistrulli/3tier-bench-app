@@ -396,7 +396,7 @@ if __name__ == "__main__":
                     if(isCpu):
                         jvm_sys.setU(s1, "tier1")
                         jvm_sys.setU(s2, "tier2")
-                time.sleep(3)
+                time.sleep(0.1)
             
             print(np.mean(X))
         
