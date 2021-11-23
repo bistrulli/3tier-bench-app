@@ -22,7 +22,6 @@ class jvm_sys(system_interface):
     sysRootPath = None
     sys = None
     client = None
-    croot = None
     cgroups = None
     period = 100000
     keys = ["think", "e1_bl", "e1_ex", "t1_hw", "e2_bl", "e2_ex", "t2_hw"]
@@ -32,8 +31,6 @@ class jvm_sys(system_interface):
     def __init__(self, sysRootPath, isCpu=False):
         self.sysRootPath = sysRootPath
         self.isCpu = isCpu
-        if(self.isCpu):
-            self.initCgroups()
         self.tier_socket = {}
     
     def startClient(self, pop):
@@ -52,6 +49,12 @@ class jvm_sys(system_interface):
         
         self.client = self.findProcessIdByName("client-0.0.1")[0]
     
+    def resetSys(self):
+        self.tier_socket=None
+        self.sys=None
+        self.client = None
+        self.cgroups=None
+    
     def stopClient(self):
         if(self.client != None):
             r = Client("localhost:11211")
@@ -65,9 +68,14 @@ class jvm_sys(system_interface):
                 print("terminate client forcibly")
                 self.client.terminate()
                 self.client.kill()
+            finally:
                 self.client = None
     
     def startSys(self):
+        
+        if(self.isCpu):
+            self.initCgroups()
+        
         cpuEmu = 0 if(self.isCpu) else 1
         
         self.sys = []
@@ -78,7 +86,7 @@ class jvm_sys(system_interface):
         if(self.isCpu):
             subprocess.Popen([javaCmd, 
                             "-Xmx6G","-Xms6G",
-                             "-XX:ParallelGCThreads=1",
+                             #"-XX:ParallelGCThreads=1",
                              #"-XX:+UnlockExperimentalVMOptions","-XX:+UseEpsilonGC",
                              "-XX:+AlwaysPreTouch",
                              "-Djava.compiler=NONE", "-jar",
@@ -90,7 +98,7 @@ class jvm_sys(system_interface):
             
             subprocess.Popen([javaCmd, 
                             "-Xmx6G","-Xms6G",
-                             "-XX:ParallelGCThreads=1",
+                             #"-XX:ParallelGCThreads=1",
                              #"-XX:+UnlockExperimentalVMOptions","-XX:+UseEpsilonGC",
                              "-XX:+AlwaysPreTouch",
                              "-Djava.compiler=NONE", "-jar",
@@ -150,7 +158,7 @@ class jvm_sys(system_interface):
                 except psutil.TimeoutExpired as e:
                     proc.kill()
                 
-        self.sys = None
+        self.resetSys()
     
     def waitTier1(self):
         connected = False
