@@ -393,9 +393,9 @@ if __name__ == "__main__":
                     g.set("t1_hw", "%f" % (s1))
                     g.set("t2_hw", "%f" % (s2))
                 
-                    if(isCpu):
-                        jvm_sys.setU(s1, "tier1")
-                        jvm_sys.setU(s2, "tier2")
+                    # if(isCpu):
+                    #     jvm_sys.setU(s1, "tier1")
+                    #     jvm_sys.setU(s2, "tier2")
                 time.sleep(0.3)
             
             print(np.mean(X))
