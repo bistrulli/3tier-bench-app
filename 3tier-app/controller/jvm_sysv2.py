@@ -237,8 +237,23 @@ class jvm_sys(system_interface):
         
         time.sleep(0.5)
     
-    def initCgroups(self): 
-        # self.cgroups = {"tier1":{"name":"t1", "cg":None}, "tier2":{"name":"t2", "cg":None}}
+    def initCgroups(self):
+        self.cgroups = {"tier1":{"name":"t1", "cg":None}, "tier2":{"name":"t2", "cg":None}} 
+        if(os.path.exists("/sys/fs/cgroup/t1")):
+            if(not os.path.exists("/sys/fs/cgroup/t1/e1")):
+                raise ValueError("e1 cgroupv2 doesn't exist")
+            else:
+                self.cgroups["tier1"]["cg"]="/sys/fs/cgroup/t1/e1/cpu.max"
+        else:
+            raise ValueError("t1 cgroupv2 doesn't exist")
+        
+        if(os.path.exists("/sys/fs/cgroup/t2")):
+            if(not os.path.exists("/sys/fs/cgroup/t2/e2")):
+                raise ValueError("e2 cgroupv2 doesn't exist")
+            else:
+                self.cgroups["tier2"]["cg"]="/sys/fs/cgroup/t2/e2/cpu.max"
+        else:
+            raise ValueError("t2 cgroupv2 doesn't exist")
         #
         # p = subprocess.Popen(["cgget", "-g", "cpu:t1"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         # out, err = p.communicate()
@@ -249,7 +264,6 @@ class jvm_sys(system_interface):
         # out, err = p.communicate()
         # if(str(err).find("Cgroup does not exist") != -1):
         #     subprocess.check_output(["sudo", "cgcreate", "-g", "cpu:t2", "-a", "emilio:emilio", "-t", "emilio:emilio"])
-        pass
     
     def setU(self, RL, cnt_name):
         
@@ -393,9 +407,9 @@ if __name__ == "__main__":
                     g.set("t1_hw", "%f" % (s1))
                     g.set("t2_hw", "%f" % (s2))
                 
-                    # if(isCpu):
-                    #     jvm_sys.setU(s1, "tier1")
-                    #     jvm_sys.setU(s2, "tier2")
+                    if(isCpu):
+                        jvm_sys.setU(s1, "tier1")
+                        jvm_sys.setU(s2, "tier2")
                 time.sleep(0.3)
             
             print(np.mean(X))
