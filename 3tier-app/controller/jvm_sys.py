@@ -50,10 +50,10 @@ class jvm_sys(system_interface):
         self.client = self.findProcessIdByName("client-0.0.1")[0]
     
     def resetSys(self):
-        self.tier_socket=None
-        self.sys=None
+        self.tier_socket = {}
+        self.sys = None
         self.client = None
-        self.cgroups=None
+        self.cgroups = None
     
     def stopClient(self):
         if(self.client != None):
@@ -84,10 +84,10 @@ class jvm_sys(system_interface):
         self.sys.append(self.findProcessIdByName("memcached")[0])
         
         if(self.isCpu):
-            subprocess.Popen([javaCmd, 
-                            "-Xmx6G","-Xms6G",
-                             #"-XX:ParallelGCThreads=1",
-                             #"-XX:+UnlockExperimentalVMOptions","-XX:+UseEpsilonGC",
+            subprocess.Popen([javaCmd,
+                            "-Xmx6G", "-Xms6G",
+                             # "-XX:ParallelGCThreads=1",
+                             # "-XX:+UnlockExperimentalVMOptions","-XX:+UseEpsilonGC",
                              "-XX:+AlwaysPreTouch",
                              "-Djava.compiler=NONE", "-jar",
                              '%stier2/target/tier2-0.0.1-SNAPSHOT-jar-with-dependencies.jar' % (self.sysRootPath),
@@ -96,10 +96,10 @@ class jvm_sys(system_interface):
             self.waitTier2()
             self.sys.append(self.findProcessIdByName("tier2-0.0.1")[0])
             
-            subprocess.Popen([javaCmd, 
-                            "-Xmx6G","-Xms6G",
-                             #"-XX:ParallelGCThreads=1",
-                             #"-XX:+UnlockExperimentalVMOptions","-XX:+UseEpsilonGC",
+            subprocess.Popen([javaCmd,
+                            "-Xmx6G", "-Xms6G",
+                             # "-XX:ParallelGCThreads=1",
+                             # "-XX:+UnlockExperimentalVMOptions","-XX:+UseEpsilonGC",
                              "-XX:+AlwaysPreTouch",
                              "-Djava.compiler=NONE", "-jar",
                              '%stier1/target/tier1-0.0.1-SNAPSHOT-jar-with-dependencies.jar' % (self.sysRootPath),
@@ -277,16 +277,16 @@ class jvm_sys(system_interface):
     #     return [astate, estate]
     
     def getstate(self, monitor=None):
-        state=self.getStateTcp()
-        return [[state["think"],state["e1_bl"]+state["e1_ex"],state["e2_bl"]+state["e2_ex"]],
-                [state["think"],state["e1_bl"],state["e1_ex"],state["e2_bl"],state["e2_ex"]]]
+        state = self.getStateTcp()
+        return [[state["think"], state["e1_bl"] + state["e1_ex"], state["e2_bl"] + state["e2_ex"]],
+                [state["think"], state["e1_bl"], state["e1_ex"], state["e2_bl"], state["e2_ex"]]]
         
     def getStateNetStat(self):
         cmd = "netstat -anp | grep :80 | grep ESTABLISHED | wc -l"
-        ps = subprocess.Popen(cmd,shell=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
-        start=time.time()
+        ps = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        start = time.time()
         output = ps.communicate()[0]
-        print(output,time.time()-start)
+        print(output, time.time() - start)
     
     def getStateTcp(self):
         tiers = [3333, 13000, 13001]
@@ -315,7 +315,6 @@ class jvm_sys(system_interface):
         
         self.tier_socket["%d" % (tier)].sendall("getState\n".encode("UTF-8"))
         return self.tier_socket["%d" % (tier)].recv(1024).decode("UTF-8").rstrip("\n")
-        
     
     def testTcpState(self, tier):
         msg = self.getTierTcpState(tier)
@@ -375,22 +374,22 @@ if __name__ == "__main__":
             
             g = Client("localhost:11211")
             
-            X=[]
+            X = []
             for i in range(360):
-                state=jvm_sys.getstate()[0]
-                print(state,i,np.sum(state))
+                state = jvm_sys.getstate()[0]
+                print(state, i, np.sum(state))
                 X.append(state[0])
             
-                if(np.mod(i+1,6)==0 and i>=6):
-                    s1=np.random.rand()*10
-                    s2=np.random.rand()*10
-                    print(s1,s2)
-                    g.set("t1_hw","%f"%(s1))
-                    g.set("t2_hw","%f"%(s2))
+                if(np.mod(i + 1, 6) == 0 and i >= 6):
+                    s1 = np.random.rand() * 10
+                    s2 = np.random.rand() * 10
+                    print(s1, s2)
+                    g.set("t1_hw", "%f" % (s1))
+                    g.set("t2_hw", "%f" % (s2))
                 
                     if(isCpu):
-                        jvm_sys.setU(s1,"tier1")
-                        jvm_sys.setU(s2,"tier2")
+                        jvm_sys.setU(s1, "tier1")
+                        jvm_sys.setU(s2, "tier2")
                 time.sleep(3)
             
             print(np.mean(X))
@@ -400,7 +399,7 @@ if __name__ == "__main__":
         
             plt.figure()
             plt.plot(X)
-            plt.axhline(y=10,color='r',linestyle='--')
+            plt.axhline(y=10, color='r', linestyle='--')
             plt.savefig("queue_test.png")
     except Exception as ex:
         traceback.print_exception(type(ex), ex, ex.__traceback__)
