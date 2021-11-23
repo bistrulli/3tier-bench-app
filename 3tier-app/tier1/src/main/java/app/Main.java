@@ -1,5 +1,7 @@
 package app;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.HashMap;
@@ -23,6 +25,9 @@ public class Main {
 	public static void main(String[] args) {
 		System.setProperty("net.spy.log.LoggerImpl", "net.spy.memcached.compat.log.SLF4JLogger");
 		Main.getCliOptions(args);
+		if(!Main.isEmu) {
+			Main.addToCgv2();
+		}
 		SimpleTask[] Sys = Main.genSystem();
 		try {
 			Main.resetState(Sys[0]);
@@ -66,6 +71,24 @@ public class Main {
         return InetAddresses.isUriInetAddress(hostname) || 
         		InternetDomainName.isValid(hostname);
     }
+	
+	public static void addToCgv2() {
+		try {
+			int tid = GetThreadID.get_tid();
+			// aggiungo questo thread al gruppo dei serventi del tier
+			BufferedWriter out;
+			try {
+				out = new BufferedWriter(new FileWriter("/sys/fs/cgroup/t1/cgroup.procs", true));
+				out.write(String.valueOf(tid));
+				out.flush();
+				out.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 	public static void getCliOptions(String[] args) {
 
