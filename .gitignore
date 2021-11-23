@@ -32,3 +32,5 @@ target/
 *.rdb
 
 #*.png
+
+**/__pycache__/
