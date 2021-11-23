@@ -271,11 +271,15 @@ class jvm_sys(system_interface):
         #     print("set cgrop for %s" % (self.cgroups[cnt_name]["name"]))
         #     self.cgroups[cnt_name]["cg"] = trees.Tree().get_node_by_path('/cpu/%s' % (self.cgroups[cnt_name]["name"]))
         #
-        # quota = int(np.round(RL * self.period))
+        quota = int(np.round(RL * self.period))
         #
         # self.cgroups[cnt_name]["cg"].controller.cfs_period_us = self.period
         # self.cgroups[cnt_name]["cg"].controller.cfs_quota_us = quota
-        pass
+        
+        cgfile=open(self.cgroups[cnt_name]["cg"],"w")
+        cgfile.write("%d %d"%(quota,self.period))
+        cgfile.flush()
+        cgfile.close()
     
     # def getstate(self, monitor):
     #     N = 2
