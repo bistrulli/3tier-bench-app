@@ -254,27 +254,9 @@ class jvm_sys(system_interface):
                 self.cgroups["tier2"]["cg"]="/sys/fs/cgroup/t2/e2/cpu.max"
         else:
             raise ValueError("t2 cgroupv2 doesn't exist")
-        #
-        # p = subprocess.Popen(["cgget", "-g", "cpu:t1"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        # out, err = p.communicate()
-        # if(str(err).find("Cgroup does not exist") != -1):
-        #     subprocess.check_output(["sudo", "cgcreate", "-g", "cpu:t1", "-a", "emilio:emilio", "-t", "emilio:emilio"])
-        #
-        # p = subprocess.Popen(["cgget", "-g", "cpu:t2"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        # out, err = p.communicate()
-        # if(str(err).find("Cgroup does not exist") != -1):
-        #     subprocess.check_output(["sudo", "cgcreate", "-g", "cpu:t2", "-a", "emilio:emilio", "-t", "emilio:emilio"])
     
     def setU(self, RL, cnt_name):
-        
-        # if(self.cgroups[cnt_name]["cg"] == None):
-        #     print("set cgrop for %s" % (self.cgroups[cnt_name]["name"]))
-        #     self.cgroups[cnt_name]["cg"] = trees.Tree().get_node_by_path('/cpu/%s' % (self.cgroups[cnt_name]["name"]))
-        #
         quota = int(np.round(RL * self.period))
-        #
-        # self.cgroups[cnt_name]["cg"].controller.cfs_period_us = self.period
-        # self.cgroups[cnt_name]["cg"].controller.cfs_quota_us = quota
         
         cgfile=open(self.cgroups[cnt_name]["cg"],"w")
         cgfile.write("%d %d"%(quota,self.period))
