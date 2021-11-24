@@ -17,7 +17,7 @@ from cgroupspy import trees
 import docker
 from pathlib import Path
 from pymemcache.client.base import Client
-from jvm_sys import jvm_sys
+from jvm_sysv2 import jvm_sys
 from docker_sys import dockersys
 
 curpath = os.path.realpath(__file__)
@@ -207,7 +207,7 @@ if __name__ == "__main__":
     dt = 10 ** (-1)
     H = 5
     N = 3
-    rep = 5
+    rep = 1
     drep = 0
     sTime = 10000
     TF = sTime * rep * dt;
