@@ -184,7 +184,7 @@ class optCtrlNN3:
             for ui in range(1, P.shape[0]):
                 ru += (uvar_dn[ui] - Sold[ui]) ** 2
         
-        model.minimize(obj + 0.1*ru + 0.1*casadi.sumsqr(uvar_dn[1:3]))
+        model.minimize(obj + 0.1*ru + 0.3*casadi.sumsqr(uvar_dn[1:3]))
         
         optionsIPOPT = {'print_time':False, 'ipopt':{'print_level':0}}
         optionsOSQP = {'print_time':False, 'osqp':{'verbose':False}}
@@ -208,7 +208,7 @@ if __name__ == "__main__":
     dt = 10 ** (-1)
     H = 5
     N = 3
-    rep = 6
+    rep = 1
     drep = 0
     sTime = 10000
     TF = sTime * rep * dt;
@@ -249,7 +249,7 @@ if __name__ == "__main__":
     #plant=dockersys()
     plant.startSys()
     #plant.startClient(np.random.randint(low=10, high=100))
-    plant.startClient(40)
+    plant.startClient(80)
     
     #memcached client
     r=Client("localhost:11211")
@@ -317,8 +317,8 @@ if __name__ == "__main__":
                     #     r.set("t1_hw",optSNN[1, step-1])
                     #     r.set("t2_hw",optSNN[2, step-1])
                     
-                    r.set("t1_hw",str(110))
-                    r.set("t2_hw",str(110))
+                    # r.set("t1_hw",str(110))
+                    # r.set("t2_hw",str(110))
                     
                 #print(r.get("sim").decode('UTF-8'))
                 
@@ -341,8 +341,8 @@ if __name__ == "__main__":
                 # #r.mset({"t1_hw":str(np.round(optU[1],4)),"t2_hw":str(np.round(optU[2],4))})
                 # else:
                 #optU=[0,9.57555318,7.32977541]
-                # r.set("t1_hw",str(optU[1]))
-                # r.set("t2_hw",str(optU[2]))
+                r.set("t1_hw",str(optU[1]))
+                r.set("t2_hw",str(optU[2]))
                 plant.setU(optU[1],"tier1")
                 plant.setU(optU[2],"tier2")
                 # print(optU)
