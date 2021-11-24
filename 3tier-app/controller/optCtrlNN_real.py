@@ -251,25 +251,26 @@ def resetU():
 
 
 def getstate(r, keys, N):
-    str_state=[r.get(keys[i]) for i in range(len(keys))]
-    try:
-        if(str_state[0]==None):
-            astate = [0]
-        else:
-            astate = [float(str_state[0])]
-            
-        gidx = 1;
-        for i in range(1, N):
-            astate.append(float(str_state[gidx]) + float(str_state[gidx + 1]))
-            # if(float(str_state[gidx])<0 or float(str_state[gidx + 1])<0):
-            #     raise ValueError("Error! state < 0")
-            gidx += 3
-    except:
-        print(time.asctime())
-        for i in range(len(keys)):
-            print(str_state[i],keys[i])
-    
-    return astate
+    # str_state=[r.get(keys[i]) for i in range(len(keys))]
+    # try:
+    #     if(str_state[0]==None):
+    #         astate = [0]
+    #     else:
+    #         astate = [float(str_state[0])]
+    #
+    #     gidx = 1;
+    #     for i in range(1, N):
+    #         astate.append(float(str_state[gidx]) + float(str_state[gidx + 1]))
+    #         if(float(str_state[gidx])<0 or float(str_state[gidx + 1])<0):
+    #             raise ValueError("Error! state < 0")
+    #         gidx += 3
+    # except:
+    #     print(time.asctime())
+    #     for i in range(len(keys)):
+    #         print(str_state[i],keys[i])
+    #
+    # return astate
+    return [float(r.get("think")),0.,0.]
 
 
 
@@ -354,8 +355,8 @@ class optCtrlNN3:
         # print(self.tfmodel.get_tensor(output_details[1]['index']).shape)
         # print(self.tfmodel.get_tensor(output_details[2]['index']).shape)
         
-        Bias = self.tfmodel.get_tensor(output_details[2]['index'])
-        Gain = self.tfmodel.get_tensor(output_details[1]['index'])
+        Gain = self.tfmodel.get_tensor(output_details[0]['index'])
+        Bias = self.tfmodel.get_tensor(output_details[1]['index'])
 
         # Bias=Ypredicted_N[-1]
         # Gain=Ypredicted_N[1]

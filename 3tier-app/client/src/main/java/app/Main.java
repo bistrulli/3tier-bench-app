@@ -87,7 +87,7 @@ public class Main {
 		clientEntries.put("think", Client.class);
 		clientEntries_stimes.put("think", 1000l);
 		final SimpleTask client = new SimpleTask(clientEntries, clientEntries_stimes, Main.initPop, "Client",
-				Main.jedisHost, 100l);
+				Main.jedisHost, 10l);
 		Client.setTier1Host(Main.tier1Host);
 		return new SimpleTask[] { client };
 	}

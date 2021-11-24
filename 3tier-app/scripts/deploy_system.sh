@@ -22,5 +22,5 @@ kubectl apply -f ../services/client-mntext.yaml
 kubectl apply -f ../controller/vpa_tier1.yaml
 kubectl apply -f ../controller/vpa_tier2.yaml
 
-sleep 3
-kubectl apply -f ../client/deploy.yaml
+#sleep 3
+#kubectl apply -f ../client/deploy.yaml

@@ -28,7 +28,7 @@ class dockersys(system_interface):
         r=Client("localhost:11211")
         r.set("stop","0")
         
-        self.client_cnt=self.dck_client.containers.run(image="bistrulli/client:gke_0.4",
+        self.client_cnt=self.dck_client.containers.run(image="bistrulli/client:gke_0.5",
                               command="java -Xmx4G -jar client-0.0.1-SNAPSHOT-jar-with-dependencies.jar --initPop %d --queues \
                                       '[\"think\", \"e1_bl\", \"e1_ex\", \"t1_hw\", \"e2_bl\", \"e2_ex\", \"t2_hw\"]' \
                                        --jedisHost monitor.app --tier1Host tier1.app"%(initPop),
@@ -142,11 +142,14 @@ class dockersys(system_interface):
         
         if(not found):
             raise ValueError("container %s not found during cpulimit update"%(cnt_name))
+    
+    
         
     def getstate(self, monitor=None):
-        state = self.getStateTcp()
-        return [[state["think"], state["e1_bl"] + state["e1_ex"], state["e2_bl"] + state["e2_ex"]],
-                [state["think"], state["e1_bl"], state["e1_ex"], state["e2_bl"], state["e2_ex"]]]
+        return int(monitor.get("think"))
+        # state = self.getStateTcp()
+        # return [[state["think"], state["e1_bl"] + state["e1_ex"], state["e2_bl"] + state["e2_ex"]],
+        #         [state["think"], state["e1_bl"], state["e1_ex"], state["e2_bl"], state["e2_ex"]]]
     
     def getStateTcp(self):
         tiers = [3333, 13000, 13001]
@@ -182,25 +185,20 @@ if __name__ == "__main__":
     try:
         dck_sys=dockersys(isCpu=True)
         dck_sys.startSys()
+        dck_sys.startClient(40)
         
-        time.sleep(2)
-        print(dck_sys.getTierTcpState(13000))
-        r = req.get('http://localhost:3000/?entry=e1&snd=think&id=fe4d6c23-7fff-4a3a-b722-5cf87a163f73')
-        print(r)
-        print(dck_sys.getTierTcpState(13000))
-        # dck_sys.startClient(1)
-        #
-        # mnt=Client("localhost:11211")
-        #
-        # for i in range(100):
-        #      print(dck_sys.getstate())
-        #      time.sleep(0.2)
-        # mnt.close()
-        #
-        # #dck_sys.setU(2, "tier1-k")
-        #
-        # dck_sys.stopClient()
-        # dck_sys.stopSystem()
+        mnt=Client("localhost:11211")
+        
+        while(mnt.get("sim")==None):
+                print("waiting sim to start")
+                time.sleep(0.1)
+                
+        pop=float(mnt.get("sim").decode('UTF-8').split("_")[1]);
+        
+        for i in range(200):
+             print([dck_sys.getstate(mnt),pop])
+             time.sleep(0.2)
+        mnt.close()
     except Exception as ex:
         traceback.print_exception(type(ex), ex, ex.__traceback__)
     finally:
