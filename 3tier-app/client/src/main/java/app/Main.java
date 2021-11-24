@@ -25,6 +25,7 @@ public class Main {
 	private static String[] systemQueues = null;
 	private static File expFile = null;
 	private static String tier1Host = null;
+	private static boolean sim;
 
 	public static void main(String[] args) {
 
@@ -34,7 +35,8 @@ public class Main {
 		final SimpleTask[] Sys = Main.genSystem();
 		Main.resetState(Sys[0]);
 		Sys[0].start();
-		//Main.startSim(Sys[0]);
+		if(Main.sim)
+			Main.startSim(Sys[0]);
 		MemcachedClient memcachedClient = null;
 		while (true) {
 			if (Client.isStarted.get()) {
@@ -104,11 +106,12 @@ public class Main {
 
 	public static void getCliOptions(String[] args) {
 		int c;
-		LongOpt[] longopts = new LongOpt[4];
+		LongOpt[] longopts = new LongOpt[5];
 		longopts[0] = new LongOpt("initPop", LongOpt.REQUIRED_ARGUMENT, null, 0);
 		longopts[1] = new LongOpt("jedisHost", LongOpt.REQUIRED_ARGUMENT, null, 1);
 		longopts[2] = new LongOpt("queues", LongOpt.REQUIRED_ARGUMENT, null, 2);
 		longopts[3] = new LongOpt("tier1Host", LongOpt.REQUIRED_ARGUMENT, null, 3);
+		longopts[4] = new LongOpt("sim", LongOpt.REQUIRED_ARGUMENT, null, 4);
 
 		Getopt g = new Getopt("ddctrl", args, "", longopts);
 		g.setOpterr(true);
@@ -142,6 +145,13 @@ public class Main {
 			case 3:
 				try {
 					Main.tier1Host = String.valueOf(g.getOptarg());
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				break;
+			case 4:
+				try {
+					Main.sim = Integer.valueOf(g.getOptarg()) > 0 ? true : false;
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

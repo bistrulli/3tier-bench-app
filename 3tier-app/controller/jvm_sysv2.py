@@ -33,7 +33,7 @@ class jvm_sys(system_interface):
         self.isCpu = isCpu
         self.tier_socket = {}
     
-    def startClient(self, pop):
+    def startClient(self, pop,sim=False):
         r = Client("localhost:11211")
         r.set("stop", "0")
         r.set("started", "0")
@@ -43,7 +43,8 @@ class jvm_sys(system_interface):
                          "-Djava.compiler=NONE", "-jar",
                          '%sclient/target/client-0.0.1-SNAPSHOT-jar-with-dependencies.jar' % (self.sysRootPath),
                          '--initPop', '%d' % (pop), '--jedisHost', 'localhost', '--tier1Host', 'localhost',
-                         '--queues', '[\"think\", \"e1_bl\", \"e1_ex\", \"t1_hw\", \"e2_bl\", \"e2_ex\", \"t2_hw\"]'])
+                         '--queues', '[\"think\", \"e1_bl\", \"e1_ex\", \"t1_hw\", \"e2_bl\", \"e2_ex\", \"t2_hw\"]',
+                         '--sim',"%d"%(int(sim))])
         
         self.waitClient()
         
@@ -377,7 +378,7 @@ if __name__ == "__main__":
         
         for i in range(1):
             jvm_sys.startSys()
-            jvm_sys.startClient(100)
+            jvm_sys.startClient(100,sim=False)
             
             g = Client("localhost:11211")
             
