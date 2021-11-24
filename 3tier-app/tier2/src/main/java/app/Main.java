@@ -20,11 +20,12 @@ public class Main {
 
 	private static Boolean isEmu = false;
 	private static String jedisHost = null;
+	private static boolean cgv2= false;
 
 	public static void main(String[] args) {
 		System.setProperty("net.spy.log.LoggerImpl", "net.spy.memcached.compat.log.SLF4JLogger");
 		Main.getCliOptions(args);
-		if(!Main.isEmu) {
+		if(Main.cgv2) {
 			Main.addToCgv2();
 		}
 		SimpleTask[] Sys = Main.genSystem();
@@ -61,7 +62,7 @@ public class Main {
 		t2Entries.put("e2", Tier2HTTPHandler.class);  
 		t2Entries_stimes.put("e2", 100l);
 		final SimpleTask t2 = new SimpleTask("localhost", 3001, t2Entries, t2Entries_stimes, 1, Main.isEmu, "t2",
-				Main.jedisHost,100l,100l,100l);
+				Main.jedisHost,100l,100l,100l,Main.cgv2);
 		t2.setHwCore(1f);
 		return new SimpleTask[] { t2 };
 	}
@@ -92,9 +93,10 @@ public class Main {
 	public static void getCliOptions(String[] args) {
 
 		int c;
-		LongOpt[] longopts = new LongOpt[2];
+		LongOpt[] longopts = new LongOpt[3];
 		longopts[0] = new LongOpt("cpuEmu", LongOpt.REQUIRED_ARGUMENT, null, 0);
 		longopts[1] = new LongOpt("jedisHost", LongOpt.REQUIRED_ARGUMENT, null, 1);
+		longopts[2] = new LongOpt("cgv2", LongOpt.REQUIRED_ARGUMENT, null, 2);
 
 		Getopt g = new Getopt("ddctrl", args, "", longopts);
 		g.setOpterr(true);
@@ -113,6 +115,13 @@ public class Main {
 						throw new Exception(String.format("%s is not a valid jedis URL", g.getOptarg()));
 					}
 					Main.jedisHost = String.valueOf(g.getOptarg());
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				break;
+			case 2:
+				try {
+					Main.cgv2 = Integer.valueOf(g.getOptarg()) > 0 ? true : false; 
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

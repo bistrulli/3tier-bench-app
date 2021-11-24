@@ -23,6 +23,7 @@ RUN mvn package
 WORKDIR /3tier-bench-app/3tier-app/tier1/target
 
 EXPOSE 3000
+EXPOSE 13000
 
 #CMD ["java","-Xmx4G","-jar","tier1-0.0.1-SNAPSHOT-jar-with-dependencies.jar",\
 #	"--cpuEmu","0","--jedisHost","monitor"]

@@ -24,4 +24,4 @@ RUN mvn package
 WORKDIR /3tier-bench-app/3tier-app/client/target
 
 
-
+EXPOSE 3333

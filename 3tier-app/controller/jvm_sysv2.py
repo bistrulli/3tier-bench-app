@@ -114,7 +114,8 @@ class jvm_sys(system_interface):
                               "-XX:+AlwaysPreTouch",
                              "-Djava.compiler=NONE", "-jar", "-Xint",
                              '%stier2/target/tier2-0.0.1-SNAPSHOT-jar-with-dependencies.jar' % (self.sysRootPath),
-                             '--cpuEmu', '%d' % (cpuEmu), '--jedisHost', 'localhost'])
+                             '--cpuEmu', '%d' % (cpuEmu), '--jedisHost', 'localhost',
+                             '--cgv2','1'])
             self.waitTier2()
             self.sys.append(self.findProcessIdByName("tier2-0.0.1")[0])
             
@@ -124,7 +125,7 @@ class jvm_sys(system_interface):
                              "-Djava.compiler=NONE", "-jar", "-Xint",
                              '%stier1/target/tier1-0.0.1-SNAPSHOT-jar-with-dependencies.jar' % (self.sysRootPath),
                              '--cpuEmu', "%d" % (cpuEmu), '--jedisHost', 'localhost',
-                             "--tier2Host", "localhost"])
+                             "--tier2Host", "localhost",'--cgv2','1'])
             self.waitTier1()
             self.sys.append(self.findProcessIdByName("tier1-0.0.1")[0])
     

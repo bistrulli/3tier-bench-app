@@ -21,11 +21,12 @@ public class Main {
 	private static Boolean isEmu = false;
 	private static String jedisHost = null;
 	private static String tier2Host;
+	private static boolean cgv2= false;
 
 	public static void main(String[] args) {
 		System.setProperty("net.spy.log.LoggerImpl", "net.spy.memcached.compat.log.SLF4JLogger");
 		Main.getCliOptions(args);
-		if(!Main.isEmu) {
+		if(Main.cgv2) {
 			Main.addToCgv2();
 		}
 		SimpleTask[] Sys = Main.genSystem();
@@ -61,7 +62,7 @@ public class Main {
 		t1Entries.put("e1", Tier1HTTPHandler.class);
 		t1Entries_stimes.put("e1", 100l);
 		final SimpleTask t1 = new SimpleTask("localhost", 3000, t1Entries, t1Entries_stimes, 1, Main.isEmu, "t1",
-				Main.jedisHost,100l,100l,100l);
+				Main.jedisHost,100l,100l,100l,Main.cgv2);
 		t1.setHwCore(1f);
 		Tier1HTTPHandler.setTier2Host(Main.tier2Host);
 		return new SimpleTask[] { t1 };
@@ -93,10 +94,11 @@ public class Main {
 	public static void getCliOptions(String[] args) {
 
 		int c;
-		LongOpt[] longopts = new LongOpt[3];
+		LongOpt[] longopts = new LongOpt[4];
 		longopts[0] = new LongOpt("cpuEmu", LongOpt.REQUIRED_ARGUMENT, null, 0);
 		longopts[1] = new LongOpt("jedisHost", LongOpt.REQUIRED_ARGUMENT, null, 1);
 		longopts[2] = new LongOpt("tier2Host", LongOpt.REQUIRED_ARGUMENT, null, 2);
+		longopts[3] = new LongOpt("cgv2", LongOpt.REQUIRED_ARGUMENT, null, 3);
 
 		Getopt g = new Getopt("ddctrl", args, "", longopts);
 		g.setOpterr(true);
@@ -122,6 +124,13 @@ public class Main {
 			case 2:
 				try {
 					Main.tier2Host = String.valueOf(g.getOptarg()); 
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				break;
+			case 3:
+				try {
+					Main.cgv2 = Integer.valueOf(g.getOptarg()) > 0 ? true : false; 
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
