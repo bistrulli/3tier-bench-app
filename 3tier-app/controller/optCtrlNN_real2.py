@@ -317,6 +317,9 @@ if __name__ == "__main__":
                     #     r.set("t1_hw",optSNN[1, step-1])
                     #     r.set("t2_hw",optSNN[2, step-1])
                     
+                    r.set("t1_hw",str(110))
+                    r.set("t2_hw",str(110))
+                    
                 #print(r.get("sim").decode('UTF-8'))
                 
                 XSSIM[:, step] = plant.getstate(r)[0]
@@ -338,8 +341,8 @@ if __name__ == "__main__":
                 # #r.mset({"t1_hw":str(np.round(optU[1],4)),"t2_hw":str(np.round(optU[2],4))})
                 # else:
                 #optU=[0,9.57555318,7.32977541]
-                r.set("t1_hw",str(optU[1]))
-                r.set("t2_hw",str(optU[2]))
+                # r.set("t1_hw",str(optU[1]))
+                # r.set("t2_hw",str(optU[2]))
                 plant.setU(optU[1],"tier1")
                 plant.setU(optU[2],"tier2")
                 # print(optU)
