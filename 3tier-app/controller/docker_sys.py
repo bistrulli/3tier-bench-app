@@ -86,7 +86,7 @@ class dockersys(system_interface):
         
         self.waitRunning(self.sys[-1])
         
-        self.sys.append(self.dck_client.containers.run(image="bistrulli/tier2:gke_0.4",
+        self.sys.append(self.dck_client.containers.run(image="bistrulli/tier2:gke_0.5",
                               command=["java","-Xmx4G","-jar","tier2-0.0.1-SNAPSHOT-jar-with-dependencies.jar",
                                        "--cpuEmu","%d"%cpuEmu,"--jedisHost","monitor.app","--cgv2","0"],
                               auto_remove=True,
@@ -99,7 +99,7 @@ class dockersys(system_interface):
         
         self.waitRunning(self.sys[-1])
         
-        self.sys.append(self.dck_client.containers.run(image="bistrulli/tier1:gke_0.4",
+        self.sys.append(self.dck_client.containers.run(image="bistrulli/tier1:gke_0.5",
                               command=["java","-Xmx4G","-jar","tier1-0.0.1-SNAPSHOT-jar-with-dependencies.jar",
                                        "--cpuEmu","%d"%cpuEmu,"--jedisHost","monitor.app","--tier2Host","tier2.app","--cgv2","0"],
                               auto_remove=True,
@@ -185,7 +185,7 @@ if __name__ == "__main__":
     try:
         dck_sys=dockersys(isCpu=True)
         dck_sys.startSys()
-        dck_sys.startClient(40)
+        dck_sys.startClient(1)
         
         mnt=Client("localhost:11211")
         
