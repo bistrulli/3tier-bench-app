@@ -62,6 +62,7 @@ public class Client implements Runnable {
 				if (Client.getToKill().get() > 0) {
 					Client.toKill.decrementAndGet();
 					this.dying = true;
+					break;
 				}
 				
 				thinking = this.task.getState().get("think").incrementAndGet();
