@@ -203,7 +203,7 @@ if __name__ == "__main__":
                      "%s/../learnt_model/gcp_model/open_loop_3tier_H5.mat" % (os.path.dirname(curpath)))
     
     isAR = True
-    isCpu = False
+    isCpu = True
     dt = 10 ** (-1)
     H = 5
     N = 3
