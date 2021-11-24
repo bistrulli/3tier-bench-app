@@ -378,14 +378,14 @@ if __name__ == "__main__":
         
         for i in range(1):
             jvm_sys.startSys()
-            jvm_sys.startClient(100,sim=False)
+            jvm_sys.startClient(40,sim=True)
             
             g = Client("localhost:11211")
             
-            g.set("t1_hw", "%f" % (1))
-            g.set("t2_hw", "%f" % (1))
-            jvm_sys.setU(1.0, "tier1")
-            jvm_sys.setU(1.0, "tier2")
+            # g.set("t1_hw", "%f" % (1))
+            # g.set("t2_hw", "%f" % (1))
+            # jvm_sys.setU(1.0, "tier1")
+            # jvm_sys.setU(1.0, "tier2")
             
             X = []
             for i in range(360):
