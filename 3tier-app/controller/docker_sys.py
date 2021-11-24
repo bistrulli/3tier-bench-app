@@ -28,10 +28,10 @@ class dockersys(system_interface):
         r=Client("localhost:11211")
         r.set("stop","0")
         
-        self.client_cnt=self.dck_client.containers.run(image="bistrulli/client:gke_0.5",
+        self.client_cnt=self.dck_client.containers.run(image="bistrulli/client:gke_0.6",
                               command="java -Xmx4G -jar client-0.0.1-SNAPSHOT-jar-with-dependencies.jar --initPop %d --queues \
                                       '[\"think\", \"e1_bl\", \"e1_ex\", \"t1_hw\", \"e2_bl\", \"e2_ex\", \"t2_hw\"]' \
-                                       --jedisHost monitor.app --tier1Host tier1.app"%(initPop),
+                                       --sim 1 --jedisHost monitor.app --tier1Host tier1.app"%(initPop),
                               auto_remove=False,
                               detach=True,
                               name="client-cnt",
@@ -72,6 +72,8 @@ class dockersys(system_interface):
     def startSys(self):
         cpuEmu=0 if(self.isCpu) else 1
         
+        print(cpuEmu)
+        
         self.getNetworkCne()
         
         self.sys.append(self.dck_client.containers.run(image="memcached:1.6.12",
@@ -86,7 +88,7 @@ class dockersys(system_interface):
         
         self.waitRunning(self.sys[-1])
         
-        self.sys.append(self.dck_client.containers.run(image="bistrulli/tier2:gke_0.5",
+        self.sys.append(self.dck_client.containers.run(image="bistrulli/tier2:gke_0.6",
                               command=["java","-Xmx4G","-jar","tier2-0.0.1-SNAPSHOT-jar-with-dependencies.jar",
                                        "--cpuEmu","%d"%cpuEmu,"--jedisHost","monitor.app","--cgv2","0"],
                               auto_remove=True,
@@ -99,7 +101,7 @@ class dockersys(system_interface):
         
         self.waitRunning(self.sys[-1])
         
-        self.sys.append(self.dck_client.containers.run(image="bistrulli/tier1:gke_0.5",
+        self.sys.append(self.dck_client.containers.run(image="bistrulli/tier1:gke_0.6",
                               command=["java","-Xmx4G","-jar","tier1-0.0.1-SNAPSHOT-jar-with-dependencies.jar",
                                        "--cpuEmu","%d"%cpuEmu,"--jedisHost","monitor.app","--tier2Host","tier2.app","--cgv2","0"],
                               auto_remove=True,
@@ -146,10 +148,10 @@ class dockersys(system_interface):
     
         
     def getstate(self, monitor=None):
-        return int(monitor.get("think"))
-        # state = self.getStateTcp()
-        # return [[state["think"], state["e1_bl"] + state["e1_ex"], state["e2_bl"] + state["e2_ex"]],
-        #         [state["think"], state["e1_bl"], state["e1_ex"], state["e2_bl"], state["e2_ex"]]]
+        #return int(monitor.get("think"))
+        state = self.getStateTcp()
+        return [[state["think"], state["e1_bl"] + state["e1_ex"], state["e2_bl"] + state["e2_ex"]],
+                [state["think"], state["e1_bl"], state["e1_ex"], state["e2_bl"], state["e2_ex"]]]
     
     def getStateTcp(self):
         tiers = [3333, 13000, 13001]
@@ -185,9 +187,12 @@ if __name__ == "__main__":
     try:
         dck_sys=dockersys(isCpu=True)
         dck_sys.startSys()
-        dck_sys.startClient(1)
+        dck_sys.startClient(40)
         
         mnt=Client("localhost:11211")
+        
+        mnt.set("t1_hw", "%f" % (10))
+        mnt.set("t2_hw", "%f" % (10))
         
         while(mnt.get("sim")==None):
                 print("waiting sim to start")
