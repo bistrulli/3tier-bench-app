@@ -1,0 +1,18 @@
+---
+apiVersion: "v1"
+kind: "Service"
+metadata:
+  name: "client-mntext"
+  namespace: "default"
+  labels:
+    app: "client-pod"
+spec:
+  ports:
+  - protocol: "TCP"
+    port: 3333
+    targetPort: 3333
+  selector:
+    app: "client-pod"
+  type: "LoadBalancer"
+  loadBalancerIP: ""
+  

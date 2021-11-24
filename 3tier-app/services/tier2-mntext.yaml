@@ -1,0 +1,18 @@
+---
+apiVersion: "v1"
+kind: "Service"
+metadata:
+  name: "tier2-mntext"
+  namespace: "default"
+  labels:
+    app: "tier2-pod"
+spec:
+  ports:
+  - protocol: "TCP"
+    port: 13001
+    targetPort: 13001
+  selector:
+    app: "tier2-pod"
+  type: "LoadBalancer"
+  loadBalancerIP: ""
+  

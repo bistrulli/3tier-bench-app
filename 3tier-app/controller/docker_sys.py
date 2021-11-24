@@ -4,6 +4,8 @@ import time
 from pymemcache.client.base import Client
 import numpy as np
 import traceback
+import socket
+import requests as req
 
 class dockersys(system_interface):
     
@@ -14,23 +16,26 @@ class dockersys(system_interface):
     keys = ["think", "e1_bl", "e1_ex", "t1_hw", "e2_bl", "e2_ex", "t2_hw"]
     period = 100000
     isCpu=None
+    tier_socket=None
     
     def __init__(self,isCpu=False):
         self.dck_client = docker.from_env()
         self.sys=[]
         self.isCpu=isCpu
+        self.tier_socket={}
     
     def startClient(self,initPop):
         r=Client("localhost:11211")
         r.set("stop","0")
         
-        self.client_cnt=self.dck_client.containers.run(image="bistrulli/client:gke_0.3",
+        self.client_cnt=self.dck_client.containers.run(image="bistrulli/client:gke_0.4",
                               command="java -Xmx4G -jar client-0.0.1-SNAPSHOT-jar-with-dependencies.jar --initPop %d --queues \
                                       '[\"think\", \"e1_bl\", \"e1_ex\", \"t1_hw\", \"e2_bl\", \"e2_ex\", \"t2_hw\"]' \
                                        --jedisHost monitor.app --tier1Host tier1.app"%(initPop),
                               auto_remove=False,
                               detach=True,
                               name="client-cnt",
+                              ports={'3333/tcp': 3333},
                               hostname="client.app",
                               network="3tier-app_default",
                               stop_signal="SIGINT")
@@ -81,24 +86,26 @@ class dockersys(system_interface):
         
         self.waitRunning(self.sys[-1])
         
-        self.sys.append(self.dck_client.containers.run(image="bistrulli/tier2:gke_0.3",
+        self.sys.append(self.dck_client.containers.run(image="bistrulli/tier2:gke_0.4",
                               command=["java","-Xmx4G","-jar","tier2-0.0.1-SNAPSHOT-jar-with-dependencies.jar",
-                                       "--cpuEmu","%d"%cpuEmu,"--jedisHost","monitor.app"],
+                                       "--cpuEmu","%d"%cpuEmu,"--jedisHost","monitor.app","--cgv2","0"],
                               auto_remove=True,
                               detach=True,
                               name="tier2-cnt",
+                              ports={'13001/tcp': 13001},
                               hostname="tier2.app",
                               network="3tier-app_default",
                               stop_signal="SIGINT"))
         
         self.waitRunning(self.sys[-1])
         
-        self.sys.append(self.dck_client.containers.run(image="bistrulli/tier1:gke_0.3",
+        self.sys.append(self.dck_client.containers.run(image="bistrulli/tier1:gke_0.4",
                               command=["java","-Xmx4G","-jar","tier1-0.0.1-SNAPSHOT-jar-with-dependencies.jar",
-                                       "--cpuEmu","%d"%cpuEmu,"--jedisHost","monitor.app","--tier2Host","tier2.app"],
+                                       "--cpuEmu","%d"%cpuEmu,"--jedisHost","monitor.app","--tier2Host","tier2.app","--cgv2","0"],
                               auto_remove=True,
                               detach=True,
                               name="tier1-cnt",
+                              ports={'3000/tcp': 3000,'13000/tcp': 13000},
                               hostname="tier1.app",
                               network="3tier-app_default",
                               stop_signal="SIGINT"))
@@ -136,46 +143,67 @@ class dockersys(system_interface):
         if(not found):
             raise ValueError("container %s not found during cpulimit update"%(cnt_name))
         
-    def getstate(self,monitor):
-        N=2
-        str_state=[monitor.get(self.keys[i]) for i in range(len(self.keys))]
-        try:
-            estate = [float(str_state[i]) for i in range(len(str_state))]
-            astate = [float(str_state[0].decode('UTF-8'))]
-            
-            gidx = 1;
-            for i in range(0, N):
-                astate.append(float(str_state[gidx].decode('UTF-8')) + float(str_state[gidx + 1].decode('UTF-8')))
-                if(float(str_state[gidx])<0 or float(str_state[gidx + 1])<0):
-                    raise ValueError("Error! state < 0")
-                gidx += 3
-        except:
-            for i in range(len(self.keys)):
-                print(str_state[i],self.keys[i])
+    def getstate(self, monitor=None):
+        state = self.getStateTcp()
+        return [[state["think"], state["e1_bl"] + state["e1_ex"], state["e2_bl"] + state["e2_ex"]],
+                [state["think"], state["e1_bl"], state["e1_ex"], state["e2_bl"], state["e2_ex"]]]
+    
+    def getStateTcp(self):
+        tiers = [3333, 13000, 13001]
+        sys_state = {}
         
-        return [astate,estate]
+        for tier in tiers: 
+            msgFromServer = self.getTierTcpState(tier)
+                
+            states = msgFromServer.split("$")
+            for state in states:
+                if(state != None and state != ''):
+                    key, val = state.split(":")
+                    sys_state[key] = int(val)
+        
+        return sys_state
+    
+    def getTierTcpState(self, tier):
+        if("%d" % (tier) not in self.tier_socket):
+            # Create a TCP socket at client side
+            self.tier_socket["%d" % (tier)] = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            self.tier_socket["%d" % (tier)].setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
+            self.tier_socket["%d" % (tier)].connect(('localhost', tier))
+            msg = self.tier_socket["%d" % (tier)].recv(1024)
+            if(msg.decode("UTF-8").rstrip("\n") != "connected"):
+                raise ValueError("Error while connecting to tier %d msg=%s" % (tier,msg.decode("UTF-8").rstrip("\n")))
+        
+        self.tier_socket["%d" % (tier)].sendall("getState\n".encode("UTF-8"))
+        return self.tier_socket["%d" % (tier)].recv(1024).decode("UTF-8").rstrip("\n")
 
 
 if __name__ == "__main__":
     
     try:
-        dck_sys=dockersys(isCpu=False)
+        dck_sys=dockersys(isCpu=True)
         dck_sys.startSys()
-        dck_sys.startClient(30)
         
-        mnt=Client("localhost:11211")
-        
-        for i in range(100):
-            print(dck_sys.getstate(mnt))
-            time.sleep(0.2)
-        mnt.close()
-        
-        #dck_sys.setU(2, "tier1-k")
-        
-        dck_sys.stopClient()
-        dck_sys.stopSystem()
-    except Exception as e:
+        time.sleep(2)
+        print(dck_sys.getTierTcpState(13000))
+        r = req.get('http://localhost:3000/?entry=e1&snd=think&id=fe4d6c23-7fff-4a3a-b722-5cf87a163f73')
+        print(r)
+        print(dck_sys.getTierTcpState(13000))
+        # dck_sys.startClient(1)
+        #
+        # mnt=Client("localhost:11211")
+        #
+        # for i in range(100):
+        #      print(dck_sys.getstate())
+        #      time.sleep(0.2)
+        # mnt.close()
+        #
+        # #dck_sys.setU(2, "tier1-k")
+        #
+        # dck_sys.stopClient()
+        # dck_sys.stopSystem()
+    except Exception as ex:
         traceback.print_exception(type(ex), ex, ex.__traceback__)
+    finally:
         dck_sys.stopClient()
         dck_sys.stopSystem()
     
