@@ -384,7 +384,7 @@ if __name__ == "__main__":
             g.set("t1_hw", "%f" % (1))
             g.set("t2_hw", "%f" % (1))
             jvm_sys.setU(1.0, "tier1")
-            jvm_sys.setU(s2, "tier2")
+            jvm_sys.setU(1.0, "tier2")
             
             X = []
             for i in range(360):
