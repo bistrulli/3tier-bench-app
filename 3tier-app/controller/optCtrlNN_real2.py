@@ -340,7 +340,7 @@ if __name__ == "__main__":
                 #     r.set("t2_hw",str(optU[2]))
                 # #r.mset({"t1_hw":str(np.round(optU[1],4)),"t2_hw":str(np.round(optU[2],4))})
                 # else:
-                #optU=[0,9.57555318,7.32977541]
+                optU=[0,5.22,4.46]
                 r.set("t1_hw",str(optU[1]))
                 r.set("t2_hw",str(optU[2]))
                 plant.setU(optU[1],"tier1")
