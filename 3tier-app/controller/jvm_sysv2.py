@@ -366,7 +366,7 @@ class jvm_sys(system_interface):
     def closeStateMonitor(self):
         for idx,key in enumerate(self.tier_socket):
             self.tier_socket[key].sendall("q\n".encode("UTF-8"))
-            del self.tier_socket[key]
+        self.tier_socket={}
        
             
 if __name__ == "__main__":

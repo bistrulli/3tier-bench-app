@@ -348,9 +348,6 @@ if __name__ == "__main__":
                 # print(optU)
                 
                 print(state[1],tgt,np.sum(XSSIM[:, step]),step,optU[1:N])
-                
-                if(step%20==0):
-                    plant.closeStateMonitor()
                             
                 optSNN[:, step] = optU[0:N]
                 tgtStory += [tgt]
@@ -361,6 +358,9 @@ if __name__ == "__main__":
                 # optSPid=mitigateBottleneck(optSPid, Xsim3, tgt)
                 
                 step+=1
+                
+                if(step%20==0):
+                    plant.closeStateMonitor()
              
             # print("NN Reference error %f%% \nODE Reference error %f%% \n"%(np.abs(XSNN[0,-1]-tgt)*100/tgt,np.abs(XSODE[0,-1]-tgt)*100/tgt))
             plt.close('all')
