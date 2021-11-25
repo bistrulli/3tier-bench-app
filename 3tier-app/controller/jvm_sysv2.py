@@ -39,7 +39,7 @@ class jvm_sys(system_interface):
         r.set("started", "0")
         r.close()
         
-        subprocess.Popen([javaCmd, "-Xmx6G",
+        subprocess.Popen([javaCmd, "-Xmx15G",
                          "-Djava.compiler=NONE", "-jar",
                          '%sclient/target/client-0.0.1-SNAPSHOT-jar-with-dependencies.jar' % (self.sysRootPath),
                          '--initPop', '%d' % (pop), '--jedisHost', 'localhost', '--tier1Host', 'localhost',
@@ -86,8 +86,7 @@ class jvm_sys(system_interface):
         
         if(not self.isCpu):
             subprocess.Popen([javaCmd,
-                            "-Xmx6G", "-Xms6G",
-                             "-XX:+AlwaysPreTouch",
+                            "-Xmx15G", "-Xms15G",
                              "-Djava.compiler=NONE", "-jar",
                              '%stier2/target/tier2-0.0.1-SNAPSHOT-jar-with-dependencies.jar' % (self.sysRootPath),
                              '--cpuEmu', '%d' % (cpuEmu), '--jedisHost', 'localhost'])
@@ -96,7 +95,7 @@ class jvm_sys(system_interface):
             self.sys.append(self.findProcessIdByName("tier2-0.0.1")[0])
             
             subprocess.Popen([javaCmd,
-                            "-Xmx6G", "-Xms6G",
+                            "-Xmx15G", "-Xms15G",
                              "-Djava.compiler=NONE", "-jar",
                              '%stier1/target/tier1-0.0.1-SNAPSHOT-jar-with-dependencies.jar' % (self.sysRootPath),
                              '--cpuEmu', "%d" % (cpuEmu), '--jedisHost', 'localhost',
@@ -106,7 +105,7 @@ class jvm_sys(system_interface):
             self.sys.append(self.findProcessIdByName("tier1-0.0.1")[0])
         else:
             subprocess.Popen([ javaCmd, 
-                             "-Xmx6G", "-Xms6G",
+                             "-Xmx15G", "-Xms15G",
                              "-Djava.compiler=NONE", "-jar", "-Xint",
                              '%stier2/target/tier2-0.0.1-SNAPSHOT-jar-with-dependencies.jar' % (self.sysRootPath),
                              '--cpuEmu', '%d' % (cpuEmu), '--jedisHost', 'localhost',
@@ -115,8 +114,7 @@ class jvm_sys(system_interface):
             self.sys.append(self.findProcessIdByName("tier2-0.0.1")[0])
             
             subprocess.Popen([javaCmd,
-                            "-Xmx6G", "-Xms6G",
-                            "-XX:+AlwaysPreTouch",
+                            "-Xmx15G", "-Xms15G",
                              "-Djava.compiler=NONE", "-jar", "-Xint",
                              '%stier1/target/tier1-0.0.1-SNAPSHOT-jar-with-dependencies.jar' % (self.sysRootPath),
                              '--cpuEmu', "%d" % (cpuEmu), '--jedisHost', 'localhost',
