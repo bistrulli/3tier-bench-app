@@ -349,7 +349,7 @@ if __name__ == "__main__":
                 
                 print(state[1],tgt,np.sum(XSSIM[:, step]),step,optU[1:N])
                 
-                if(step%40==0):
+                if(step%20==0):
                     plant.closeStateMonitor()
                             
                 optSNN[:, step] = optU[0:N]
