@@ -375,15 +375,15 @@ if __name__ == "__main__":
         g = None
         jvm_sys = jvm_sys("../", isCpu)
         
-        while(r.get("sim")==None):
-                print("waiting sim to start")
-                time.sleep(0.2)
-        
         for i in range(1):
             jvm_sys.startSys()
             jvm_sys.startClient(40,sim=True)
             
             g = Client("localhost:11211")
+            
+            while(g.get("sim")==None):
+                print("waiting sim to start")
+                time.sleep(0.2)
             
             g.set("t1_hw", "%f" % (100))
             g.set("t2_hw", "%f" % (100))
