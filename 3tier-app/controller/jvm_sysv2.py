@@ -365,9 +365,7 @@ class jvm_sys(system_interface):
     
     def closeStateMonitor(self):
         for idx,key in enumerate(self.tier_socket):
-            print("closing %s"%(key))
             self.tier_socket[key].sendall("q\n".encode("UTF-8"))
-            
         self.tier_socket={}
        
             

@@ -26,7 +26,7 @@ public class Tier1HTTPHandler extends TierHttpHandler {
 
 	public Tier1HTTPHandler(SimpleTask lqntask, HttpExchange req, long stime) {
 		super(lqntask, req, stime);
-		this.client = HttpClient.newBuilder().version(Version.HTTP_1_1).build();
+		//this.client = HttpClient.newBuilder().version(Version.HTTP_1_1).build();
 	}
 
 	public void handleResponse(HttpExchange req, String requestParamValue) throws InterruptedException, IOException {
@@ -38,6 +38,7 @@ public class Tier1HTTPHandler extends TierHttpHandler {
 		context.put("task", "Tier1");
 		context.put("entry", "e1");
 
+		client = HttpClient.newBuilder().version(Version.HTTP_1_1).build();
 		HttpRequest request = HttpRequest.newBuilder().uri(URI.create("http://"+Tier1HTTPHandler.getTier2Host()+":3001/?&entry=e2" + "&snd=" + this.getName())).build();
 		try {
 			this.measureEgress();

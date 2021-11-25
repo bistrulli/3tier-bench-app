@@ -52,6 +52,11 @@ public class Client implements Runnable {
 			
 			while (!this.dying) {
 				
+				client = HttpClient.newBuilder().version(Version.HTTP_1_1).build();
+				request = HttpRequest.newBuilder()
+						.uri(URI.create("http://"+Client.getTier1Host()+":3000/?id=" + this.clietId.toString() + "&entry=e1" + "&snd=think"))
+						.build();
+				
 				SimpleTask.getLogger().debug(String.format("%s thinking", thinking));
 				TimeUnit.MILLISECONDS.sleep(Double.valueOf(this.dist.sample()).longValue());
 

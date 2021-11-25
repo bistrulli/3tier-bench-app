@@ -63,7 +63,7 @@ public class RandomStep implements Runnable {
 
 	private void tick() {
 		int nc=0;
-		if (this.tick % 1800 == 0) {
+		if (this.tick % 900 == 0) {
 			if(this.rnd.nextBoolean()) {
 				nc=this.rnd.nextInt(100-this.workGenerator.getThreadpool().getCorePoolSize());
 				System.out.println(String.format("delta clients %d-%d", nc,this.workGenerator.getThreadpool().getCorePoolSize()));
