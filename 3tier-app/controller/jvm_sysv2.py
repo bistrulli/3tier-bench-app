@@ -87,8 +87,6 @@ class jvm_sys(system_interface):
         if(not self.isCpu):
             subprocess.Popen([javaCmd,
                             "-Xmx6G", "-Xms6G",
-                             # "-XX:ParallelGCThreads=1",
-                             # "-XX:+UnlockExperimentalVMOptions","-XX:+UseEpsilonGC",
                              "-XX:+AlwaysPreTouch",
                              "-Djava.compiler=NONE", "-jar",
                              '%stier2/target/tier2-0.0.1-SNAPSHOT-jar-with-dependencies.jar' % (self.sysRootPath),
@@ -99,8 +97,6 @@ class jvm_sys(system_interface):
             
             subprocess.Popen([javaCmd,
                             "-Xmx6G", "-Xms6G",
-                             # "-XX:ParallelGCThreads=1",
-                             # "-XX:+UnlockExperimentalVMOptions","-XX:+UseEpsilonGC",
                              "-Djava.compiler=NONE", "-jar",
                              '%stier1/target/tier1-0.0.1-SNAPSHOT-jar-with-dependencies.jar' % (self.sysRootPath),
                              '--cpuEmu', "%d" % (cpuEmu), '--jedisHost', 'localhost',
@@ -366,6 +362,11 @@ class jvm_sys(system_interface):
         finally:
             self.stopSystem()
             r.close()
+    
+    def closeStateMonitor(self):
+        for idx,key in enumerate(self.tier_socket):
+            self.tier_socket[key].sendall("q\n".encode("UTF-8"))
+            del self.tier_socket[key]
        
             
 if __name__ == "__main__":
@@ -374,16 +375,20 @@ if __name__ == "__main__":
         g = None
         jvm_sys = jvm_sys("../", isCpu)
         
+        while(r.get("sim")==None):
+                print("waiting sim to start")
+                time.sleep(0.2)
+        
         for i in range(1):
             jvm_sys.startSys()
             jvm_sys.startClient(40,sim=True)
             
             g = Client("localhost:11211")
             
-            g.set("t1_hw", "%f" % (1))
-            g.set("t2_hw", "%f" % (1))
-            jvm_sys.setU(1.0, "tier1")
-            jvm_sys.setU(1.0, "tier2")
+            g.set("t1_hw", "%f" % (100))
+            g.set("t2_hw", "%f" % (100))
+            # jvm_sys.setU(1.0, "tier1")
+            # jvm_sys.setU(1.0, "tier2")
             
             X = []
             for i in range(360):
@@ -417,6 +422,7 @@ if __name__ == "__main__":
     finally:
         jvm_sys.stopClient()
         jvm_sys.stopSystem()
+        jvm_sys.closeStateMonitor()
         if(g is not None):
             g.close()
         

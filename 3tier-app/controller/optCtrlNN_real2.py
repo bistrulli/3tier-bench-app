@@ -484,6 +484,7 @@ if __name__ == "__main__":
     finally:
         plant.stopClient()
         plant.stopSystem()
+        plant.closeStateMonitor()
         #pass
         # killClient()
         # time.sleep(5)
