@@ -358,9 +358,6 @@ if __name__ == "__main__":
                 # optSPid=mitigateBottleneck(optSPid, Xsim3, tgt)
                 
                 step+=1
-                
-                if(step%20==0):
-                    plant.closeStateMonitor()
              
             # print("NN Reference error %f%% \nODE Reference error %f%% \n"%(np.abs(XSNN[0,-1]-tgt)*100/tgt,np.abs(XSODE[0,-1]-tgt)*100/tgt))
             plt.close('all')
