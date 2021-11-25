@@ -69,6 +69,7 @@ public class Client implements Runnable {
 				
 				
 			}
+			thinking = this.task.getState().get("think").decrementAndGet();
 			SimpleTask.getLogger().debug(String.format(" user %s stopped", this.clietId));
 		} catch (IOException e1) {
 			e1.printStackTrace();
