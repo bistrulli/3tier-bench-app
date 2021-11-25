@@ -321,8 +321,8 @@ if __name__ == "__main__":
                     # r.set("t2_hw",str(110))
                     
                 #print(r.get("sim").decode('UTF-8'))
-                
-                XSSIM[:, step] = plant.getstate(r)[0]
+                state=plant.getstate(r)
+                XSSIM[:, step] = state[0]
                 #tgt = np.round(alfa[-1] * 0.884 * np.sum(XSSIM[:, step]), 5)
                 
                 if(step > 0):
@@ -347,7 +347,7 @@ if __name__ == "__main__":
                 plant.setU(optU[2],"tier2")
                 # print(optU)
                 
-                print(XSSIM[:, step],tgt,np.sum(XSSIM[:, step]),step,optU[1:N])
+                print(state[1],tgt,np.sum(XSSIM[:, step]),step,optU[1:N])
                             
                 optSNN[:, step] = optU[0:N]
                 tgtStory += [tgt]
