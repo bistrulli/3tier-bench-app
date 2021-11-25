@@ -39,11 +39,9 @@ class jvm_sys(system_interface):
         r.set("started", "0")
         r.close()
         
-        subprocess.Popen([javaCmd, "-Xmx8G", "-Xms8G",
-                          "-XX:+AlwaysPreTouch",
-                          "-XX:+UnlockExperimentalVMOptions",
-                          "-XX:+UseEpsilonGC","-Djava.compiler=NONE", "-Xint", 
-                         "-jar",'%sclient/target/client-0.0.1-SNAPSHOT-jar-with-dependencies.jar' % (self.sysRootPath),
+        subprocess.Popen([javaCmd, "-Xmx6G",
+                         "-Djava.compiler=NONE", "-jar",
+                         '%sclient/target/client-0.0.1-SNAPSHOT-jar-with-dependencies.jar' % (self.sysRootPath),
                          '--initPop', '%d' % (pop), '--jedisHost', 'localhost', '--tier1Host', 'localhost',
                          '--queues', '[\"think\", \"e1_bl\", \"e1_ex\", \"t1_hw\", \"e2_bl\", \"e2_ex\", \"t2_hw\"]',
                          '--sim',"%d"%(int(sim))])
@@ -97,8 +95,10 @@ class jvm_sys(system_interface):
             self.waitTier2()
             self.sys.append(self.findProcessIdByName("tier2-0.0.1")[0])
             
-            subprocess.Popen([javaCmd,"-Djava.compiler=NONE", 
-                             "-Xint","-jar", '%stier1/target/tier1-0.0.1-SNAPSHOT-jar-with-dependencies.jar' % (self.sysRootPath),
+            subprocess.Popen([javaCmd,
+                            "-Xmx6G", "-Xms6G",
+                             "-Djava.compiler=NONE", "-jar",
+                             '%stier1/target/tier1-0.0.1-SNAPSHOT-jar-with-dependencies.jar' % (self.sysRootPath),
                              '--cpuEmu', "%d" % (cpuEmu), '--jedisHost', 'localhost',
                              "--tier2Host", "localhost"])
             
@@ -106,11 +106,8 @@ class jvm_sys(system_interface):
             self.sys.append(self.findProcessIdByName("tier1-0.0.1")[0])
         else:
             subprocess.Popen([ javaCmd, 
-                              "-Xmx8G", "-Xms8G",
-                              "-XX:+AlwaysPreTouch",
-                              "-XX:+UnlockExperimentalVMOptions",
-                              "-XX:+UseEpsilonGC","-Djava.compiler=NONE", 
-                             "-Xint","-jar",
+                             "-Xmx6G", "-Xms6G",
+                             "-Djava.compiler=NONE", "-jar", "-Xint",
                              '%stier2/target/tier2-0.0.1-SNAPSHOT-jar-with-dependencies.jar' % (self.sysRootPath),
                              '--cpuEmu', '%d' % (cpuEmu), '--jedisHost', 'localhost',
                              '--cgv2','1'])
@@ -118,7 +115,7 @@ class jvm_sys(system_interface):
             self.sys.append(self.findProcessIdByName("tier2-0.0.1")[0])
             
             subprocess.Popen([javaCmd,
-                            "-Xmx8G", "-Xms8G",
+                            "-Xmx6G", "-Xms6G",
                             "-XX:+AlwaysPreTouch",
                              "-Djava.compiler=NONE", "-jar", "-Xint",
                              '%stier1/target/tier1-0.0.1-SNAPSHOT-jar-with-dependencies.jar' % (self.sysRootPath),
