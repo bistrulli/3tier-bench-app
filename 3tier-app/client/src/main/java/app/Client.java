@@ -59,13 +59,15 @@ public class Client implements Runnable {
 				this.task.getState().get("think").decrementAndGet();
 				HttpResponse<String> resp = client.send(request, BodyHandlers.ofString());
 				
+				thinking = this.task.getState().get("think").incrementAndGet();
+				
 				if (Client.getToKill().get() > 0) {
 					Client.toKill.decrementAndGet();
 					this.dying = true;
 					break;
 				}
 				
-				thinking = this.task.getState().get("think").incrementAndGet();
+				
 			}
 			SimpleTask.getLogger().debug(String.format(" user %s stopped", this.clietId));
 		} catch (IOException e1) {

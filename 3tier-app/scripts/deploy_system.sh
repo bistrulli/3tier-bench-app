@@ -23,4 +23,4 @@ kubectl apply -f ../controller/vpa_tier1.yaml
 kubectl apply -f ../controller/vpa_tier2.yaml
 
 #sleep 3
-#kubectl apply -f ../client/deploy.yaml
+kubectl apply -f ../client/deploy.yaml

@@ -20,6 +20,8 @@ from pymemcache.client.base import Client
 import yaml
 import re
 from scipy import integrate
+import socket
+import scipy.io as sp
 
 
 client = docker.from_env()
@@ -30,6 +32,7 @@ period = 100000
 sys = None
 tier1= None
 tier2= None
+tier_socket={}
 
 # tf.compat.v1.disable_eager_execution()
 
@@ -39,8 +42,10 @@ def get_vpaout(vpa_name):
     out,error = p.communicate()
     yaml_out=yaml.safe_load(out.decode('UTF-8'))
     
-    temp=re.findall(r'\d+', yaml_out["status"]["recommendation"]["containerRecommendations"][0]["target"]["cpu"])
-    return  list(map(float, temp))[0]
+    lwb=re.findall(r'\d+', yaml_out["status"]["recommendation"]["containerRecommendations"][0]["lowerBound"]["cpu"])
+    upb=re.findall(r'\d+', yaml_out["status"]["recommendation"]["containerRecommendations"][0]["upperBound"]["cpu"])
+    trgt=re.findall(r'\d+', yaml_out["status"]["recommendation"]["containerRecommendations"][0]["target"]["cpu"])
+    return  np.array([list(map(float, lwb))[0],list(map(float, trgt))[0],list(map(float, upb))[0]])
 
 def pruneContainer():
     subprocess.call(["docker", "container", "prune", "-f"])
@@ -251,27 +256,46 @@ def resetU():
 
 
 def getstate(r, keys, N):
-    # str_state=[r.get(keys[i]) for i in range(len(keys))]
-    # try:
-    #     if(str_state[0]==None):
-    #         astate = [0]
-    #     else:
-    #         astate = [float(str_state[0])]
-    #
-    #     gidx = 1;
-    #     for i in range(1, N):
-    #         astate.append(float(str_state[gidx]) + float(str_state[gidx + 1]))
-    #         if(float(str_state[gidx])<0 or float(str_state[gidx + 1])<0):
-    #             raise ValueError("Error! state < 0")
-    #         gidx += 3
-    # except:
-    #     print(time.asctime())
-    #     for i in range(len(keys)):
-    #         print(str_state[i],keys[i])
-    #
-    # return astate
-    return [float(r.get("think")),0.,0.]
+    state = getStateTcp()
+    return [state["think"], state["e1_bl"] + state["e1_ex"], state["e2_bl"] + state["e2_ex"]]
+        
 
+def getStateTcp():
+    tier_ports = [3333, 13000, 13001]
+    tier_addrs = ["client-mnt", "tier1-mnt", "tier2-mnt"]
+    sys_state = {}
+    
+    for idx in range(len(tier_ports)):
+        tier_port=tier_ports[idx]
+        tier_addr=tier_addrs[idx]
+        msgFromServer = getTierTcpState(tier_addr,tier_port)
+            
+        states = msgFromServer.split("$")
+        for state in states:
+            if(state != None and state != ''):
+                key, val = state.split(":")
+                sys_state[key] = int(val)
+                
+    return sys_state
+
+def getTierTcpState(tier_addr,tier_port):
+    global tier_socket
+    if("%s:%d" %(tier_addr,tier_port) not in tier_socket):
+        # Create a TCP socket at client side
+        tier_socket["%s:%d" %(tier_addr,tier_port)] = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        tier_socket["%s:%d" %(tier_addr,tier_port)].setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
+        tier_socket["%s:%d" %(tier_addr,tier_port)].connect((tier_addr, tier_port))
+        msg = tier_socket["%s:%d" %(tier_addr,tier_port)].recv(1024)
+        if(msg.decode("UTF-8").rstrip("\n") != "connected"):
+            raise ValueError("Error while connecting to tier msg=%s" % (msg.decode("UTF-8").rstrip("\n")))
+    
+    tier_socket["%s:%d" %(tier_addr,tier_port)].sendall("getState\n".encode("UTF-8"))
+    return tier_socket["%s:%d" %(tier_addr,tier_port)].recv(1024).decode("UTF-8").rstrip("\n")
+
+def closeMonitor():
+    global tier_socket
+    for idx,key in enumerate(tier_socket):
+        tier_socket[key].sendall("q\n".encode("UTF-8"))
 
 
 
@@ -428,7 +452,7 @@ if __name__ == "__main__":
     dt = 10 ** (-1)
     H = 5
     N = 3
-    rep = 1
+    rep = 10
     drep = 0
     sTime = 10000
     TF = sTime * rep * dt;
@@ -443,7 +467,9 @@ if __name__ == "__main__":
     optSNN = np.zeros([N, XSNN.shape[1]])
     optSMD = np.zeros([N, XSNN.shape[1]])
     optSPID = np.zeros([N, XSNN.shape[1]])
-    optSGKE = np.zeros([N, XSNN.shape[1]])
+    optSGKEt = np.zeros([N, XSNN.shape[1]])
+    optSGKEl = np.zeros([N, XSNN.shape[1]])
+    optSGKEu = np.zeros([N, XSNN.shape[1]])
     P = np.matrix([[0, 1., 0], [0, 0, 1.], [1., 0, 0]])
     S = np.matrix([-1, -1, -1]).T
     MU = np.matrix([1, 10, 10]).T
@@ -509,7 +535,7 @@ if __name__ == "__main__":
                 #print(r.get("sim").decode('UTF-8'))
                 
                 XSSIM[:, step] = getstate(r, keys, N)
-                tgt = np.round(alfa[-1] * 0.82 * np.sum(XSSIM[:, step]), 5)
+                #tgt = np.round(alfa[-1] * 0.82 * np.sum(XSSIM[:, step]), 5)
                 
                 
                 if(step > 0):
@@ -532,7 +558,11 @@ if __name__ == "__main__":
                 print(XSSIM[:, step],tgt,np.sum(XSSIM[:, step]),step,optU[1:3])
                             
                 optSNN[:, step] = optU[0:N]
-                optSGKE[:,step] = [0,get_vpaout("tier1-vpa")/1000.0,get_vpaout("tier2-vpa")/1000.0]
+                gket1=get_vpaout("tier1-vpa")/1000.0
+                gket2=get_vpaout("tier2-vpa")/1000.0
+                optSGKEl[:,step] = [0,gket1[0],gket2[0]]
+                optSGKEt[:,step] = [0,gket1[1],gket2[1]]
+                optSGKEu[:,step] = [0,gket1[2],gket2[2]]
                 tgtStory += [tgt]
                 
                 time.sleep(0.1)
@@ -646,7 +676,9 @@ if __name__ == "__main__":
             plt.figure()
             plt.title("Control Signals GKE")
             for i in range(1, N):
-                plt.plot(optSGKE[i,0:min(step,len(tgtStory))].T, label="Tier_%d" % (i))
+                plt.plot(optSGKEl[i,0:min(step,len(tgtStory))].T, label="Tier_%d_lb" % (i))
+                plt.plot(optSGKEt[i,0:min(step,len(tgtStory))].T, label="Tier_%d_tgt" % (i))
+                plt.plot(optSGKEu[i,0:min(step,len(tgtStory))].T, label="Tier_%d_ub" % (i))
             plt.legend()
             plt.savefig("./figure/controlGKE.png")
             
@@ -660,19 +692,23 @@ if __name__ == "__main__":
             #print(np.mean(optSPID[1:,:], axis=1))
             #print(np.mean(optSMD[1:,:], axis=1))
             print("NN core",np.mean(optSNN[1:,0:min(step,len(tgtStory))], axis=1))  
-            print("GKE Core",np.mean(optSGKE[1:,0:min(step,len(tgtStory))], axis=1)) 
+            print("GKE Core_u",np.mean(optSGKEu[1:,0:min(step,len(tgtStory))], axis=1))
+            print("GKE Core_t",np.mean(optSGKEt[1:,0:min(step,len(tgtStory))], axis=1))
             
-            print("NN core int",integrate.trapezoid(y=optSNN[1,0:min(step,len(tgtStory))],dx=2.3),
-                  integrate.trapezoid(y=optSNN[2,0:min(step,len(tgtStory))],dx=2.3))
-            print("GKE core int",integrate.trapezoid(y=optSGKE[1,0:min(step,len(tgtStory))],dx=2.3),
-                  integrate.trapezoid(y=optSGKE[2,0:min(step,len(tgtStory))],dx=2.3))
+            sp.savemat("gke_data.mat",{"NN":optSNN[1:,0:min(step,len(tgtStory))],
+                                       "GKEu":optSGKEu[1:,0:min(step,len(tgtStory))],
+                                       "GKEt":optSGKEt[1:,0:min(step,len(tgtStory))]}) 
+            # print("NN core int",integrate.trapezoid(y=optSNN[1,0:min(step,len(tgtStory))],dx=2.3),
+            #       integrate.trapezoid(y=optSNN[2,0:min(step,len(tgtStory))],dx=2.3))
+            # print("GKE core int",integrate.trapezoid(y=optSGKE[1,0:min(step,len(tgtStory))],dx=2.3),
+            #       integrate.trapezoid(y=optSGKE[2,0:min(step,len(tgtStory))],dx=2.3))
     
             plt.show()
             
     
     finally:
-        pass
         # killClient()
         # time.sleep(5)
         # killSys()
         #killDockerCmp()
+        closeMonitor()

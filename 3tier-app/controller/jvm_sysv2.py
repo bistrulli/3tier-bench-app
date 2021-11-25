@@ -101,7 +101,6 @@ class jvm_sys(system_interface):
                             "-Xmx6G", "-Xms6G",
                              # "-XX:ParallelGCThreads=1",
                              # "-XX:+UnlockExperimentalVMOptions","-XX:+UseEpsilonGC",
-                             "-XX:+AlwaysPreTouch",
                              "-Djava.compiler=NONE", "-jar",
                              '%stier1/target/tier1-0.0.1-SNAPSHOT-jar-with-dependencies.jar' % (self.sysRootPath),
                              '--cpuEmu', "%d" % (cpuEmu), '--jedisHost', 'localhost',
@@ -112,7 +111,6 @@ class jvm_sys(system_interface):
         else:
             subprocess.Popen([ javaCmd, 
                               "-Xmx6G", "-Xms6G",
-                              "-XX:+AlwaysPreTouch",
                              "-Djava.compiler=NONE", "-jar", "-Xint",
                              '%stier2/target/tier2-0.0.1-SNAPSHOT-jar-with-dependencies.jar' % (self.sysRootPath),
                              '--cpuEmu', '%d' % (cpuEmu), '--jedisHost', 'localhost',
@@ -289,12 +287,12 @@ class jvm_sys(system_interface):
         return [[state["think"], state["e1_bl"] + state["e1_ex"], state["e2_bl"] + state["e2_ex"]],
                 [state["think"], state["e1_bl"], state["e1_ex"], state["e2_bl"], state["e2_ex"]]]
         
-    def getStateNetStat(self):
-        cmd = "netstat -anp | grep :80 | grep ESTABLISHED | wc -l"
-        ps = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-        start = time.time()
-        output = ps.communicate()[0]
-        print(output, time.time() - start)
+    # def getStateNetStat(self):
+    #     cmd = "netstat -anp | grep :80 | grep ESTABLISHED | wc -l"
+    #     ps = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    #     start = time.time()
+    #     output = ps.communicate()[0]
+    #     print(output, time.time() - start)
     
     def getStateTcp(self):
         tiers = [3333, 13000, 13001]

@@ -17,10 +17,10 @@ spec:
     spec:
       containers:
       - name: "tier1-pod"
-        image: "bistrulli/tier1:gke_0.5"
+        image: "bistrulli/tier1:gke_0.7"
         imagePullPolicy: "Always"
-        command: ["java","-Xmx4G","-jar","tier1-0.0.1-SNAPSHOT-jar-with-dependencies.jar","--cpuEmu","0","--jedisHost","monitor",\
-                  "--tier2Host","tier2","--cgv2","0"]
+        command: ["sleep", "1d"]
+        #command: ["java","-Xmx6G","-Xms6G","-Djava.compiler=NONE","-jar","tier1-0.0.1-SNAPSHOT-jar-with-dependencies.jar","--cpuEmu","0","--jedisHost","monitor","--tier2Host","tier2","--cgv2","0"]
         #resources:
           #limits:
             #cpu: "25000m"

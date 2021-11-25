@@ -28,7 +28,7 @@ class dockersys(system_interface):
         r=Client("localhost:11211")
         r.set("stop","0")
         
-        self.client_cnt=self.dck_client.containers.run(image="bistrulli/client:gke_0.6",
+        self.client_cnt=self.dck_client.containers.run(image="bistrulli/client:gke_0.7",
                               command="java -Xmx4G -jar client-0.0.1-SNAPSHOT-jar-with-dependencies.jar --initPop %d --queues \
                                       '[\"think\", \"e1_bl\", \"e1_ex\", \"t1_hw\", \"e2_bl\", \"e2_ex\", \"t2_hw\"]' \
                                        --sim 1 --jedisHost monitor.app --tier1Host tier1.app"%(initPop),
@@ -88,8 +88,11 @@ class dockersys(system_interface):
         
         self.waitRunning(self.sys[-1])
         
-        self.sys.append(self.dck_client.containers.run(image="bistrulli/tier2:gke_0.6",
-                              command=["java","-Xmx4G","-jar","tier2-0.0.1-SNAPSHOT-jar-with-dependencies.jar",
+        self.sys.append(self.dck_client.containers.run(image="bistrulli/tier2:gke_0.7",
+                              command=["java",
+                                       "-Xmx6G", "-Xms6G",
+                                       "-Djava.compiler=NONE",
+                                       "-jar","tier2-0.0.1-SNAPSHOT-jar-with-dependencies.jar",
                                        "--cpuEmu","%d"%cpuEmu,"--jedisHost","monitor.app","--cgv2","0"],
                               auto_remove=True,
                               detach=True,
@@ -101,8 +104,11 @@ class dockersys(system_interface):
         
         self.waitRunning(self.sys[-1])
         
-        self.sys.append(self.dck_client.containers.run(image="bistrulli/tier1:gke_0.6",
-                              command=["java","-Xmx4G","-jar","tier1-0.0.1-SNAPSHOT-jar-with-dependencies.jar",
+        self.sys.append(self.dck_client.containers.run(image="bistrulli/tier1:gke_0.7",
+                              command=["java",
+                                       "-Xmx6G", "-Xms6G",
+                                       "-Djava.compiler=NONE",
+                                       "-jar","tier1-0.0.1-SNAPSHOT-jar-with-dependencies.jar",
                                        "--cpuEmu","%d"%cpuEmu,"--jedisHost","monitor.app","--tier2Host","tier2.app","--cgv2","0"],
                               auto_remove=True,
                               detach=True,

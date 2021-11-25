@@ -17,7 +17,12 @@ spec:
     spec:
       containers:
       - name: "client-pod"
-        image: "bistrulli/client:gke_0.5"
+        image: "bistrulli/client:gke_0.7"
         imagePullPolicy: "Always"
-        command: ["java","-Xmx4G","-jar","client-0.0.1-SNAPSHOT-jar-with-dependencies.jar","--initPop","40",\
-                  ,"--queues",'["think", "e1_bl", "e1_ex", "t1_hw", "e2_bl", "e2_ex", "t2_hw"]',"--jedisHost","monitor","--tier1Host","tier1"]
+        command: ["sleep", "1d"]
+#        command: ["java",\
+#                  "-Xmx6G", "-Xms6G",\
+#                  "-jar","client-0.0.1-SNAPSHOT-jar-with-dependencies.jar","--initPop","40",\
+#                  "--sim","1","--queues",'["think", "e1_bl", "e1_ex", "t1_hw", "e2_bl", "e2_ex", "t2_hw"]',\
+#                  "--jedisHost","monitor","--tier1Host","tier1"]
+                  
