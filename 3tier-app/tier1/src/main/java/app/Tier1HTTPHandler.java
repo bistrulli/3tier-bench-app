@@ -3,7 +3,6 @@ package app;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
-import java.net.http.HttpClient;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
@@ -20,11 +19,9 @@ import Server.TierHttpHandler;
 public class Tier1HTTPHandler extends TierHttpHandler {
 
 	private static String tier2Host = null;
-	HttpClient client = null;
 
 	public Tier1HTTPHandler(SimpleTask lqntask, HttpExchange req, long stime) {
 		super(lqntask, req, stime);
-		// this.client = HttpClient.newBuilder().version(Version.HTTP_1_1).build();
 	}
 
 	public void handleResponse(HttpExchange req, String requestParamValue) throws InterruptedException, IOException {
@@ -36,16 +33,9 @@ public class Tier1HTTPHandler extends TierHttpHandler {
 		context.put("task", "Tier1");
 		context.put("entry", "e1");
 
-//		HttpRequest request = HttpRequest.newBuilder()
-//				.uri(URI.create(
-//						"http://" + Tier1HTTPHandler.getTier2Host() + ":3001/?&entry=e2" + "&snd=" + this.getName()))
-//				.header("Connection", "close").build();
-
 		HttpResponse<String> resp = null;
 		try {
 			this.measureEgress();
-			// HttpResponse<String> resp = this.client.send(request,
-			// BodyHandlers.ofString());
 			resp = Unirest.get(URI
 					.create("http://" + Tier1HTTPHandler.getTier2Host() + ":3001/?&entry=e2" + "&snd=" + this.getName())
 					.toString()).header("Connection", "close").asString();
