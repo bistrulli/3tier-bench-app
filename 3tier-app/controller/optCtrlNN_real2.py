@@ -352,7 +352,7 @@ if __name__ == "__main__":
                 optSNN[:, step] = optU[0:N]
                 tgtStory += [tgt]
                 
-                time.sleep(2)
+                time.sleep(0.1)
                 
                 # optSPID[:,step]=optSPid
                 # optSPid=mitigateBottleneck(optSPid, Xsim3, tgt)
