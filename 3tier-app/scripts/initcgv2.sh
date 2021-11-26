@@ -1,7 +1,7 @@
 #!/bin/bash
 
 sudo su
-cd /sys/fs/group
+cd /sys/fs/cgroup
 echo "+cpu" > cgroup.subtree_control
 cat cgroup.subtree_control
 mkdir t1
@@ -15,7 +15,7 @@ cat cgroup.subtree_control
 echo "threaded" > cgroup.type
 cat cgroup.type
 
-cd /sys/fs/group
+cd /sys/fs/cgroup
 echo "+cpu" > cgroup.subtree_control
 cat cgroup.subtree_control
 mkdir t2
