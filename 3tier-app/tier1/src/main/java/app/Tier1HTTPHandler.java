@@ -4,20 +4,17 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
 import java.net.http.HttpClient;
-import java.net.http.HttpClient.Version;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.net.http.HttpResponse.BodyHandlers;
-import java.time.Duration;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
 import com.hubspot.jinjava.Jinjava;
+import com.mashape.unirest.http.HttpResponse;
+import com.mashape.unirest.http.Unirest;
+import com.mashape.unirest.http.exceptions.UnirestException;
 import com.sun.net.httpserver.HttpExchange;
 
 import Server.SimpleTask;
 import Server.TierHttpHandler;
-import jni.GetThreadID;
 
 @SuppressWarnings("restriction")
 public class Tier1HTTPHandler extends TierHttpHandler {
@@ -27,7 +24,7 @@ public class Tier1HTTPHandler extends TierHttpHandler {
 
 	public Tier1HTTPHandler(SimpleTask lqntask, HttpExchange req, long stime) {
 		super(lqntask, req, stime);
-		this.client = HttpClient.newBuilder().version(Version.HTTP_1_1).build();
+		// this.client = HttpClient.newBuilder().version(Version.HTTP_1_1).build();
 	}
 
 	public void handleResponse(HttpExchange req, String requestParamValue) throws InterruptedException, IOException {
@@ -39,18 +36,22 @@ public class Tier1HTTPHandler extends TierHttpHandler {
 		context.put("task", "Tier1");
 		context.put("entry", "e1");
 
-		HttpRequest request = HttpRequest.newBuilder()
-				.uri(URI.create("http://" + Tier1HTTPHandler.getTier2Host() + ":3001/?&entry=e2" + "&snd=" + this.getName()))
-				.header("Connection", "close")
-				.build();
+//		HttpRequest request = HttpRequest.newBuilder()
+//				.uri(URI.create(
+//						"http://" + Tier1HTTPHandler.getTier2Host() + ":3001/?&entry=e2" + "&snd=" + this.getName()))
+//				.header("Connection", "close").build();
+
+		HttpResponse<String> resp = null;
 		try {
 			this.measureEgress();
-			HttpResponse<String> resp = this.client.send(request, BodyHandlers.ofString());
+			// HttpResponse<String> resp = this.client.send(request,
+			// BodyHandlers.ofString());
+			resp = Unirest.get(URI
+					.create("http://" + Tier1HTTPHandler.getTier2Host() + ":3001/?&entry=e2" + "&snd=" + this.getName())
+					.toString()).header("Connection", "close").asString();
 			this.measureReturn();
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		} catch (InterruptedException e1) {
-			e1.printStackTrace();
+		} catch (UnirestException e) {
+			e.printStackTrace();
 		}
 
 		String renderedTemplate = jinjava.render(this.getWebPageTpl(), context);
