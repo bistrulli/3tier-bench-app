@@ -68,8 +68,8 @@ public class RandomStep implements Runnable {
 	private void tick() {
 		//recupero i controlli GKE se non nulli
 		Map<String, Object> gke = this.memClient.getBulk("t1_gke","t2_gke");
-		if(gke.get("t1_gke")!=null) {
-			//TODO
+		if(gke.get("t1_gke")!=null && gke.get("t2_gke")!=null) {
+			this.gkeCtrl.add(new Double[] {Double.valueOf((String) gke.get("t1_gke")),Double.valueOf((String) gke.get("t2_gke"))});
 		}
 		
 		int nc=0;

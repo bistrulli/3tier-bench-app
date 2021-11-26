@@ -5,7 +5,6 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpClient.Version;
 import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -14,6 +13,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.math3.distribution.AbstractRealDistribution;
 import org.apache.commons.math3.distribution.ExponentialDistribution;
+
+import com.mashape.unirest.http.HttpResponse;
+import com.mashape.unirest.http.Unirest;
 
 import Server.SimpleTask;
 import net.spy.memcached.MemcachedClient;
@@ -27,58 +29,46 @@ public class Client implements Runnable {
 	public static AtomicInteger time = new AtomicInteger(0);
 	private MemcachedClient memcachedClient = null;
 	private static AtomicInteger toKill = new AtomicInteger(0);
-	private Boolean dying=null;
-	private static String tier1Host=null;
-	public static AtomicBoolean isStarted=new AtomicBoolean(false);
+	private Boolean dying = null;
+	private static String tier1Host = null;
+	public static AtomicBoolean isStarted = new AtomicBoolean(false);
 
 	public Client(SimpleTask task, Long ttime) {
 		this.setThinkTime(ttime);
 		this.task = task;
 		this.clietId = UUID.randomUUID();
-		this.dying=false;
+		this.dying = false;
 	}
 
 	public void run() {
 		try {
-			HttpClient client = null;
-			HttpRequest request = null;
-			client = HttpClient.newBuilder().version(Version.HTTP_1_1).build();
-			request = HttpRequest.newBuilder()
-					.uri(URI.create("http://"+Client.getTier1Host()+":3000/?id=" + this.clietId.toString() + "&entry=e1" + "&snd=think"))
-					.header("Connection", "close")
-					.build();
-			
+
+			HttpResponse<String> resp = null;
 			Client.isStarted.set(true);
 			int thinking = this.task.getState().get("think").incrementAndGet();
-			
+
 			while (!this.dying) {
-				
-				client = HttpClient.newBuilder().version(Version.HTTP_1_1).build();
-				request = HttpRequest.newBuilder()
-						.uri(URI.create("http://"+Client.getTier1Host()+":3000/?id=" + this.clietId.toString() + "&entry=e1" + "&snd=think"))
-						.build();
-				
+
 				SimpleTask.getLogger().debug(String.format("%s thinking", thinking));
 				TimeUnit.MILLISECONDS.sleep(Double.valueOf(this.dist.sample()).longValue());
 
 				SimpleTask.getLogger().debug(String.format("%s sending", this.task.getName()));
 				this.task.getState().get("think").decrementAndGet();
-				HttpResponse<String> resp = client.send(request, BodyHandlers.ofString());
-				
+
+				resp = Unirest.get(URI.create("http://" + Client.getTier1Host() + ":3000/?id=" + this.clietId.toString()
+						+ "&entry=e1" + "&snd=think").toString()).header("Connection", "close").asString();
+
 				thinking = this.task.getState().get("think").incrementAndGet();
-				
+
 				if (Client.getToKill().get() > 0) {
 					Client.toKill.decrementAndGet();
 					this.dying = true;
 					break;
 				}
-				
-				
+
 			}
 			thinking = this.task.getState().get("think").decrementAndGet();
 			SimpleTask.getLogger().debug(String.format(" user %s stopped", this.clietId));
-		} catch (IOException e1) {
-			e1.printStackTrace();
 		} catch (InterruptedException e2) {
 			e2.printStackTrace();
 		} catch (Exception e) {
@@ -108,7 +98,7 @@ public class Client implements Runnable {
 	public static void setToKill(Integer toKill) {
 		Client.toKill.set(toKill);
 	}
-	
+
 	public static String getTier1Host() {
 		return tier1Host;
 	}
