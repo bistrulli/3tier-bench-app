@@ -27,7 +27,8 @@ public class Tier2HTTPHandler extends TierHttpHandler {
 		context.put("task", "Tier2");
 		context.put("entry", "e2");
 
-		String renderedTemplate = jinjava.render(this.getWebPageTpl(), context);
+		//String renderedTemplate = jinjava.render(this.getWebPageTpl(), context);
+		String renderedTemplate = jinjava.render("<div>Hello, {{ task }}.{{ entry }}!</div>", context);
 
 		if (!this.getLqntask().isEmulated()) {
 			this.doWorkCPU();

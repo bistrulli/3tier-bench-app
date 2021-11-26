@@ -53,7 +53,8 @@ public class Tier1HTTPHandler extends TierHttpHandler {
 			e1.printStackTrace();
 		}
 
-		String renderedTemplate = jinjava.render(this.getWebPageTpl(), context);
+		//String renderedTemplate = jinjava.render(this.getWebPageTpl(), context);
+		String renderedTemplate = jinjava.render("<div>Hello, {{ task }}.{{ entry }}!</div>", context);
 
 		if (!this.getLqntask().isEmulated()) {
 			this.doWorkCPU();
