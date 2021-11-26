@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.net.InetSocketAddress;
+import java.util.ArrayList;
+import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ExecutionException;
 
@@ -17,6 +19,7 @@ public class RandomStep implements Runnable {
 	private SimpleTask workGenerator = null;
 	private Random rnd=null;
 	private MemcachedClient memClient=null;
+	private ArrayList<Double[]> gkeCtrl=null;
 
 	public RandomStep(SimpleTask workGenerator) {
 		this.tick = 0;
@@ -28,6 +31,7 @@ public class RandomStep implements Runnable {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		this.gkeCtrl=new ArrayList<Double []>();
 	}
 
 	private void addClients(int delta) {
@@ -62,8 +66,14 @@ public class RandomStep implements Runnable {
 	}
 
 	private void tick() {
+		//recupero i controlli GKE se non nulli
+		Map<String, Object> gke = this.memClient.getBulk("t1_gke","t2_gke");
+		if(gke.get("t1_gke")!=null) {
+			//TODO
+		}
+		
 		int nc=0;
-		if (this.tick % 30 == 0) {
+		if (this.tick % 900 == 0) {
 			if(this.rnd.nextBoolean()) {
 				nc=this.rnd.nextInt(100-this.workGenerator.getThreadpool().getCorePoolSize());
 				System.out.println(String.format("delta clients %d-%d", nc,this.workGenerator.getThreadpool().getCorePoolSize()));
@@ -78,6 +88,11 @@ public class RandomStep implements Runnable {
 			} catch (InterruptedException | ExecutionException e) {
 				e.printStackTrace();
 			}
+		}
+		String end_sim = String.valueOf(this.memClient.get("end_sim"));
+		if(end_sim=="1") {
+			//salvo i controlli accumulati per porterli usare successivamente
+			//TODO
 		}
 		this.tick++;
 	}
