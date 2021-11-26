@@ -92,20 +92,20 @@ public class RandomStep implements Runnable {
 				e.printStackTrace();
 			}
 		}
-		String end_sim = String.valueOf(this.memClient.get("end_sim"));
-		if(end_sim=="1") {
-			System.out.println("dumping ctrl trace");
-			JSONArray json_array = new JSONArray(this.gkeCtrl);	
-			FileWriter myWriter;
-			try {
-				myWriter = new FileWriter("trace.json");
-				myWriter.write(json_array.toString());
-			    myWriter.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			this.memClient.set("saved", 3600, "1");
-		}
+//		String end_sim = String.valueOf(this.memClient.get("end_sim"));
+//		if(end_sim=="1") {
+//			System.out.println("dumping ctrl trace");
+//			JSONArray json_array = new JSONArray(this.gkeCtrl);	
+//			FileWriter myWriter;
+//			try {
+//				myWriter = new FileWriter("trace.json");
+//				myWriter.write(json_array.toString());
+//			    myWriter.close();
+//			} catch (IOException e) {
+//				e.printStackTrace();
+//			}
+//			this.memClient.set("saved", 3600, "1");
+//		}
 		this.tick++;
 	}
 
