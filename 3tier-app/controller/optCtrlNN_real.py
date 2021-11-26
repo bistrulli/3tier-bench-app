@@ -580,7 +580,7 @@ if __name__ == "__main__":
             
             r.set("end_sim","1")
             isSaved=r.get("saved")
-            while(isSave is not None and isSaved.decode("UTF-8")!="1"):
+            while(isSaved is not None and isSaved.decode("UTF-8")!="1"):
                 print("waiting sim to finish "+isSaved)
                 time.sleep(0.1)
                 isSaved=r.get("saved").decode("UTF-8")

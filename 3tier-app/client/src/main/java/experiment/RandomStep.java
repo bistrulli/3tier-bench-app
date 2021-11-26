@@ -94,6 +94,7 @@ public class RandomStep implements Runnable {
 		}
 		String end_sim = String.valueOf(this.memClient.get("end_sim"));
 		if(end_sim=="1") {
+			System.out.println("dumping ctrl trace");
 			JSONArray json_array = new JSONArray(this.gkeCtrl);	
 			FileWriter myWriter;
 			try {
