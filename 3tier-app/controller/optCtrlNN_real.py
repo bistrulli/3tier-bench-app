@@ -495,6 +495,9 @@ if __name__ == "__main__":
     #memcached client
     r=Client("monitor:11211")
     
+    r.set("t1_gke",None)
+    r.set("t2_gke",None)
+    
     try:
             while(r.get("sim")==None):
                 print("waiting sim to start")

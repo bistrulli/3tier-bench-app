@@ -20,27 +20,27 @@ public class RandomStep implements Runnable {
 
 	private Integer tick = null;
 	private SimpleTask workGenerator = null;
-	private Random rnd=null;
-	private MemcachedClient memClient=null;
-	private ArrayList<Double[]> gkeCtrl=null;
+	private Random rnd = null;
+	private MemcachedClient memClient = null;
+	private ArrayList<Double[]> gkeCtrl = null;
 
 	public RandomStep(SimpleTask workGenerator) {
 		this.tick = 0;
 		this.workGenerator = workGenerator;
-		this.rnd=new Random();
+		this.rnd = new Random();
 		this.rnd.setSeed(100);
 		try {
 			this.memClient = new MemcachedClient(new InetSocketAddress(this.workGenerator.getJedisHost(), 11211));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		this.gkeCtrl=new ArrayList<Double []>();
+		this.gkeCtrl = new ArrayList<Double[]>();
 	}
 
 	private void addClients(int delta) {
 		int actualSize = this.workGenerator.getThreadpool().getCorePoolSize();
 		try {
-			this.workGenerator.setThreadPoolSize(actualSize+delta);
+			this.workGenerator.setThreadPoolSize(actualSize + delta);
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		}
@@ -49,8 +49,8 @@ public class RandomStep implements Runnable {
 				Constructor<? extends Runnable> c;
 				try {
 					c = Client.class.getDeclaredConstructor(SimpleTask.class, Long.class);
-					this.workGenerator.getThreadpool().submit(c.newInstance(this.workGenerator, this.workGenerator.getsTimes()
-							.get(this.workGenerator.getEntries().entrySet().iterator().next().getKey())));
+					this.workGenerator.getThreadpool().submit(c.newInstance(this.workGenerator, this.workGenerator
+							.getsTimes().get(this.workGenerator.getEntries().entrySet().iterator().next().getKey())));
 				} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException
 						| IllegalArgumentException | InvocationTargetException e) {
 					e.printStackTrace();
@@ -69,26 +69,29 @@ public class RandomStep implements Runnable {
 	}
 
 	private void tick() {
-		//recupero i controlli GKE se non nulli
-		Map<String, Object> gke = this.memClient.getBulk("t1_gke","t2_gke");
-		if(gke.get("t1_gke")!=null && gke.get("t2_gke")!=null) {
+		// recupero i controlli GKE se non nulli
+		Map<String, Object> gke = this.memClient.getBulk("t1_gke", "t2_gke");
+		if (gke.get("t1_gke") != null && gke.get("t2_gke") != null) {
 			System.out.println("found");
-			this.gkeCtrl.add(new Double[] {Double.valueOf((String) gke.get("t1_gke")),Double.valueOf((String) gke.get("t2_gke"))});
+			this.gkeCtrl.add(new Double[] { Double.valueOf(String.valueOf(gke.get("t1_gke"))),
+					Double.valueOf(String.valueOf(gke.get("t2_gke"))) });
 		}
-		
-		int nc=0;
+
+		int nc = 0;
 		if (this.tick % 60 == 0) {
-			if(this.rnd.nextBoolean()) {
-				nc=this.rnd.nextInt(100-this.workGenerator.getThreadpool().getCorePoolSize());
-				System.out.println(String.format("delta clients %d-%d", nc,this.workGenerator.getThreadpool().getCorePoolSize()));
+			if (this.rnd.nextBoolean()) {
+				nc = this.rnd.nextInt(100 - this.workGenerator.getThreadpool().getCorePoolSize());
+				System.out.println(
+						String.format("delta clients %d-%d", nc, this.workGenerator.getThreadpool().getCorePoolSize()));
 				this.addClients(nc);
-			}else {
-				nc=this.rnd.nextInt(this.workGenerator.getThreadpool().getCorePoolSize());
-				System.out.println(String.format("delta clients %d-%d", -nc,this.workGenerator.getThreadpool().getCorePoolSize()));
+			} else {
+				nc = this.rnd.nextInt(this.workGenerator.getThreadpool().getCorePoolSize());
+				System.out.println(String.format("delta clients %d-%d", -nc,
+						this.workGenerator.getThreadpool().getCorePoolSize()));
 				this.addClients(-nc);
 			}
 			try {
-				this.memClient.set("sim", 3600,"step_"+this.workGenerator.getThreadpool().getCorePoolSize()).get();
+				this.memClient.set("sim", 3600, "step_" + this.workGenerator.getThreadpool().getCorePoolSize()).get();
 			} catch (InterruptedException | ExecutionException e) {
 				e.printStackTrace();
 			}
