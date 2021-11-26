@@ -40,8 +40,9 @@ class jvm_sys(system_interface):
         r.close()
         
         subprocess.Popen([javaCmd, "-Xmx15G",
-                         "-Djava.compiler=NONE", "-jar",
-                         '%sclient/target/client-0.0.1-SNAPSHOT-jar-with-dependencies.jar' % (self.sysRootPath),
+                         "-Djava.compiler=NONE",
+                         "-Djdk.httpclient.allowRestrictedHeaders=Connection", 
+                         "-jar",'%sclient/target/client-0.0.1-SNAPSHOT-jar-with-dependencies.jar' % (self.sysRootPath),
                          '--initPop', '%d' % (pop), '--jedisHost', 'localhost', '--tier1Host', 'localhost',
                          '--queues', '[\"think\", \"e1_bl\", \"e1_ex\", \"t1_hw\", \"e2_bl\", \"e2_ex\", \"t2_hw\"]',
                          '--sim',"%d"%(int(sim))])
@@ -87,8 +88,9 @@ class jvm_sys(system_interface):
         if(not self.isCpu):
             subprocess.Popen([javaCmd,
                             "-Xmx15G", "-Xms15G",
-                             "-Djava.compiler=NONE", "-jar",
-                             '%stier2/target/tier2-0.0.1-SNAPSHOT-jar-with-dependencies.jar' % (self.sysRootPath),
+                             "-Djava.compiler=NONE",
+                             "-Djdk.httpclient.allowRestrictedHeaders=Connection",  
+                             "-jar",'%stier2/target/tier2-0.0.1-SNAPSHOT-jar-with-dependencies.jar' % (self.sysRootPath),
                              '--cpuEmu', '%d' % (cpuEmu), '--jedisHost', 'localhost'])
             
             self.waitTier2()
@@ -96,8 +98,9 @@ class jvm_sys(system_interface):
             
             subprocess.Popen([javaCmd,
                             "-Xmx15G", "-Xms15G",
-                             "-Djava.compiler=NONE", "-jar",
-                             '%stier1/target/tier1-0.0.1-SNAPSHOT-jar-with-dependencies.jar' % (self.sysRootPath),
+                             "-Djava.compiler=NONE",
+                             "-Djdk.httpclient.allowRestrictedHeaders=Connection", 
+                             "-jar",'%stier1/target/tier1-0.0.1-SNAPSHOT-jar-with-dependencies.jar' % (self.sysRootPath),
                              '--cpuEmu', "%d" % (cpuEmu), '--jedisHost', 'localhost',
                              "--tier2Host", "localhost"])
             
@@ -106,8 +109,9 @@ class jvm_sys(system_interface):
         else:
             subprocess.Popen([ javaCmd, 
                              "-Xmx15G", "-Xms15G",
-                             "-Djava.compiler=NONE", "-jar",
-                             '%stier2/target/tier2-0.0.1-SNAPSHOT-jar-with-dependencies.jar' % (self.sysRootPath),
+                             "-Djava.compiler=NONE",
+                             "-Djdk.httpclient.allowRestrictedHeaders=Connection", 
+                             "-jar",'%stier2/target/tier2-0.0.1-SNAPSHOT-jar-with-dependencies.jar' % (self.sysRootPath),
                              '--cpuEmu', '%d' % (cpuEmu), '--jedisHost', 'localhost',
                              '--cgv2','1'])
             self.waitTier2()
@@ -115,8 +119,9 @@ class jvm_sys(system_interface):
             
             subprocess.Popen([javaCmd,
                             "-Xmx15G", "-Xms15G",
-                             "-Djava.compiler=NONE", "-jar",
-                             '%stier1/target/tier1-0.0.1-SNAPSHOT-jar-with-dependencies.jar' % (self.sysRootPath),
+                             "-Djava.compiler=NONE",
+                             "-Djdk.httpclient.allowRestrictedHeaders=Connection", 
+                             "-jar",'%stier1/target/tier1-0.0.1-SNAPSHOT-jar-with-dependencies.jar' % (self.sysRootPath),
                              '--cpuEmu', "%d" % (cpuEmu), '--jedisHost', 'localhost',
                              "--tier2Host", "localhost",'--cgv2','1'])
             self.waitTier1()
