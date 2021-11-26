@@ -452,7 +452,7 @@ if __name__ == "__main__":
     dt = 10 ** (-1)
     H = 5
     N = 3
-    rep = 10
+    rep = 1
     drep = 0
     sTime = 10000
     TF = sTime * rep * dt;
@@ -533,7 +533,6 @@ if __name__ == "__main__":
                         r.set("t2_hw","120")
                     
                 #print(r.get("sim").decode('UTF-8'))
-                
                 XSSIM[:, step] = getstate(r, keys, N)
                 #tgt = np.round(alfa[-1] * 0.82 * np.sum(XSSIM[:, step]), 5)
                 
@@ -548,8 +547,9 @@ if __name__ == "__main__":
                 optU = optU_N * ctrl.stdu + ctrl.meanu
                 Sold = optU_N
                 
-                #r.set("t1_hw",str(np.round(optU[1],4)))
-                #r.set("t2_hw",str(np.round(optU[2],4)))
+                r.set("t1_gke",str(np.round(optU[1],4)))
+                r.set("t2_gke",str(np.round(optU[2],4)))
+                
                 #r.mset({"t1_hw":str(np.round(optU[1],4)),"t2_hw":str(np.round(optU[2],4))})
                 #if(isCpu):
                 #    setU(optU)
@@ -565,7 +565,6 @@ if __name__ == "__main__":
                 optSGKEu[:,step] = [0,gket1[2],gket2[2]]
                 tgtStory += [tgt]
                 
-                time.sleep(0.1)
                 
                 # optSPID[:,step]=optSPid
                 # optSPid=mitigateBottleneck(optSPid, Xsim3, tgt)
@@ -576,6 +575,8 @@ if __name__ == "__main__":
              
             # print("NN Reference error %f%% \nODE Reference error %f%% \n"%(np.abs(XSNN[0,-1]-tgt)*100/tgt,np.abs(XSODE[0,-1]-tgt)*100/tgt))
             plt.close('all')
+            r.set("t1_gke",None)
+            r.set("t2_gke",None)
             
             Path( './figure' ).mkdir( parents=True, exist_ok=True )   
             
