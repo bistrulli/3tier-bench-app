@@ -72,7 +72,7 @@ public class RandomStep implements Runnable {
 		// recupero i controlli GKE se non nulli
 		Map<String, Object> gke = this.memClient.getBulk("t1_gke", "t2_gke");
 		if (gke.get("t1_gke") != null && gke.get("t2_gke") != null) {
-			System.out.println("found");
+			System.out.println("found"+String.valueOf(gke.get("t1_gke"))+" "+String.valueOf(gke.get("t2_gke")));
 			this.gkeCtrl.add(new Double[] { Double.valueOf(String.valueOf(gke.get("t1_gke"))),
 					Double.valueOf(String.valueOf(gke.get("t2_gke"))) });
 		}
