@@ -550,9 +550,6 @@ if __name__ == "__main__":
                 optU = optU_N * ctrl.stdu + ctrl.meanu
                 Sold = optU_N
                 
-                r.set("t1_gke",str(np.round(optU[1],4)))
-                r.set("t2_gke",str(np.round(optU[2],4)))
-                
                 #r.mset({"t1_hw":str(np.round(optU[1],4)),"t2_hw":str(np.round(optU[2],4))})
                 #if(isCpu):
                 #    setU(optU)
@@ -567,6 +564,9 @@ if __name__ == "__main__":
                 optSGKEt[:,step] = [0,gket1[1],gket2[1]]
                 optSGKEu[:,step] = [0,gket1[2],gket2[2]]
                 tgtStory += [tgt]
+                
+                r.set("t1_gke",str(gket1[1]))
+                r.set("t2_gke",str(gket2[1]))
                 
                 
                 # optSPID[:,step]=optSPid

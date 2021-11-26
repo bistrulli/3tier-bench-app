@@ -74,11 +74,10 @@ public class RandomStep implements Runnable {
 		Object t2_gke = this.memClient.get("t2_gke");
 
 		if (t1_gke != null && t2_gke != null) {
-
 			String st1_gke = String.valueOf(t1_gke);
 			String st2_gke = String.valueOf(t2_gke);
 			if (!st1_gke.equals("None") && !st2_gke.equals("None")) {
-				System.out.println("found:" + st1_gke +"-"+st2_gke);
+				System.out.println("found:" + st1_gke + "-" + st2_gke);
 				this.gkeCtrl.add(new Double[] { Double.valueOf(st1_gke), Double.valueOf(st2_gke) });
 			}
 		}
@@ -102,20 +101,23 @@ public class RandomStep implements Runnable {
 				e.printStackTrace();
 			}
 		}
-//		String end_sim = String.valueOf(this.memClient.get("end_sim"));
-//		if(end_sim=="1") {
-//			System.out.println("dumping ctrl trace");
-//			JSONArray json_array = new JSONArray(this.gkeCtrl);	
-//			FileWriter myWriter;
-//			try {
-//				myWriter = new FileWriter("trace.json");
-//				myWriter.write(json_array.toString());
-//			    myWriter.close();
-//			} catch (IOException e) {
-//				e.printStackTrace();
-//			}
-//			this.memClient.set("saved", 3600, "1");
-//		}
+		Object end_sim = this.memClient.get("end_sim");
+		if (end_sim != null) {
+			String send_sim = String.valueOf(end_sim);
+			if (send_sim.equals("1")) {
+				System.out.println("dumping ctrl trace");
+				JSONArray json_array = new JSONArray(this.gkeCtrl);
+				FileWriter myWriter;
+				try {
+					myWriter = new FileWriter("trace.json");
+					myWriter.write(json_array.toString());
+					myWriter.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				this.memClient.set("saved", 3600, "1");
+			}
+		}
 		this.tick++;
 	}
 
