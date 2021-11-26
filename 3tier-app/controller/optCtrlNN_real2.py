@@ -341,10 +341,10 @@ if __name__ == "__main__":
                 # #r.mset({"t1_hw":str(np.round(optU[1],4)),"t2_hw":str(np.round(optU[2],4))})
                 # else:
                 #optU=[0,5.22,4.46]
-                r.set("t1_hw",str(optU[1]))
-                r.set("t2_hw",str(optU[2]))
-                plant.setU(optU[1],"tier1")
-                plant.setU(optU[2],"tier2")
+                # r.set("t1_hw",str(optU[1]))
+                # r.set("t2_hw",str(optU[2]))
+                # plant.setU(optU[1],"tier1")
+                # plant.setU(optU[2],"tier2")
                 # print(optU)
                 
                 print(state[1],tgt,np.sum(XSSIM[:, step]),step,optU[1:N])
