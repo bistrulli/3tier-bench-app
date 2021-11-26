@@ -6,6 +6,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpClient.Version;
 import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.time.Duration;
 import java.util.Map;
@@ -26,7 +27,7 @@ public class Tier1HTTPHandler extends TierHttpHandler {
 
 	public Tier1HTTPHandler(SimpleTask lqntask, HttpExchange req, long stime) {
 		super(lqntask, req, stime);
-		//this.client = HttpClient.newBuilder().version(Version.HTTP_1_1).build();
+		this.client = HttpClient.newBuilder().version(Version.HTTP_1_1).build();
 	}
 
 	public void handleResponse(HttpExchange req, String requestParamValue) throws InterruptedException, IOException {
@@ -38,11 +39,13 @@ public class Tier1HTTPHandler extends TierHttpHandler {
 		context.put("task", "Tier1");
 		context.put("entry", "e1");
 
-		client = HttpClient.newBuilder().version(Version.HTTP_1_1).build();
-		HttpRequest request = HttpRequest.newBuilder().uri(URI.create("http://"+Tier1HTTPHandler.getTier2Host()+":3001/?&entry=e2" + "&snd=" + this.getName())).build();
+		HttpRequest request = HttpRequest.newBuilder()
+				.uri(URI.create("http://" + Tier1HTTPHandler.getTier2Host() + ":3001/?&entry=e2" + "&snd=" + this.getName()))
+				.header("Connection", "close")
+				.build();
 		try {
 			this.measureEgress();
-			this.client.send(request, BodyHandlers.ofString());
+			HttpResponse<String> resp = this.client.send(request, BodyHandlers.ofString());
 			this.measureReturn();
 		} catch (IOException e1) {
 			e1.printStackTrace();
@@ -58,7 +61,7 @@ public class Tier1HTTPHandler extends TierHttpHandler {
 			Float executing = 0f;
 			String[] entries = this.getLqntask().getEntries().keySet().toArray(new String[0]);
 			for (String e : entries) {
-					executing += this.getLqntask().getState().get(e + "_ex").get();
+				executing += this.getLqntask().getState().get(e + "_ex").get();
 			}
 			this.doWorkSleep(executing);
 		}

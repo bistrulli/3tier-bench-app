@@ -45,6 +45,7 @@ public class Client implements Runnable {
 			client = HttpClient.newBuilder().version(Version.HTTP_1_1).build();
 			request = HttpRequest.newBuilder()
 					.uri(URI.create("http://"+Client.getTier1Host()+":3000/?id=" + this.clietId.toString() + "&entry=e1" + "&snd=think"))
+					.header("Connection", "close")
 					.build();
 			
 			Client.isStarted.set(true);
