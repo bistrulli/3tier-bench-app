@@ -69,7 +69,7 @@ repcount=0;
 
 #per npoints intendo il numero di diverso di stati iniziali che considero
 isCpu=True
-rep=180
+rep=20
 H=5
 ssTime=(H+1)*60
 N=3
@@ -88,7 +88,7 @@ P=None
 X0=None
 myuuid = uuid.uuid4()
 
-fname="open_loop_3tier_H5"
+fname="open_loop_3tier_H5_v"
 
 #dck_sys=dockersys()
 dck_sys=jvm_sys("../",isCpu)
@@ -112,7 +112,7 @@ try:
             dck_sys.stopSystem()
             
             dck_sys.startSys()
-            dck_sys.startClient(np.sum(XS[tick,:]))
+            dck_sys.startClient(np.sum(XS[tick,:]),sim=False)
             
             if(r is not None):
                 r.close()
