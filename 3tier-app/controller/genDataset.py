@@ -69,7 +69,7 @@ repcount=0;
 
 #per npoints intendo il numero di diverso di stati iniziali che considero
 isCpu=True
-rep=20
+rep=100
 H=5
 ssTime=(H+1)*60
 N=3
@@ -88,7 +88,7 @@ P=None
 X0=None
 myuuid = uuid.uuid4()
 
-fname="open_loop_3tier_H5_v_new2"
+fname="open_loop_3tier_H5_new2"
 
 #dck_sys=dockersys()
 dck_sys=jvm_sys("../",isCpu)
