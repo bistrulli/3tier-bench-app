@@ -42,9 +42,16 @@ def get_vpaout(vpa_name):
     out,error = p.communicate()
     yaml_out=yaml.safe_load(out.decode('UTF-8'))
     
-    lwb=re.findall(r'\d+', yaml_out["status"]["recommendation"]["containerRecommendations"][0]["lowerBound"]["cpu"])
-    upb=re.findall(r'\d+', yaml_out["status"]["recommendation"]["containerRecommendations"][0]["upperBound"]["cpu"])
-    trgt=re.findall(r'\d+', yaml_out["status"]["recommendation"]["containerRecommendations"][0]["target"]["cpu"])
+    lwb=[-1]
+    upb=[-1]
+    trgt=[-1]
+    try:
+        lwb=re.findall(r'\d+', yaml_out["status"]["recommendation"]["containerRecommendations"][0]["lowerBound"]["cpu"])
+        upb=re.findall(r'\d+', yaml_out["status"]["recommendation"]["containerRecommendations"][0]["upperBound"]["cpu"])
+        trgt=re.findall(r'\d+', yaml_out["status"]["recommendation"]["containerRecommendations"][0]["target"]["cpu"])
+    except:
+        pass
+        
     return  np.array([list(map(float, lwb))[0],list(map(float, trgt))[0],list(map(float, upb))[0]])
 
 def pruneContainer():
@@ -452,7 +459,7 @@ if __name__ == "__main__":
     dt = 10 ** (-1)
     H = 5
     N = 3
-    rep = 1
+    rep = 20
     drep = 0
     sTime = 10000
     TF = sTime * rep * dt;
@@ -584,9 +591,9 @@ if __name__ == "__main__":
             r.set("end_sim","1")
             isSaved=r.get("saved")
             while(isSaved is not None and isSaved.decode("UTF-8")!="1"):
-                print("waiting sim to finish "+isSaved)
+                print("waiting sim to finish "+ isSaved.decode("UTF-8"))
                 time.sleep(0.1)
-                isSaved=r.get("saved").decode("UTF-8")
+                isSaved=r.get("saved")
             
             r.set("end_sim",None)
             r.set("saved",None)
@@ -722,6 +729,9 @@ if __name__ == "__main__":
             
     
     finally:
+        r.set("end_sim",None)
+        r.set("saved",None)
+        r.close()
         # killClient()
         # time.sleep(5)
         # killSys()
