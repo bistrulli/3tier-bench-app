@@ -35,14 +35,14 @@ def getTr():
 def getServer(X,S,rand,estate=None):
     optS=None
     if(rand):
-        optS=np.round(np.matrix([np.sum(X),getTr()*19.8+0.2,getTr()*19.8+0.2]),4)
+        optS=np.round(np.matrix([np.sum(X),getTr()*29.8+0.2,getTr()*29.8+0.2]),4)
     else:
         #devo definire il numero di server da assegnare
         optS=S
         
         ex=[0,estate[2],estate[5]]
         #findBootleneck
-        S[0,0]=1000
+        S[0,0]=10000
         U=np.divide(np.minimum(ex,S),S)
         b=np.argmax(np.mean(U,axis=0))
         
@@ -69,9 +69,9 @@ repcount=0;
 
 #per npoints intendo il numero di diverso di stati iniziali che considero
 isCpu=True
-rep=100
+rep=10
 H=5
-ssTime=(H+1)*60
+ssTime=(H+1)*30
 N=3
 npoints=ssTime*(rep)
 DS_X=np.zeros([npoints//(H+1),N])
@@ -88,7 +88,7 @@ P=None
 X0=None
 myuuid = uuid.uuid4()
 
-fname="open_loop_3tier_H5_new2"
+fname="open_loop_3tier_H5_v"
 
 #dck_sys=dockersys()
 dck_sys=jvm_sys("../",isCpu)
@@ -102,7 +102,7 @@ try:
                 Path(str(script_dir)+"/../data/%s/"%(str(myuuid)) ).mkdir( parents=True, exist_ok=True )
                 sp.savemat(str(script_dir)+"/../data/%s/%s.mat"%(myuuid,fname),{"DS_X":DS_X,"DS_Y":DS_Y,"DS_U":DS_U})
             
-            XS[tick,:]=[np.random.randint(low=1,high=100)]+[0]*(N-1)
+            XS[tick,:]=[np.random.randint(low=1,high=220)]+[0]*(N-1)
             X0=XS[[tick],:]
            
             #optS=np.round(np.matrix([np.sum(X0),getTr()*14.8+0.2,getTr()*14.8+0.2]),4)
