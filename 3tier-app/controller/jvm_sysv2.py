@@ -255,7 +255,8 @@ class jvm_sys(system_interface):
             raise ValueError("t2 cgroupv2 doesn't exist")
     
     def setU(self, RL, cnt_name):
-        quota = int(np.round(RL * self.period))
+        
+        quota = int(np.round(np.maximum(RL,0.1) * self.period))
         
         cgfile=open(self.cgroups[cnt_name]["cg"],"w")
         cgfile.write("%d %d"%(quota,self.period))
