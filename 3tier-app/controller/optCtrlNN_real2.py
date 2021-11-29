@@ -268,7 +268,7 @@ if __name__ == "__main__":
                     #time.sleep(3)                            
                     drep+=1
                     
-                    #Sold = None       
+                    Sold = None       
                     #alfa.append(genAfa())
                     alfa.append(1)
                     #XSSIM[:, step] = [np.random.randint(low=10, high=100), 0, 0]
@@ -284,7 +284,7 @@ if __name__ == "__main__":
                     optSPid = [np.sum(XSSIM[:, step]), 1, 1]
                     cp += 1
                     #ek = 0
-                    #Ie = 0
+                    Ie = 0
                        
                     # if(r is not None):
                     #     killClient()
