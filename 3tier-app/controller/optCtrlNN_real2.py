@@ -249,7 +249,7 @@ if __name__ == "__main__":
     #plant=dockersys()
     plant.startSys()
     #plant.startClient(np.random.randint(low=10, high=100))
-    plant.startClient(180,sim=True)
+    plant.startClient(160,sim=True)
     
     #memcached client
     r=Client("localhost:11211")
@@ -317,8 +317,8 @@ if __name__ == "__main__":
                     #     r.set("t1_hw",optSNN[1, step-1])
                     #     r.set("t2_hw",optSNN[2, step-1])
                     
-                    r.set("t1_hw",str(200))
-                    r.set("t2_hw",str(200))
+                    # r.set("t1_hw",str(110))
+                    # r.set("t2_hw",str(110))
                     
                 #print(r.get("sim").decode('UTF-8'))
                 state=plant.getstate(r)
@@ -340,13 +340,11 @@ if __name__ == "__main__":
                 #     r.set("t2_hw",str(optU[2]))
                 # #r.mset({"t1_hw":str(np.round(optU[1],4)),"t2_hw":str(np.round(optU[2],4))})
                 # else:
-                # #optU=[0,6.335,6.02]
-                
-                # optU=[0,30,30]
-                # r.set("t1_hw",str(optU[1]))
-                # r.set("t2_hw",str(optU[2]))
-                # plant.setU(optU[1],"tier1")
-                # plant.setU(optU[2],"tier2")
+                #optU=[0,6.335,6.02]
+                r.set("t1_hw",str(optU[1]))
+                r.set("t2_hw",str(optU[2]))
+                plant.setU(optU[1],"tier1")
+                plant.setU(optU[2],"tier2")
                 # print(optU)
                 
                 print(state[1],tgt,np.sum(XSSIM[:, step]),step,optU[1:N])
