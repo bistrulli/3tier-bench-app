@@ -174,12 +174,11 @@ class optCtrlNN3:
                 model.subject_to(stateVar[:, h] == Ypredicted[(N * h):N * (h + 1)])
         
         obj = 0
-        for h in range(H):
+        for h in range(H-1):
             model.subject_to(absE_var[0, h] >= (stateVar[0, h] * self.stdy[h * N] + self.meany[h * N] - tgt))
             model.subject_to(absE_var[0, h] >= -(stateVar[0, h] * self.stdy[h * N] + self.meany[h * N] - tgt))
             # obj+=(stateVar[0,h]*self.stdy[h*N]+self.meany[h*N]-tgt)**2
-            if(h>=3):
-                obj += absE_var[0, h]
+            obj += absE_var[0, h]
         
         ru = 0;
         if(Sold is not None):
