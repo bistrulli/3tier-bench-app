@@ -26,7 +26,7 @@ public class Main {
 
 	public static void main(String[] args) {
 		System.setProperty("net.spy.log.LoggerImpl", "net.spy.memcached.compat.log.SLF4JLogger");
-		Unirest.setConcurrency(200, 200);
+		Unirest.setConcurrency(300, 300);
 		Main.getCliOptions(args);
 		if(Main.cgv2) {
 			Main.addToCgv2();
