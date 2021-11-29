@@ -178,7 +178,8 @@ class optCtrlNN3:
             model.subject_to(absE_var[0, h] >= (stateVar[0, h] * self.stdy[h * N] + self.meany[h * N] - tgt))
             model.subject_to(absE_var[0, h] >= -(stateVar[0, h] * self.stdy[h * N] + self.meany[h * N] - tgt))
             # obj+=(stateVar[0,h]*self.stdy[h*N]+self.meany[h*N]-tgt)**2
-            obj += absE_var[0, h]
+            if(h>=3):
+                obj += absE_var[0, h]
         
         ru = 0;
         if(Sold is not None):
@@ -209,7 +210,7 @@ if __name__ == "__main__":
     dt = 10 ** (-1)
     H = 5
     N = 3
-    rep = 30
+    rep = 1
     drep = 0
     sTime = 10000
     TF = sTime * rep * dt;
