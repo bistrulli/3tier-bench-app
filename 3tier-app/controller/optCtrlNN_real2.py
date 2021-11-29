@@ -208,7 +208,7 @@ if __name__ == "__main__":
     dt = 10 ** (-1)
     H = 5
     N = 3
-    rep = 3
+    rep = 1
     drep = 0
     sTime = 10000
     TF = sTime * rep * dt;
@@ -249,7 +249,7 @@ if __name__ == "__main__":
     #plant=dockersys()
     plant.startSys()
     #plant.startClient(np.random.randint(low=10, high=100))
-    plant.startClient(150,sim=True)
+    plant.startClient(170,sim=True)
     
     #memcached client
     r=Client("localhost:11211")
@@ -340,7 +340,7 @@ if __name__ == "__main__":
                 #     r.set("t2_hw",str(optU[2]))
                 # #r.mset({"t1_hw":str(np.round(optU[1],4)),"t2_hw":str(np.round(optU[2],4))})
                 # else:
-                optU=[0,30,30]
+                optU=[0,60,60]
                 r.set("t1_hw",str(optU[1]))
                 r.set("t2_hw",str(optU[2]))
                 plant.setU(optU[1],"tier1")
