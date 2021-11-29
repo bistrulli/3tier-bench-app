@@ -19,6 +19,7 @@ from pathlib import Path
 from pymemcache.client.base import Client
 from jvm_sysv2 import jvm_sys
 from docker_sys import dockersys
+import scipy.io as spio
 
 curpath = os.path.realpath(__file__)
 plant=None
@@ -477,7 +478,7 @@ if __name__ == "__main__":
             
             print(np.mean(optSNN[1:,0:min(optSPID.shape[1],len(tgtStory))-1], axis=1))
             
-            sp.savemat("nn_data.mat",{"sIdx":sIdx,
+            spio.savemat("nn_data.mat",{"sIdx":sIdx,
                                        "optSNN":optSNN[:,0:min(optSPID.shape[1],len(tgtStory))-1].T,
                                        "GKEt":XSSIM.T[0:len(tgtStory), :]})          
     
