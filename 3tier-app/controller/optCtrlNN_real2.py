@@ -330,7 +330,7 @@ if __name__ == "__main__":
                     Ie += (tgt - XSSIM[0, step])
                 
                 #stime = time.time()
-                optU_N, XNN = ctrl.buildOpt(XSSIM[:, [step]].T, tgt + 0.01 * Ie, MU, S, P, Sold, H, isAR)
+                optU_N, XNN = ctrl.buildOpt(XSSIM[:, [step]].T, tgt + 0.1 * Ie, MU, S, P, Sold, H, isAR)
                 #ftime = time.time() - stime
                 
                 optU = optU_N * ctrl.stdu + ctrl.meanu
@@ -341,7 +341,7 @@ if __name__ == "__main__":
                 #     r.set("t2_hw",str(optU[2]))
                 # #r.mset({"t1_hw":str(np.round(optU[1],4)),"t2_hw":str(np.round(optU[2],4))})
                 # else:
-                #optU=[0,60,60]
+                optU=[0,60,60]
                 r.set("t1_hw",str(optU[1]))
                 r.set("t2_hw",str(optU[2]))
                 plant.setU(optU[1],"tier1")
