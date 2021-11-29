@@ -69,7 +69,7 @@ repcount=0;
 
 #per npoints intendo il numero di diverso di stati iniziali che considero
 isCpu=True
-rep=100
+rep=10
 H=5
 ssTime=(H+1)*30
 N=3
@@ -88,7 +88,7 @@ P=None
 X0=None
 myuuid = uuid.uuid4()
 
-fname="open_loop_3tier_H5"
+fname="open_loop_3tier_H5_v_final"
 
 #dck_sys=dockersys()
 dck_sys=jvm_sys("../",isCpu)
@@ -159,7 +159,7 @@ try:
                 if(isCpu):
                     dck_sys.setU(optS[0,1], "tier1")
                     dck_sys.setU(optS[0,2], "tier2")
-        time.sleep(0.5)
+        time.sleep(0.2)
         
     #salvo risultati intermedi
     Path(str(script_dir)+"/../data/%s/"%(str(myuuid)) ).mkdir( parents=True, exist_ok=True )
