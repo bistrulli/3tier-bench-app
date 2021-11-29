@@ -12,6 +12,7 @@ import java.util.concurrent.TimeUnit;
 import com.google.common.net.InetAddresses;
 import com.google.common.net.InternetDomainName;
 import com.google.gson.Gson;
+import com.mashape.unirest.http.Unirest;
 
 import Server.SimpleTask;
 import experiment.RandomStep;
@@ -30,18 +31,20 @@ public class Main {
 	public static void main(String[] args) {
 
 		System.setProperty("net.spy.log.LoggerImpl", "net.spy.memcached.compat.log.SLF4JLogger");
+		
+		Unirest.setConcurrency(200, 200);
 
 		Main.getCliOptions(args);
 		final SimpleTask[] Sys = Main.genSystem();
 		Main.resetState(Sys[0]);
 		Sys[0].start();
-		if(Main.sim)
+		if (Main.sim)
 			Main.startSim(Sys[0]);
 		MemcachedClient memcachedClient = null;
 		while (true) {
 			if (Client.isStarted.get()) {
 				break;
-			}else {
+			} else {
 				System.out.println("waiting for client");
 			}
 			try {
@@ -52,7 +55,7 @@ public class Main {
 		}
 		try {
 			memcachedClient = new MemcachedClient(new InetSocketAddress(Main.jedisHost, 11211));
-			memcachedClient.set("started", 36000,"1").get();
+			memcachedClient.set("started", 36000, "1").get();
 		} catch (IOException | InterruptedException | ExecutionException e) {
 			e.printStackTrace();
 		}

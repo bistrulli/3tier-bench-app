@@ -9,6 +9,7 @@ import java.util.concurrent.ExecutionException;
 
 import com.google.common.net.InetAddresses;
 import com.google.common.net.InternetDomainName;
+import com.mashape.unirest.http.Unirest;
 
 import Server.SimpleTask;
 import gnu.getopt.Getopt;
@@ -20,12 +21,13 @@ public class Main {
 
 	private static Boolean isEmu = false;
 	private static String jedisHost = null;
-	private static boolean cgv2= false;
+	private static boolean cgv2 = false;
 
 	public static void main(String[] args) {
 		System.setProperty("net.spy.log.LoggerImpl", "net.spy.memcached.compat.log.SLF4JLogger");
+		Unirest.setConcurrency(200, 200);
 		Main.getCliOptions(args);
-		if(Main.cgv2) {
+		if (Main.cgv2) {
 			Main.addToCgv2();
 		}
 		SimpleTask[] Sys = Main.genSystem();
@@ -38,19 +40,19 @@ public class Main {
 	}
 
 	public static void resetState(SimpleTask task) throws InterruptedException, ExecutionException {
-		MemcachedClient memcachedClient=null;
+		MemcachedClient memcachedClient = null;
 		try {
 			memcachedClient = new MemcachedClient(new InetSocketAddress(Main.jedisHost, 11211));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
-		memcachedClient.set(task.getName()+"_sw", 3600,"1").get();
-		memcachedClient.set(task.getName()+"_hw", 3600,"1").get();
+
+		memcachedClient.set(task.getName() + "_sw", 3600, "1").get();
+		memcachedClient.set(task.getName() + "_hw", 3600, "1").get();
 		String[] entries = task.getEntries().keySet().toArray(new String[0]);
 		for (String e : entries) {
-			memcachedClient.set(e + "_bl",3600,"0").get();
-			memcachedClient.set(e + "_ex",3600,"0").get();
+			memcachedClient.set(e + "_bl", 3600, "0").get();
+			memcachedClient.set(e + "_ex", 3600, "0").get();
 		}
 		memcachedClient.shutdown();
 	}
@@ -59,19 +61,18 @@ public class Main {
 		// instatiate tier2 class
 		HashMap<String, Class> t2Entries = new HashMap<String, Class>();
 		HashMap<String, Long> t2Entries_stimes = new HashMap<String, Long>();
-		t2Entries.put("e2", Tier2HTTPHandler.class);  
+		t2Entries.put("e2", Tier2HTTPHandler.class);
 		t2Entries_stimes.put("e2", 100l);
 		final SimpleTask t2 = new SimpleTask("localhost", 3001, t2Entries, t2Entries_stimes, 1, Main.isEmu, "t2",
-				Main.jedisHost,100l,100l,100l,Main.cgv2);
+				Main.jedisHost, 100l, 100l, 100l, Main.cgv2);
 		t2.setHwCore(1f);
 		return new SimpleTask[] { t2 };
 	}
-	
+
 	public static boolean validate(final String hostname) {
-        return InetAddresses.isUriInetAddress(hostname) || 
-        		InternetDomainName.isValid(hostname);
-    }
-	
+		return InetAddresses.isUriInetAddress(hostname) || InternetDomainName.isValid(hostname);
+	}
+
 	public static void addToCgv2() {
 		try {
 			int tid = GetThreadID.get_tid();
@@ -121,7 +122,7 @@ public class Main {
 				break;
 			case 2:
 				try {
-					Main.cgv2 = Integer.valueOf(g.getOptarg()) > 0 ? true : false; 
+					Main.cgv2 = Integer.valueOf(g.getOptarg()) > 0 ? true : false;
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
