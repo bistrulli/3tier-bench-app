@@ -250,7 +250,7 @@ if __name__ == "__main__":
     #plant=dockersys()
     plant.startSys()
     #plant.startClient(np.random.randint(low=10, high=100))
-    plant.startClient(200,sim=True)
+    plant.startClient(190,sim=True)
     
     #memcached client
     r=Client("localhost:11211")
