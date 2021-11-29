@@ -209,7 +209,7 @@ if __name__ == "__main__":
     dt = 10 ** (-1)
     H = 5
     N = 3
-    rep = 1
+    rep = 30
     drep = 0
     sTime = 10000
     TF = sTime * rep * dt;
@@ -250,7 +250,7 @@ if __name__ == "__main__":
     #plant=dockersys()
     plant.startSys()
     #plant.startClient(np.random.randint(low=10, high=100))
-    plant.startClient(190,sim=True)
+    plant.startClient(195,sim=True)
     
     #memcached client
     r=Client("localhost:11211")
