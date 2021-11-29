@@ -208,7 +208,7 @@ if __name__ == "__main__":
     dt = 10 ** (-1)
     H = 5
     N = 3
-    rep = 6
+    rep = 1
     drep = 0
     sTime = 10000
     TF = sTime * rep * dt;
@@ -475,9 +475,11 @@ if __name__ == "__main__":
             # plt.title("Control Singals PID")
             # plt.plot(optSPID[1:,:].T)
             
-            print(np.mean(optSPID[1:,0:min(optSPID.shape[1],len(tgtStory))-1], axis=1))
-            print(np.mean(optSMD[1:,0:min(optSPID.shape[1],len(tgtStory))-1], axis=1))
-            print(np.mean(optSNN[1:,0:min(optSPID.shape[1],len(tgtStory))-1], axis=1))         
+            print(np.mean(optSNN[1:,0:min(optSPID.shape[1],len(tgtStory))-1], axis=1))
+            
+            sp.savemat("nn_data.mat",{"sIdx":sIdx,
+                                       "optSNN":optSNN[:,0:min(optSPID.shape[1],len(tgtStory))-1].T,
+                                       "GKEt":XSSIM.T[0:len(tgtStory), :]})          
     
             plt.show()
     
