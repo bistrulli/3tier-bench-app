@@ -1,6 +1,5 @@
 #!/bin/bash
 
-sudo su
 cd /sys/fs/cgroup
 echo "+cpu" > cgroup.subtree_control
 cat cgroup.subtree_control
