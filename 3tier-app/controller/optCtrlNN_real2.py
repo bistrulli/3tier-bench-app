@@ -348,7 +348,7 @@ if __name__ == "__main__":
                 plant.setU(optU[2],"tier2")
                 # print(optU)
                 
-                print(state[1],tgt,np.sum(XSSIM[:, step]),step,optU[1:N])
+                #print(state[1],tgt,np.sum(XSSIM[:, step]),step,optU[1:N])
                             
                 optSNN[:, step] = optU[0:N]
                 tgtStory += [tgt]
