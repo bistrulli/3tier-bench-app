@@ -21,7 +21,7 @@ public class Tier2HTTPHandler extends TierHttpHandler {
 	public void handleResponse(HttpExchange req, String requestParamValue) throws InterruptedException, IOException {
 		this.addToCGV2Group(this.getName());
 		this.measureIngress();
-
+ 
 		Jinjava jinjava = new Jinjava();
 		Map<String, Object> context = Maps.newHashMap();
 		context.put("task", "Tier2");

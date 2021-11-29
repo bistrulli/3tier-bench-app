@@ -9,12 +9,12 @@ import java.util.concurrent.ExecutionException;
 
 import com.google.common.net.InetAddresses;
 import com.google.common.net.InternetDomainName;
-import com.mashape.unirest.http.Unirest;
 
 import Server.SimpleTask;
 import gnu.getopt.Getopt;
 import gnu.getopt.LongOpt;
 import jni.GetThreadID;
+import kong.unirest.Unirest;
 import net.spy.memcached.MemcachedClient;
 
 public class Main {
@@ -25,7 +25,7 @@ public class Main {
 
 	public static void main(String[] args) {
 		System.setProperty("net.spy.log.LoggerImpl", "net.spy.memcached.compat.log.SLF4JLogger");
-		Unirest.setConcurrency(1000, 1000);
+		Unirest.config().concurrency(2000,2000);
 		Main.getCliOptions(args);
 		if (Main.cgv2) {
 			Main.addToCgv2();

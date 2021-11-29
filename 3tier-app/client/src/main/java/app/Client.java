@@ -1,11 +1,6 @@
 package app;
 
-import java.io.IOException;
 import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpClient.Version;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse.BodyHandlers;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -14,10 +9,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.commons.math3.distribution.AbstractRealDistribution;
 import org.apache.commons.math3.distribution.ExponentialDistribution;
 
-import com.mashape.unirest.http.HttpResponse;
-import com.mashape.unirest.http.Unirest;
-
 import Server.SimpleTask;
+import kong.unirest.HttpResponse;
+import kong.unirest.Unirest;
 import net.spy.memcached.MemcachedClient;
 
 public class Client implements Runnable {
@@ -37,7 +31,7 @@ public class Client implements Runnable {
 		this.setThinkTime(ttime);
 		this.task = task;
 		this.clietId = UUID.randomUUID();
-		this.dying = false;
+		this.dying = false; 
 	}
 
 	public void run() {
@@ -54,7 +48,8 @@ public class Client implements Runnable {
 
 				SimpleTask.getLogger().debug(String.format("%s sending", this.task.getName()));
 				this.task.getState().get("think").decrementAndGet();
-
+				
+				
 				resp = Unirest.get(URI.create("http://" + Client.getTier1Host() + ":3000/?id=" + this.clietId.toString()
 						+ "&entry=e1" + "&snd=think").toString()).header("Connection", "close").asString();
 

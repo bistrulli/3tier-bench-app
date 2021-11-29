@@ -6,14 +6,14 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ExecutionException;
 
-import org.json.JSONArray;
+//import org.json.JSONArray;
 
 import Server.SimpleTask;
 import app.Client;
+import kong.unirest.json.JSONArray;
 import net.spy.memcached.MemcachedClient;
 
 public class RandomStep implements Runnable {
@@ -40,7 +40,7 @@ public class RandomStep implements Runnable {
 	private void addClients(int delta) {
 		int actualSize = this.workGenerator.getThreadpool().getCorePoolSize();
 		try {
-			this.workGenerator.setThreadPoolSize(actualSize + delta);
+			this.workGenerator.setThreadPoolSize(actualSize + delta); 
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		}
@@ -83,7 +83,7 @@ public class RandomStep implements Runnable {
 		}
 
 		int nc = 0;
-		if (this.tick % 120 == 0) {
+		if (this.tick % 60 == 0) {
 			if (this.rnd.nextBoolean()) {
 				nc = this.rnd.nextInt(200 - this.workGenerator.getThreadpool().getCorePoolSize());
 				System.out.println(
