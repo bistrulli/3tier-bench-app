@@ -143,7 +143,7 @@ class optCtrlNN3:
         # Bias=Ypredicted_N[-1]
         # Gain=Ypredicted_N[1]
         
-        model = casadi.Opti("conic")
+        model = casadi.Opti()
         Uvar = model.variable(1, self.Xtrain.shape[1] + self.Xtrain.shape[1] * self.Xtrain.shape[1]);
         stateVar = model.variable(self.Xtrain.shape[1], H);
         absE_var = model.variable(1, H);
