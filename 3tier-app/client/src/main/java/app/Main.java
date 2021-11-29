@@ -32,7 +32,7 @@ public class Main {
 
 		System.setProperty("net.spy.log.LoggerImpl", "net.spy.memcached.compat.log.SLF4JLogger");
 		
-		Unirest.setConcurrency(1000, 300);
+		Unirest.setConcurrency(1000, 1000);
 
 		Main.getCliOptions(args);
 		final SimpleTask[] Sys = Main.genSystem();
