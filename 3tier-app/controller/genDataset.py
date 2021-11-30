@@ -46,19 +46,19 @@ def getServer(X,S,rand,estate=None):
         U=np.divide(np.minimum(ex,S),S)
         b=np.argmax(np.mean(U,axis=0))
         
-        # print("queue=",ex)
-        # print("server",S)
-        # print("utiliation=",U)
-        # print("bottelneck",b)
+        print("queue=",ex)
+        print("server",S)
+        print("utiliation=",U)
+        print("bottelneck",b)
          
         #optS[0,b]=np.maximum(np.minimum(optS[0,b]*15*np.random.rand(),100),0.1)
-        optS[0,b]=max(min(ex[b],30),1)
+        optS[0,b]=min(ex[b],30)
         if(b==1):
-             optS[0,2]=min(max(np.random.rand()*optS[0,2]/3.0,1),30)
+             optS[0,2]=min(max(np.random.rand()*optS[0,2]/3.0,0.1),30)
         else:
-             optS[0,1]=min(max(np.random.rand()*optS[0,1]/3.0,1),30)
+             optS[0,1]=min(max(np.random.rand()*optS[0,1]/3.0,0.1),30)
     
-    # print("New=",optS)
+    print("New=",optS)
     
     return optS;
         
@@ -88,7 +88,7 @@ P=None
 X0=None
 myuuid = uuid.uuid4()
 
-fname="open_loop_3tier_H5_v_exp"
+fname="open_loop_3tier_H5_exp"
 
 #dck_sys=dockersys()
 dck_sys=jvm_sys("../",isCpu)
@@ -160,8 +160,6 @@ try:
                 if(isCpu):
                     dck_sys.setU(optS[0,1], "tier1")
                     dck_sys.setU(optS[0,2], "tier2")
-                    
-        print(state[1],np.sum(XS[tick,:]))
         time.sleep(0.5)
         
     #salvo risultati intermedi
