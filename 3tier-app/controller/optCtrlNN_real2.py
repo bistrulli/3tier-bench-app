@@ -250,7 +250,7 @@ if __name__ == "__main__":
     #plant=dockersys()
     plant.startSys()
     #plant.startClient(np.random.randint(low=10, high=100))
-    plant.startClient(195,sim=True)
+    plant.startClient(80,sim=True)
     
     #memcached client
     r=Client("localhost:11211")
@@ -353,7 +353,7 @@ if __name__ == "__main__":
                 optSNN[:, step] = optU[0:N]
                 tgtStory += [tgt]
                 
-                time.sleep(0.1)
+                time.sleep(1)
                 
                 # optSPID[:,step]=optSPid
                 # optSPid=mitigateBottleneck(optSPid, Xsim3, tgt)
