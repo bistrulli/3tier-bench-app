@@ -23,6 +23,7 @@ public class RandomStep implements Runnable {
 	private Random rnd = null;
 	private MemcachedClient memClient = null;
 	private ArrayList<Double[]> gkeCtrl = null;
+	private Integer lastNc=null;
 
 	public RandomStep(SimpleTask workGenerator) {
 		this.tick = 0;
@@ -85,6 +86,7 @@ public class RandomStep implements Runnable {
 
 		int nc = 0;
 		if (this.tick % 90 == 0) {
+			
 			if (this.rnd.nextBoolean()) {
 				nc = this.rnd.nextInt(200 - this.workGenerator.getThreadpool().getCorePoolSize());
 				System.out.println(
@@ -101,6 +103,7 @@ public class RandomStep implements Runnable {
 			} catch (InterruptedException | ExecutionException e) {
 				e.printStackTrace();
 			}
+			this.lastNc=nc;
 		}
 		Object end_sim = this.memClient.get("end_sim");
 		if (end_sim != null) {
