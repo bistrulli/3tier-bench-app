@@ -52,7 +52,7 @@ def getServer(X,S,rand,estate=None):
         print("bottelneck",b)
          
         #optS[0,b]=np.maximum(np.minimum(optS[0,b]*15*np.random.rand(),100),0.1)
-        optS[0,b]=min(ex[b],30)
+        optS[0,b]=max(min(ex[b],30),0.1)
         if(b==1):
              optS[0,2]=min(max(np.random.rand()*optS[0,2]/3.0,0.1),30)
         else:
@@ -69,7 +69,7 @@ repcount=0;
 
 #per npoints intendo il numero di diverso di stati iniziali che considero
 isCpu=True
-rep=10
+rep=100
 H=5
 ssTime=(H+1)*30
 N=3
