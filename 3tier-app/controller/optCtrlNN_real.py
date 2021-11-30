@@ -459,7 +459,7 @@ if __name__ == "__main__":
     dt = 10 ** (-1)
     H = 5
     N = 3
-    rep = 20
+    rep = 50
     drep = 0
     sTime = 10000
     TF = sTime * rep * dt;

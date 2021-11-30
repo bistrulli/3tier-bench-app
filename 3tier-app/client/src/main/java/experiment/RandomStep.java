@@ -29,7 +29,7 @@ public class RandomStep implements Runnable {
 		this.workGenerator = workGenerator;
 		this.rnd = new Random();
 		//this.rnd.setSeed(100);
-		this.rnd.setSeed(200);
+		this.rnd.setSeed(45060);
 		try {
 			this.memClient = new MemcachedClient(new InetSocketAddress(this.workGenerator.getJedisHost(), 11211));
 		} catch (IOException e) {
