@@ -62,7 +62,7 @@ public class Main {
 		HashMap<String, Class> t1Entries = new HashMap<String, Class>();
 		HashMap<String, Long> t1Entries_stimes = new HashMap<String, Long>();
 		t1Entries.put("e1", Tier1HTTPHandler.class);
-		t1Entries_stimes.put("e1", 65l);
+		t1Entries_stimes.put("e1", 62l);
 		final SimpleTask t1 = new SimpleTask("localhost", 3000, t1Entries, t1Entries_stimes, 1, Main.isEmu, "t1",
 				Main.jedisHost,100l,null,null,Main.cgv2);
 		t1.setHwCore(1f);
