@@ -160,8 +160,8 @@ try:
                 if(isCpu):
                     dck_sys.setU(optS[0,1], "tier1")
                     dck_sys.setU(optS[0,2], "tier2")
-        
-        print(np.sum(XS[tick,:]))
+                    
+        print(state[1],np.sum(XS[tick,:]))
         time.sleep(0.5)
         
     #salvo risultati intermedi
