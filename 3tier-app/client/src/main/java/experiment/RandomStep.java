@@ -9,6 +9,9 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.ExecutionException;
 
+import org.apache.commons.math3.distribution.EnumeratedDistribution;
+import org.apache.commons.math3.util.Pair;
+
 //import org.json.JSONArray;
 
 import Server.SimpleTask;
@@ -87,7 +90,18 @@ public class RandomStep implements Runnable {
 		int nc = 0;
 		if (this.tick % 90 == 0) {
 			
-			if (this.rnd.nextBoolean()) {
+			EnumeratedDistribution<Integer> dist=new EnumeratedDistribution<>(null);
+			ArrayList<Pair<Integer,Double>> weight = new ArrayList<Pair<Integer,Double>>();
+			
+			if(this.lastNc==null) {
+				this.lastNc=100;
+			}
+			
+			double p0=(200.0-this.lastNc)/200.0;
+			weight.add(new Pair<Integer, Double>(0,p0));
+			weight.add(new Pair<Integer, Double>(1,1-p0));
+			
+			if (dist.sample()==0) {
 				nc = this.rnd.nextInt(200 - this.workGenerator.getThreadpool().getCorePoolSize());
 				System.out.println(
 						String.format("delta clients %d-%d", nc, this.workGenerator.getThreadpool().getCorePoolSize()));
