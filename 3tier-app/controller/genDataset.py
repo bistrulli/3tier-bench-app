@@ -52,11 +52,11 @@ def getServer(X,S,rand,estate=None):
         # print("bottelneck",b)
          
         #optS[0,b]=np.maximum(np.minimum(optS[0,b]*15*np.random.rand(),100),0.1)
-        optS[0,b]=min(ex[b],30)
+        optS[0,b]=max(min(ex[b],30),1)
         if(b==1):
-             optS[0,2]=min(max(np.random.rand()*optS[0,2]/3.0,0.1),30)
+             optS[0,2]=min(max(np.random.rand()*optS[0,2]/3.0,1),30)
         else:
-             optS[0,1]=min(max(np.random.rand()*optS[0,1]/3.0,0.1),30)
+             optS[0,1]=min(max(np.random.rand()*optS[0,1]/3.0,1),30)
     
     # print("New=",optS)
     
