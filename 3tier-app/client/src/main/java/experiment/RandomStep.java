@@ -97,8 +97,8 @@ public class RandomStep implements Runnable {
 				this.lastNc=100;
 			}
 			
-			double p0=(200.0-this.lastNc)/200.0;
-			System.out.println("p_0"+p0);
+			double p0=(200.0-this.workGenerator.getThreadpool().getCorePoolSize())/200.0;
+			System.out.println("p_0 "+p0);
 			weight.add(new Pair<Integer, Double>(0,p0));
 			weight.add(new Pair<Integer, Double>(1,1-p0));
 			
