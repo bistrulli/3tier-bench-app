@@ -83,7 +83,7 @@ public class RandomStep implements Runnable {
 		}
 
 		int nc = 0;
-		if (this.tick % 120 == 0) {
+		if (this.tick % 90 == 0) {
 			if (this.rnd.nextBoolean()) {
 				nc = this.rnd.nextInt(200 - this.workGenerator.getThreadpool().getCorePoolSize());
 				System.out.println(
