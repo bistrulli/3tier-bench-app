@@ -201,8 +201,8 @@ if __name__ == "__main__":
     
     
     curpath = os.path.realpath(__file__)
-    ctrl = optCtrlNN3("%s/../learnt_model/gcp_model/model_3tier.tflite" % (os.path.dirname(curpath)),
-                     "%s/../learnt_model/gcp_model/open_loop_3tier_H5.mat" % (os.path.dirname(curpath)))
+    ctrl = optCtrlNN3("%s/../learnt_model/gcp_model/model_3tier_exp.tflite" % (os.path.dirname(curpath)),
+                     "%s/../learnt_model/gcp_model/open_loop_3tier_H5_exp.mat" % (os.path.dirname(curpath)))
     
     isAR = True
     isCpu = True
