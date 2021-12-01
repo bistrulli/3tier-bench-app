@@ -392,9 +392,9 @@ if __name__ == "__main__":
             
             g = Client("localhost:11211")
             
-            while(g.get("sim")==None):
-                print("waiting sim to start")
-                time.sleep(0.2)
+            # while(g.get("sim")==None):
+            #     print("waiting sim to start")
+            #     time.sleep(0.2)
             
             g.set("t1_hw", "%f" % (1))
             g.set("t2_hw", "%f" % (1))
