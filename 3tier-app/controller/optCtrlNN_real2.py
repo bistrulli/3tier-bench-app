@@ -280,7 +280,8 @@ if __name__ == "__main__":
                     XSSIM2[:, step] = XSSIM[:, step]
                     XSSIMPid[:, step] = XSSIM[:, step]
                     S[0] = pop
-                    tgt = np.round(alfa[-1] * 0.884 * pop, 5)
+                    #tgt = np.round(alfa[-1] * 0.884 * pop, 5)
+                    tgt = np.round(alfa[-1] * 0.8735 * pop, 5)
                     sIdx.append({'alfa':alfa[-1], 'x0':XSSIM[:, step].tolist(), "tgt":tgt,"idx":step})
                     optSPid = [np.sum(XSSIM[:, step]), 1, 1]
                     cp += 1
