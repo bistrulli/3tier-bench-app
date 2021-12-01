@@ -209,7 +209,7 @@ if __name__ == "__main__":
     dt = 10 ** (-1)
     H = 5
     N = 3
-    rep = 10
+    rep = 50 
     drep = 0
     sTime = 10000
     TF = sTime * rep * dt;
@@ -481,7 +481,7 @@ if __name__ == "__main__":
             
             spio.savemat("nn_data.mat",{"sIdx":sIdx,
                                        "optSNN":optSNN[:,0:min(optSPID.shape[1],len(tgtStory))-1].T,
-                                       "GKEt":XSSIM.T[0:len(tgtStory), :]})          
+                                       "XSSIM":XSSIM.T[0:len(tgtStory), :]})          
     
             plt.show()
     
