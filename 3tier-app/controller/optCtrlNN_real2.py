@@ -209,7 +209,7 @@ if __name__ == "__main__":
     dt = 10 ** (-1)
     H = 5
     N = 3
-    rep = 1
+    rep = 10
     drep = 0
     sTime = 10000
     TF = sTime * rep * dt;
@@ -271,7 +271,7 @@ if __name__ == "__main__":
                     
                     Sold = None       
                     #alfa.append(genAfa())
-                    alfa.append(0.5)
+                    alfa.append(1.0)
                     #XSSIM[:, step] = [np.random.randint(low=10, high=100), 0, 0]
                     XSSIM[:, step] = plant.getstate(r)[0]
                     #XSSIM[:, step] = [100, 0, 0]
