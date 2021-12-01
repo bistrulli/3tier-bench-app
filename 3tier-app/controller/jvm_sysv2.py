@@ -402,7 +402,7 @@ if __name__ == "__main__":
             jvm_sys.setU(None, "tier2")
             
             X = []
-            for i in range(1000):
+            for i in range(10000):
                 state = jvm_sys.getstate()[0]
                 print(state, i, np.sum(state))
                 X.append(state[0])
