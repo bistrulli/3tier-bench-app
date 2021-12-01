@@ -256,12 +256,19 @@ class jvm_sys(system_interface):
     
     def setU(self, RL, cnt_name):
         
-        quota = int(np.round(np.maximum(RL,0.1) * self.period))
+        if(RL!=None):
+            quota = int(np.round(np.maximum(RL,0.1) * self.period))
         
-        cgfile=open(self.cgroups[cnt_name]["cg"],"w")
-        cgfile.write("%d %d"%(quota,self.period))
-        cgfile.flush()
-        cgfile.close()
+            cgfile=open(self.cgroups[cnt_name]["cg"],"w")
+            cgfile.write("%d %d"%(quota,self.period))
+            cgfile.flush()
+            cgfile.close()
+        else:
+            cgfile=open(self.cgroups[cnt_name]["cg"],"w")
+            cgfile.write("%s %d"%("max",self.period))
+            cgfile.flush()
+            cgfile.close()
+            
     
     # def getstate(self, monitor):
     #     N = 2
@@ -381,7 +388,7 @@ if __name__ == "__main__":
         
         for i in range(1):
             jvm_sys.startSys()
-            jvm_sys.startClient(40,sim=True)
+            jvm_sys.startClient(1,sim=False)
             
             g = Client("localhost:11211")
             
@@ -389,10 +396,10 @@ if __name__ == "__main__":
                 print("waiting sim to start")
                 time.sleep(0.2)
             
-            g.set("t1_hw", "%f" % (100))
-            g.set("t2_hw", "%f" % (100))
-            # jvm_sys.setU(1.0, "tier1")
-            # jvm_sys.setU(1.0, "tier2")
+            g.set("t1_hw", "%f" % (1))
+            g.set("t2_hw", "%f" % (1))
+            jvm_sys.setU(None, "tier1")
+            jvm_sys.setU(None, "tier2")
             
             X = []
             for i in range(360):
@@ -410,17 +417,14 @@ if __name__ == "__main__":
                 #     if(isCpu):
                 #         jvm_sys.setU(s1, "tier1")
                 #         jvm_sys.setU(s2, "tier2")
-                time.sleep(0.3)
+                time.sleep(0.1)
             
             print(np.mean(X))
         
-            jvm_sys.stopClient()
-            jvm_sys.stopSystem()
-        
-            plt.figure()
-            plt.plot(X)
-            plt.axhline(y=10, color='r', linestyle='--')
-            plt.savefig("queue_test.png")
+            # plt.figure()
+            # plt.plot(X)
+            # plt.axhline(y=10, color='r', linestyle='--')
+            # plt.savefig("queue_test.png")
     except Exception as ex:
         traceback.print_exception(type(ex), ex, ex.__traceback__)
     finally:
