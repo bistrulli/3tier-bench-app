@@ -15,7 +15,7 @@ try:
         st = time.time()
         state="%d" % (np.random.randint(low=0, high=1000))
         client.set('state',state)
-        result = client.get('state')
+        result = client.get('state').decode('utf-8')
         sampleT.append(time.time() - st)
         if(result!=state):
             raise ValueError(result,"is not",state)
