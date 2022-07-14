@@ -8,7 +8,7 @@ client = Client('monitor')
 
 sampleT=[]
 
-nsample=1000
+nsample=int(10**5)
 for i in range(0,nsample):
     st=time.time()
     client.set('state', "%d"%(np.random.randint(low=0,high=1000)))
