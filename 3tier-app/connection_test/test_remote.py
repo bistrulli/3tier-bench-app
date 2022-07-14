@@ -4,7 +4,7 @@ import numpy as np
 from scipy.io import savemat
 
 
-client = Client('monitor')
+client = Client('localhost')
 
 sampleT=[]
 
@@ -16,6 +16,6 @@ for i in range(0,nsample):
     sampleT.append(time.time()-st)
     print((i*100.0/nsample))
 
-savemat("gketime.mat", {"data":sampleT})
+savemat("gketime_local.mat", {"data":sampleT})
 
 
