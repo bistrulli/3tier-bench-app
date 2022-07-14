@@ -4,7 +4,7 @@ import numpy as np
 from scipy.io import savemat
 import traceback
 
-client = Client('localhost')
+client = Client('monitor')
 
 sampleT = []
 
@@ -21,7 +21,7 @@ try:
             raise ValueError(result,"is not",state)
         print((i * 100.0 / nsample))
     
-    savemat("gketime_local.mat", {"data":sampleT})
+    savemat("gketime_zone.mat", {"data":sampleT})
 except(e):
     traceback.print_exc()
 finally:
